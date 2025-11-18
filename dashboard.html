@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Dashboard de Estudos - Benjamin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .header h1 { color: #667eea; margin-bottom: 10px; }
+        
+        .subject-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+            width: 100%;
+        }
+        
+        .subject-btn {
+            padding: 12px 25px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .subject-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .subject-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            background: #f0f0f0;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .stat-value { font-size: 1.5rem; font-weight: 600; color: #667eea; }
+        .stat-label { font-size: 0.8rem; color: #666; }
+        
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            background: white;
+            color: #667eea;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover { 
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            min-height: 400px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        .card {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .quiz-item {
+            background: #f0f7ff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 2px solid #667eea;
+        }
+        
+        .quiz-item p { margin-bottom: 10px; font-weight: 600; }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .option-btn {
+            padding: 10px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+        
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f7ff;
+        }
+        
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .vf-card {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .vf-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+        
+        .vf-question { font-weight: 600; margin-bottom: 10px; }
+        
+        .vf-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .vf-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .vf-btn-true {
+            background: #28a745;
+            color: white;
+        }
+        
+        .vf-btn-false {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .vf-explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .vf-explanation.show { display: block; }
+        
+        .flashcard {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .flashcard:hover { transform: scale(1.02); }
+        
+        .flashcard-text { font-size: 1.1rem; font-weight: 600; }
+        
+        .treasure-progress {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .progress-step {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        .progress-step.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .progress-step.completed {
+            background: #28a745;
+            color: white;
+        }
+        
+        @media (max-width: 600px) {
+            .nav { flex-direction: column; }
+            .btn { width: 100%; }
+            .subject-selector { flex-direction: column; }
+            .subject-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Dashboard de Estudos - Benjamin</h1>
+            <p>Prepare-se para as provas de recuperação! 🚀</p>
+            
+            <div class="subject-selector">
+                <button class="subject-btn active" onclick="selectSubject('geo1')">🌍 Geografia 1</button>
+                <button class="subject-btn" onclick="selectSubject('geo2')">🌎 Geografia 2</button>
+                <button class="subject-btn" onclick="selectSubject('ingles')">🌐 Inglês</button>
+                <button class="subject-btn" onclick="selectSubject('ciencias')">🔬 Ciências</button>
+                <button class="subject-btn" onclick="selectSubject('matematica')">🔢 Matemática</button>
+                <button class="subject-btn" onclick="selectSubject('geo')">🗺️ GEO (Real)</button>
+                <button class="subject-btn" onclick="selectSubject('historia')">📜 História</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="points">0</div>
+                    <div class="stat-label">Pontos</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="level">1</div>
+                    <div class="stat-label">Nível</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="correct">0</div>
+                    <div class="stat-label">Acertos</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav">
+            <button class="btn active" onclick="showSection('resumo')">📖 Resumo</button>
+            <button class="btn" onclick="showSection('quizzes')">🎯 Quizzes</button>
+            <button class="btn" onclick="showSection('vf')">✅ V/F</button>
+            <button class="btn" onclick="showSection('flashcards')">🎴 Flashcards</button>
+            <button class="btn" onclick="showSection('tesouro')">🗺️ Tesouro</button>
+        </div>
+        
+        <div class="content">
+            <!-- RESUMO -->
+            <div id="resumo" class="section active">
+                <h2 id="resumo-title">📖 Resumo</h2>
+                <div id="resumo-content"></div>
+            </div>
+            
+            <!-- QUIZZES -->
+            <div id="quizzes" class="section">
+                <h2>🎯 Quizzes (40 Questões)</h2>
+                <div id="quizzes-content"></div>
+            </div>
+            
+            <!-- V/F -->
+            <div id="vf" class="section">
+                <h2>✅ Verdadeiro ou Falso (40 Questões)</h2>
+                <div id="vf-content"></div>
+            </div>
+            
+            <!-- FLASHCARDS -->
+            <div id="flashcards" class="section">
+                <h2>🎴 Flashcards (30 Conceitos)</h2>
+                <p style="margin-bottom: 15px; color: #666;">Clique nos cards para virar e ver a resposta!</p>
+                <div id="flashcards-content"></div>
+            </div>
+            
+            <!-- TESOURO -->
+            <div id="tesouro" class="section">
+                <h2>🗺️ Caça ao Tesouro</h2>
+                <p style="margin-bottom: 15px; color: #666;">Acerte 3 perguntas seguidas para encontrar o tesouro!</p>
+                <div class="treasure-progress" id="treasure-progress"></div>
+                <div id="treasure-content"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DADOS GEOGRAFIA 2
+        const geo2Data = {
+            resumo: `
+                <div class="card">
+                    <h3>🏔️ Montanhas vs Planaltos</h3>
+                    <p><strong>Montanhas:</strong> Formadas por agentes endógenos (vulcanismo, tectonismo). Muito elevadas, acidentadas, com picos agudos. Altitude: acima de 1000m.</p>
+                    <p><strong>Planaltos:</strong> Formados por erosão de montanhas antigas. Elevados e planos no topo. Altitude: 300-1000m.</p>
+                </div>
+                <div class="card">
+                    <h3>📏 Altura vs Altitude</h3>
+                    <p><strong>Altura:</strong> Medida vertical de um objeto (ex: altura de uma árvore).</p>
+                    <p><strong>Altitude:</strong> Distância vertical de um ponto em relação ao nível do mar (referência).</p>
+                </div>
+                <div class="card">
+                    <h3>⚡ Agentes Endógenos</h3>
+                    <p><strong>Definição:</strong> Agentes que atuam no interior da Terra, transformando o relevo de forma violenta e rápida.</p>
+                    <p><strong>Principais exemplos:</strong></p>
+                    <p>1. <strong>Vulcanismo:</strong> Erupção de magma que forma vulcões e novas rochas.</p>
+                    <p>2. <strong>Tectonismo:</strong> Movimento das placas tectônicas que causa terremotos e dobramentos.</p>
+                    <p>3. <strong>Magmatismo:</strong> Movimentação do magma no interior.</p>
+                </div>
+                <div class="card">
+                    <h3>🌍 Tectonismo</h3>
+                    <p><strong>Característica:</strong> Movimento das placas tectônicas que formam a crosta terrestre.</p>
+                    <p><strong>Papel na formação do relevo:</strong> Cria montanhas, fossas oceânicas, causa terremotos. Responsável por grandes transformações geológicas.</p>
+                </div>
+                <div class="card">
+                    <h3>🌋 Vulcanismo</h3>
+                    <p><strong>Como ocorre:</strong> Magma sobe pela crosta terrestre e é expelido em erupções vulcânicas.</p>
+                    <p><strong>Transformação do relevo:</strong> Cria vulcões, forma novas rochas (lava solidificada), modifica paisagens.</p>
+                </div>
+                <div class="card">
+                    <h3>🌧️ Agentes Exógenos</h3>
+                    <p><strong>Definição:</strong> Agentes que atuam na superfície, transformando o relevo de forma lenta e contínua.</p>
+                    <p><strong>Por que são "modeladores":</strong> Desgastam e transportam material, esculpindo o relevo.</p>
+                    <p><strong>Exemplos:</strong> Chuva, vento, gelo, mar, rios, intemperismo.</p>
+                </div>
+                <div class="card">
+                    <h3>🔄 Erosão vs Intemperismo</h3>
+                    <p><strong>Intemperismo:</strong> Desintegração de rochas em pequenos fragmentos (no local).</p>
+                    <p><strong>Erosão:</strong> Transporte do material desintegrado pela água, vento ou gelo.</p>
+                    <p><strong>Diferença:</strong> Intemperismo = quebra / Erosão = transporte</p>
+                </div>
+                <div class="card">
+                    <h3>💧 Tipos de Erosão</h3>
+                    <p><strong>1. Eólica:</strong> Causada pelo vento (forma dunas).</p>
+                    <p><strong>2. Pluvial:</strong> Causada pela chuva (lixiviação).</p>
+                    <p><strong>3. Fluvial:</strong> Causada pelos rios (vale em V).</p>
+                    <p><strong>4. Marinha:</strong> Causada pelo mar (falésias).</p>
+                    <p><strong>5. Glacial:</strong> Causada pelo gelo (vale em U).</p>
+                </div>
+                <div class="card">
+                    <h3>⚗️ Intemperismo Químico</h3>
+                    <p><strong>Característica:</strong> Alteração química das rochas, não apenas desintegração física.</p>
+                    <p><strong>Intensidade climática:</strong> Mais intenso em climas quentes e úmidos (tropical).</p>
+                    <p><strong>Processo:</strong> Água + CO₂ + minerais = novas substâncias.</p>
+                </div>
+                <div class="card">
+                    <h3>🌊 Ciclo Hidrológico</h3>
+                    <p><strong>Três etapas principais:</strong></p>
+                    <p>1. <strong>Evaporação:</strong> Água dos oceanos, rios e lagos sobe para a atmosfera.</p>
+                    <p>2. <strong>Condensação:</strong> Vapor de água forma nuvens.</p>
+                    <p>3. <strong>Precipitação:</strong> Chuva cai e retorna à superfície.</p>
+                </div>
+                <div class="card">
+                    <h3>🏞️ Rios e Bacias Hidrográficas</h3>
+                    <p><strong>Rio:</strong> Curso de água que flui continuamente.</p>
+                    <p><strong>Bacia Hidrográfica:</strong> Área de terra que drena água para um rio principal.</p>
+                    <p><strong>Componentes:</strong> Rio principal, afluentes, sub-afluentes.</p>
+                </div>
+                <div class="card">
+                    <h3>🌍 Formação da Atmosfera</h3>
+                    <p><strong>Como se formou:</strong> Liberação de gases vulcânicos, fotossíntese de organismos primitivos.</p>
+                    <p><strong>Principal mudança:</strong> Surgimento do oxigênio (O₂) permitiu o surgimento da vida.</p>
+                </div>
+                <div class="card">
+                    <h3>💨 Gases Atmosféricos</h3>
+                    <p><strong>Principais gases:</strong></p>
+                    <p>- Nitrogênio (N₂): 78%</p>
+                    <p>- Oxigênio (O₂): 21%</p>
+                    <p>- Argônio (Ar): 0.93%</p>
+                    <p>- Dióxido de Carbono (CO₂): 0.04%</p>
+                    <p>- Outros: traços</p>
+                </div>
+                <div class="card">
+                    <h3>🌤️ Camadas da Atmosfera</h3>
+                    <p><strong>1. Troposfera:</strong> Mais próxima, onde vivemos, fenômenos meteorológicos.</p>
+                    <p><strong>2. Estratosfera:</strong> Contém ozônio, protege contra UV.</p>
+                    <p><strong>3. Mesosfera:</strong> Mais fria, meteoritos se queimam.</p>
+                    <p><strong>4. Termosfera:</strong> Mais quente, auroras boreais.</p>
+                    <p><strong>5. Exosfera:</strong> Transição para o espaço.</p>
+                </div>
+                <div class="card">
+                    <h3>🌡️ Elementos vs Fatores Climáticos</h3>
+                    <p><strong>Elementos Climáticos:</strong> Características do clima em um momento específico (temperatura, umidade, pressão, vento).</p>
+                    <p><strong>Fatores Climáticos:</strong> Influenciam o clima a longo prazo (latitude, altitude, continentalidade, correntes oceânicas).</p>
+                    <p><strong>Exemplo:</strong> Hoje está quente (elemento) porque estamos no trópico (fator).</p>
+                </div>
+            `,
+            quizzes: [
+                { pergunta: 'Qual é a principal diferença entre montanhas e planaltos?', opcoes: ['Mesma altura', 'Montanhas são acidentadas, planaltos são planos', 'Planaltos são maiores', 'Não há diferença'], resposta: 1 },
+                { pergunta: 'O que é altitude?', opcoes: ['Altura de um objeto', 'Distância vertical do nível do mar', 'Profundidade do oceano', 'Largura de um relevo'], resposta: 1 },
+                { pergunta: 'Qual é um agente endógeno?', opcoes: ['Chuva', 'Vento', 'Vulcanismo', 'Intemperismo'], resposta: 2 },
+                { pergunta: 'O tectonismo causa:', opcoes: ['Chuva', 'Terremotos e montanhas', 'Erosão', 'Nuvens'], resposta: 1 },
+                { pergunta: 'Como o vulcanismo transforma o relevo?', opcoes: ['Lentamente', 'Criando vulcões e novas rochas', 'Não transforma', 'Apenas submerso'], resposta: 1 },
+                { pergunta: 'Qual é um agente exógeno?', opcoes: ['Tectonismo', 'Magmatismo', 'Chuva', 'Vulcanismo'], resposta: 2 },
+                { pergunta: 'Por que agentes exógenos são "modeladores"?', opcoes: ['Criam vulcões', 'Desgastam e transportam material', 'Causam terremotos', 'Formam montanhas'], resposta: 1 },
+                { pergunta: 'Qual é a diferença entre erosão e intemperismo?', opcoes: ['Mesma coisa', 'Intemperismo quebra, erosão transporta', 'Erosão quebra, intemperismo transporta', 'Nenhuma diferença'], resposta: 1 },
+                { pergunta: 'Qual tipo de erosão é causado pelo vento?', opcoes: ['Pluvial', 'Fluvial', 'Eólica', 'Marinha'], resposta: 2 },
+                { pergunta: 'Em qual clima o intemperismo químico é mais intenso?', opcoes: ['Frio', 'Temperado', 'Quente e úmido', 'Seco'], resposta: 2 },
+                { pergunta: 'Qual é a primeira etapa do ciclo hidrológico?', opcoes: ['Condensação', 'Evaporação', 'Precipitação', 'Infiltração'], resposta: 1 },
+                { pergunta: 'O que é uma bacia hidrográfica?', opcoes: ['Um rio', 'Uma área que drena água para um rio', 'Uma montanha', 'Um lago'], resposta: 1 },
+                { pergunta: 'Como se formou a atmosfera?', opcoes: ['Sempre existiu', 'Vulcões e fotossíntese', 'Chuva', 'Oceanos'], resposta: 1 },
+                { pergunta: 'Qual gás é mais abundante na atmosfera?', opcoes: ['Oxigênio', 'Nitrogênio', 'Dióxido de carbono', 'Argônio'], resposta: 1 },
+                { pergunta: 'Qual camada contém ozônio?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+                { pergunta: 'Qual camada é mais fria?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 2 },
+                { pergunta: 'O que são elementos climáticos?', opcoes: ['Fatores que influenciam clima', 'Características do clima em um momento', 'Gases atmosféricos', 'Camadas da atmosfera'], resposta: 1 },
+                { pergunta: 'O que são fatores climáticos?', opcoes: ['Temperatura do dia', 'Influências a longo prazo no clima', 'Chuva de hoje', 'Vento agora'], resposta: 1 },
+                { pergunta: 'Qual é um fator climático?', opcoes: ['Temperatura', 'Umidade', 'Latitude', 'Pressão'], resposta: 2 },
+                { pergunta: 'Qual tipo de erosão forma vales em U?', opcoes: ['Eólica', 'Pluvial', 'Fluvial', 'Glacial'], resposta: 3 },
+                { pergunta: 'Qual tipo de erosão forma vales em V?', opcoes: ['Eólica', 'Fluvial', 'Marinha', 'Glacial'], resposta: 1 },
+                { pergunta: 'Qual tipo de erosão forma dunas?', opcoes: ['Pluvial', 'Eólica', 'Marinha', 'Glacial'], resposta: 1 },
+                { pergunta: 'O que causa erosão marinha?', opcoes: ['Chuva', 'Vento', 'Mar', 'Gelo'], resposta: 2 },
+                { pergunta: 'Qual camada da atmosfera tem auroras boreais?', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 2 },
+                { pergunta: 'Qual camada da atmosfera é onde vivemos?', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+                { pergunta: 'Qual percentual de oxigênio na atmosfera?', opcoes: ['78%', '21%', '0.93%', '0.04%'], resposta: 1 },
+                { pergunta: 'Qual percentual de nitrogênio na atmosfera?', opcoes: ['21%', '78%', '0.93%', '0.04%'], resposta: 1 },
+                { pergunta: 'O que permite a vida na Terra?', opcoes: ['Vulcões', 'Oxigênio na atmosfera', 'Montanhas', 'Rios'], resposta: 1 },
+                { pergunta: 'Qual é a segunda etapa do ciclo hidrológico?', opcoes: ['Evaporação', 'Condensação', 'Precipitação', 'Infiltração'], resposta: 1 },
+                { pergunta: 'Qual é a terceira etapa do ciclo hidrológico?', opcoes: ['Evaporação', 'Condensação', 'Precipitação', 'Infiltração'], resposta: 2 },
+                { pergunta: 'Qual agente endógeno causa terremotos?', opcoes: ['Vulcanismo', 'Tectonismo', 'Magmatismo', 'Intemperismo'], resposta: 1 },
+                { pergunta: 'Qual agente endógeno causa erupções?', opcoes: ['Tectonismo', 'Vulcanismo', 'Magmatismo', 'Erosão'], resposta: 1 },
+                { pergunta: 'Qual agente externo causa lixiviação?', opcoes: ['Vento', 'Chuva', 'Gelo', 'Mar'], resposta: 1 },
+                { pergunta: 'Qual agente externo causa falésias?', opcoes: ['Vento', 'Gelo', 'Mar', 'Chuva'], resposta: 2 },
+                { pergunta: 'Qual agente externo causa desertos?', opcoes: ['Chuva', 'Vento', 'Gelo', 'Mar'], resposta: 1 },
+                { pergunta: 'Qual agente externo causa geleiras?', opcoes: ['Vento', 'Chuva', 'Gelo', 'Mar'], resposta: 2 },
+                { pergunta: 'O intemperismo químico envolve:', opcoes: ['Apenas quebra física', 'Alteração química das rochas', 'Transporte de material', 'Formação de vulcões'], resposta: 1 },
+                { pergunta: 'Qual é a principal mudança na formação da atmosfera?', opcoes: ['Surgimento de vulcões', 'Surgimento do oxigênio', 'Formação de oceanos', 'Criação de montanhas'], resposta: 1 },
+                { pergunta: 'Qual camada da atmosfera é a mais quente?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 3 },
+                { pergunta: 'Qual camada da atmosfera é a transição para o espaço?', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 3 }
+            ],
+            vf: [
+                { texto: 'Montanhas são formadas por agentes endógenos.', resposta: true, explicacao: 'Correto! Vulcanismo e tectonismo formam montanhas.' },
+                { texto: 'Planaltos são sempre muito elevados e acidentados.', resposta: false, explicacao: 'Errado! Planaltos são elevados mas planos no topo.' },
+                { texto: 'Altura e altitude são a mesma coisa.', resposta: false, explicacao: 'Errado! Altura é de um objeto, altitude é do nível do mar.' },
+                { texto: 'Agentes endógenos transformam o relevo lentamente.', resposta: false, explicacao: 'Errado! Agentes endógenos transformam rapidamente.' },
+                { texto: 'Vulcanismo cria novas rochas.', resposta: true, explicacao: 'Correto! Lava solidificada forma novas rochas.' },
+                { texto: 'Tectonismo causa terremotos.', resposta: true, explicacao: 'Correto! Movimento de placas causa terremotos.' },
+                { texto: 'Agentes exógenos são modeladores do relevo.', resposta: true, explicacao: 'Correto! Desgastam e transportam material.' },
+                { texto: 'Erosão e intemperismo são a mesma coisa.', resposta: false, explicacao: 'Errado! Intemperismo quebra, erosão transporta.' },
+                { texto: 'Erosão eólica forma dunas.', resposta: true, explicacao: 'Correto! Vento transporta areia e forma dunas.' },
+                { texto: 'Erosão fluvial forma vales em U.', resposta: false, explicacao: 'Errado! Erosão fluvial forma vales em V, glacial em U.' },
+                { texto: 'Intemperismo químico é mais intenso em climas quentes e úmidos.', resposta: true, explicacao: 'Correto! Água e calor aceleram reações químicas.' },
+                { texto: 'O ciclo hidrológico tem 4 etapas principais.', resposta: false, explicacao: 'Errado! Tem 3: evaporação, condensação, precipitação.' },
+                { texto: 'Uma bacia hidrográfica é um rio.', resposta: false, explicacao: 'Errado! É a área que drena água para um rio.' },
+                { texto: 'A atmosfera se formou há bilhões de anos.', resposta: true, explicacao: 'Correto! Vulcões e fotossíntese a criaram.' },
+                { texto: 'Oxigênio é o gás mais abundante na atmosfera.', resposta: false, explicacao: 'Errado! Nitrogênio é o mais abundante (78%).' },
+                { texto: 'Nitrogênio representa 78% da atmosfera.', resposta: true, explicacao: 'Correto! É o gás mais abundante.' },
+                { texto: 'Oxigênio representa 21% da atmosfera.', resposta: true, explicacao: 'Correto! É o segundo mais abundante.' },
+                { texto: 'A troposfera contém ozônio.', resposta: false, explicacao: 'Errado! A estratosfera contém ozônio.' },
+                { texto: 'A mesosfera é a camada mais fria.', resposta: true, explicacao: 'Correto! Temperatura chega a -90°C.' },
+                { texto: 'A termosfera é onde vivemos.', resposta: false, explicacao: 'Errado! Vivemos na troposfera.' },
+                { texto: 'Elementos climáticos são características do clima em um momento.', resposta: true, explicacao: 'Correto! Temperatura, umidade, etc.' },
+                { texto: 'Fatores climáticos influenciam o clima a longo prazo.', resposta: true, explicacao: 'Correto! Latitude, altitude, etc.' },
+                { texto: 'Latitude é um elemento climático.', resposta: false, explicacao: 'Errado! Latitude é um fator climático.' },
+                { texto: 'Temperatura é um fator climático.', resposta: false, explicacao: 'Errado! Temperatura é um elemento climático.' },
+                { texto: 'Erosão marinha forma falésias.', resposta: true, explicacao: 'Correto! Mar desgasta as costas.' },
+                { texto: 'Erosão glacial forma vales em U.', resposta: true, explicacao: 'Correto! Gelo modela o relevo.' },
+                { texto: 'Chuva é um agente endógeno.', resposta: false, explicacao: 'Errado! Chuva é um agente exógeno.' },
+                { texto: 'Vento é um agente exógeno.', resposta: true, explicacao: 'Correto! Atua na superfície.' },
+                { texto: 'Gelo é um agente exógeno.', resposta: true, explicacao: 'Correto! Causa erosão glacial.' },
+                { texto: 'Mar é um agente exógeno.', resposta: true, explicacao: 'Correto! Causa erosão marinha.' },
+                { texto: 'Magmatismo é um agente endógeno.', resposta: true, explicacao: 'Correto! Atua no interior da Terra.' },
+                { texto: 'Intemperismo é um agente endógeno.', resposta: false, explicacao: 'Errado! Intemperismo é um agente exógeno.' },
+                { texto: 'A exosfera é a transição para o espaço.', resposta: true, explicacao: 'Correto! É a camada mais externa.' },
+                { texto: 'Fenômenos meteorológicos ocorrem na estratosfera.', resposta: false, explicacao: 'Errado! Ocorrem na troposfera.' },
+                { texto: 'Meteoritos se queimam na mesosfera.', resposta: true, explicacao: 'Correto! Pela fricção com a atmosfera.' },
+                { texto: 'Auroras boreais ocorrem na termosfera.', resposta: true, explicacao: 'Correto! Fenômeno luminoso nessa camada.' },
+                { texto: 'O oxigênio permitiu o surgimento da vida.', resposta: true, explicacao: 'Correto! Mudança principal na atmosfera.' },
+                { texto: 'Planaltos são formados por erosão de montanhas antigas.', resposta: true, explicacao: 'Correto! Desgaste transforma montanhas em planaltos.' },
+                { texto: 'Montanhas têm altitude acima de 1000m.', resposta: true, explicacao: 'Correto! Classificação por altitude.' }
+            ],
+            flashcards: [
+                { pergunta: 'O que diferencia montanhas de planaltos?', resposta: 'Montanhas são acidentadas, planaltos são planos no topo' },
+                { pergunta: 'O que é altitude?', resposta: 'Distância vertical de um ponto em relação ao nível do mar' },
+                { pergunta: 'O que é altura?', resposta: 'Medida vertical de um objeto' },
+                { pergunta: 'Cite 2 agentes endógenos', resposta: 'Vulcanismo e tectonismo' },
+                { pergunta: 'O que é tectonismo?', resposta: 'Movimento das placas tectônicas que causa terremotos' },
+                { pergunta: 'O que é vulcanismo?', resposta: 'Erupção de magma que forma vulcões e novas rochas' },
+                { pergunta: 'O que são agentes exógenos?', resposta: 'Agentes que atuam na superfície, transformam lentamente' },
+                { pergunta: 'Por que agentes exógenos são "modeladores"?', resposta: 'Porque desgastam e transportam material' },
+                { pergunta: 'Qual é a diferença entre erosão e intemperismo?', resposta: 'Intemperismo quebra rochas, erosão transporta material' },
+                { pergunta: 'Cite 3 tipos de erosão', resposta: 'Eólica, pluvial, fluvial, marinha, glacial' },
+                { pergunta: 'O que é erosão eólica?', resposta: 'Erosão causada pelo vento' },
+                { pergunta: 'O que é erosão fluvial?', resposta: 'Erosão causada pelos rios' },
+                { pergunta: 'O que é erosão marinha?', resposta: 'Erosão causada pelo mar' },
+                { pergunta: 'O que é erosão glacial?', resposta: 'Erosão causada pelo gelo' },
+                { pergunta: 'O que é intemperismo químico?', resposta: 'Alteração química das rochas em climas quentes e úmidos' },
+                { pergunta: 'Cite as 3 etapas do ciclo hidrológico', resposta: 'Evaporação, condensação, precipitação' },
+                { pergunta: 'O que é evaporação?', resposta: 'Água sobe para a atmosfera' },
+                { pergunta: 'O que é condensação?', resposta: 'Vapor de água forma nuvens' },
+                { pergunta: 'O que é precipitação?', resposta: 'Chuva cai e retorna à superfície' },
+                { pergunta: 'O que é um rio?', resposta: 'Curso de água que flui continuamente' },
+                { pergunta: 'O que é bacia hidrográfica?', resposta: 'Área de terra que drena água para um rio principal' },
+                { pergunta: 'Como se formou a atmosfera?', resposta: 'Vulcões liberaram gases e organismos produziram oxigênio' },
+                { pergunta: 'Qual gás é mais abundante na atmosfera?', resposta: 'Nitrogênio (78%)' },
+                { pergunta: 'Qual é a porcentagem de oxigênio?', resposta: '21%' },
+                { pergunta: 'Cite as 5 camadas da atmosfera', resposta: 'Troposfera, estratosfera, mesosfera, termosfera, exosfera' },
+                { pergunta: 'Qual camada contém ozônio?', resposta: 'Estratosfera' },
+                { pergunta: 'Qual camada é mais fria?', resposta: 'Mesosfera (-90°C)' },
+                { pergunta: 'Qual camada é mais quente?', resposta: 'Termosfera (acima de 1000°C)' },
+                { pergunta: 'O que são elementos climáticos?', resposta: 'Características do clima em um momento (temperatura, umidade)' },
+                { pergunta: 'O que são fatores climáticos?', resposta: 'Influências a longo prazo (latitude, altitude, continentalidade)' }
+            ]
+        };
+        
+        // DADOS GEOGRAFIA 1 (da sessão anterior)
+        const geo1Data = {
+            resumo: '<div class="card"><p>Geografia 1 - Conteúdo anterior</p></div>',
+            quizzes: [],
+            vf: [],
+            flashcards: []
+        };
+        
+        // DADOS INGLÉS
+        const inglesData = {
+    resumo: `
+        <div class="card">
+            <h3>⚽ Sports & Sports Verbs (Unit 6)</h3>
+            <p><strong>Sports:</strong> Football (futebol), basketball (basquete), tennis (tênis), volleyball (vôlei), swimming (natação), cycling (ciclismo)</p>
+            <p><strong>Sports Verbs:</strong> Play (jogar), kick (chutar), catch (pegar), throw (lançar), run (correr), jump (pular)</p>
+            <p><strong>Exemplo:</strong> "I play football" = Eu jogo futebol</p>
+        </div>
+        <div class="card">
+            <h3>🐘 Animals & Adjectives (Unit 7)</h3>
+            <p><strong>Animals:</strong> Dog (cachorro), cat (gato), bird (pássaro), fish (peixe), lion (leão), elephant (elefante), monkey (macaco)</p>
+            <p><strong>Adjectives:</strong> Big (grande), small (pequeno), fast (rápido), slow (lento), wild (selvagem), friendly (amigável)</p>
+            <p><strong>Exemplo:</strong> "The lion is big and wild" = O leão é grande e selvagem</p>
+        </div>
+        <div class="card">
+            <h3>⏰ Simple Past - Was/Were</h3>
+            <p><strong>Afirmativo:</strong> I was, you were, he/she/it was, we were, they were</p>
+            <p><strong>Negativo:</strong> I was not, you were not, he/she/it was not, etc</p>
+            <p><strong>Interrogativo:</strong> Was I? Were you? Was he/she/it? Were we? Were they?</p>
+            <p><strong>Exemplo:</strong> "I was at school yesterday" = Eu estava na escola ontem</p>
+        </div>
+        <div class="card">
+            <h3>📝 There Was / There Were</h3>
+            <p><strong>Singular:</strong> There was (havia) - "There was a cat in the house" = Havia um gato na casa</p>
+            <p><strong>Plural:</strong> There were (havia) - "There were dogs in the park" = Havia cães no parque</p>
+            <p><strong>Negativo:</strong> There was not / There were not</p>
+            <p><strong>Interrogativo:</strong> Was there? Were there?</p>
+        </div>
+        <div class="card">
+            <h3>🔄 Regular Verbs - Simple Past</h3>
+            <p><strong>Formação:</strong> Infinitivo + ED</p>
+            <p><strong>Exemplos:</strong> Play → Played (jogou), Walk → Walked (caminhou), Watch → Watched (assistiu)</p>
+            <p><strong>Frase:</strong> "I played football yesterday" = Eu joguei futebol ontem</p>
+            <p><strong>Negativo:</strong> "I did not play" = Eu não joguei</p>
+        </div>
+        <div class="card">
+            <h3>⚡ Irregular Verbs - Simple Past</h3>
+            <p><strong>Go:</strong> Went (foi/foi embora)</p>
+            <p><strong>See:</strong> Saw (viu)</p>
+            <p><strong>Do:</strong> Did (fez)</p>
+            <p><strong>Make:</strong> Made (fez/criou)</p>
+            <p><strong>Come:</strong> Came (veio)</p>
+            <p><strong>Exemplo:</strong> "I went to the park" = Eu fui ao parque</p>
+        </div>
+    `,
+    quizzes: [
+        { pergunta: 'Qual é a tradução de "football"?', opcoes: ['Basquete', 'Futebol', 'Tênis', 'Vôlei'], resposta: 1 },
+        { pergunta: 'O verbo "play" significa...', opcoes: ['Correr', 'Jogar', 'Pular', 'Chutar'], resposta: 1 },
+        { pergunta: 'Qual é a tradução de "dog"?', opcoes: ['Gato', 'Cachorro', 'Pássaro', 'Peixe'], resposta: 1 },
+        { pergunta: 'O adjetivo "big" significa...', opcoes: ['Pequeno', 'Grande', 'Rápido', 'Lento'], resposta: 1 },
+        { pergunta: 'Qual é a forma correta de "I was"?', opcoes: ['I were', 'I was', 'I am was', 'I be'], resposta: 1 },
+        { pergunta: 'Complete: "There ___ a cat in the house"', opcoes: ['were', 'was', 'is', 'are'], resposta: 1 },
+        { pergunta: 'O verbo "kick" significa...', opcoes: ['Pegar', 'Lançar', 'Chutar', 'Correr'], resposta: 2 },
+        { pergunta: 'Qual é a tradução de "elephant"?', opcoes: ['Leão', 'Macaco', 'Elefante', 'Pássaro'], resposta: 2 },
+        { pergunta: 'Complete: "I ___ at school yesterday" (was/were)', opcoes: ['were', 'was', 'am', 'is'], resposta: 1 },
+        { pergunta: 'Qual é o simple past de "play"?', opcoes: ['Playd', 'Played', 'Play', 'Plays'], resposta: 1 },
+        { pergunta: 'O verbo "catch" significa...', opcoes: ['Lançar', 'Pegar', 'Chutar', 'Correr'], resposta: 1 },
+        { pergunta: 'Qual é a tradução de "basketball"?', opcoes: ['Futebol', 'Basquete', 'Tênis', 'Vôlei'], resposta: 1 },
+        { pergunta: 'O adjetivo "small" significa...', opcoes: ['Grande', 'Pequeno', 'Rápido', 'Lento'], resposta: 1 },
+        { pergunta: 'Complete: "They ___ in the park" (was/were)', opcoes: ['was', 'were', 'is', 'are'], resposta: 1 },
+        { pergunta: 'Qual é o simple past de "go"?', opcoes: ['Goed', 'Goes', 'Went', 'Going'], resposta: 2 },
+        { pergunta: 'O verbo "throw" significa...', opcoes: ['Pegar', 'Lançar', 'Chutar', 'Correr'], resposta: 1 },
+        { pergunta: 'Qual é a tradução de "swimming"?', opcoes: ['Ciclismo', 'Natação', 'Futebol', 'Tênis'], resposta: 1 },
+        { pergunta: 'O adjetivo "fast" significa...', opcoes: ['Lento', 'Rápido', 'Grande', 'Pequeno'], resposta: 1 },
+        { pergunta: 'Complete: "He ___ at home yesterday"', opcoes: ['were', 'was', 'am', 'is'], resposta: 1 },
+        { pergunta: 'Qual é o simple past de "see"?', opcoes: ['Seed', 'Saw', 'See', 'Seeing'], resposta: 1 },
+        { pergunta: 'O verbo "run" significa...', opcoes: ['Pular', 'Correr', 'Chutar', 'Jogar'], resposta: 1 },
+        { pergunta: 'Qual é a tradução de "lion"?', opcoes: ['Leão', 'Macaco', 'Elefante', 'Pássaro'], resposta: 0 },
+        { pergunta: 'O adjetivo "wild" significa...', opcoes: ['Amigável', 'Selvagem', 'Rápido', 'Lento'], resposta: 1 },
+        { pergunta: 'Complete: "We ___ at the beach"', opcoes: ['was', 'were', 'is', 'are'], resposta: 1 },
+        { pergunta: 'Qual é o simple past de "do"?', opcoes: ['Doed', 'Did', 'Do', 'Doing'], resposta: 1 },
+        { pergunta: 'O verbo "jump" significa...', opcoes: ['Correr', 'Pular', 'Chutar', 'Jogar'], resposta: 1 },
+        { pergunta: 'Qual é a tradução de "tennis"?', opcoes: ['Vôlei', 'Tênis', 'Basquete', 'Futebol'], resposta: 1 },
+        { pergunta: 'O adjetivo "friendly" significa...', opcoes: ['Selvagem', 'Amigável', 'Rápido', 'Lento'], resposta: 1 },
+        { pergunta: 'Complete: "You ___ at the party"', opcoes: ['was', 'were', 'is', 'am'], resposta: 1 },
+        { pergunta: 'Qual é o simple past de "make"?', opcoes: ['Maked', 'Made', 'Make', 'Making'], resposta: 1 },
+        { pergunta: 'O verbo "play" com sports significa...', opcoes: ['Assistir', 'Jogar', 'Correr', 'Pular'], resposta: 1 },
+        { pergunta: 'Qual é a tradução de "monkey"?', opcoes: ['Leão', 'Macaco', 'Elefante', 'Pássaro'], resposta: 1 },
+        { pergunta: 'Complete: "There ___ many animals in the zoo"', opcoes: ['was', 'were', 'is', 'am'], resposta: 1 },
+        { pergunta: 'Qual é o simple past de "come"?', opcoes: ['Comed', 'Came', 'Come', 'Coming'], resposta: 1 },
+        { pergunta: 'O verbo "kick" é usado em qual sport?', opcoes: ['Basketball', 'Tennis', 'Football', 'Swimming'], resposta: 2 },
+        { pergunta: 'Qual é a tradução de "volleyball"?', opcoes: ['Basquete', 'Vôlei', 'Futebol', 'Tênis'], resposta: 1 },
+        { pergunta: 'O adjetivo "slow" significa...', opcoes: ['Rápido', 'Lento', 'Grande', 'Pequeno'], resposta: 1 },
+        { pergunta: 'Complete: "I ___ not at school yesterday"', opcoes: ['were', 'was', 'am', 'is'], resposta: 1 },
+        { pergunta: 'Qual é a forma negativa de "was"?', opcoes: ['Was not', 'Were not', 'Is not', 'Am not'], resposta: 0 },
+        { pergunta: 'Complete: "They ___ to the park last week"', opcoes: ['Went', 'Go', 'Goes', 'Going'], resposta: 0 }
+    ],
+    vf: [
+        { texto: 'Football significa futebol.', resposta: true, explicacao: 'Correto! Football = futebol.' },
+        { texto: 'Play significa correr.', resposta: false, explicacao: 'Errado! Play significa jogar. Run significa correr.' },
+        { texto: 'Dog significa cachorro.', resposta: true, explicacao: 'Correto! Dog = cachorro.' },
+        { texto: 'Big significa pequeno.', resposta: false, explicacao: 'Errado! Big significa grande. Small significa pequeno.' },
+        { texto: 'I was é a forma correta do simple past.', resposta: true, explicacao: 'Correto! I was = Eu estava.' },
+        { texto: 'There was é usado para plural.', resposta: false, explicacao: 'Errado! There was é para singular. There were é para plural.' },
+        { texto: 'Kick significa chutar.', resposta: true, explicacao: 'Correto! Kick = chutar.' },
+        { texto: 'Elephant significa leão.', resposta: false, explicacao: 'Errado! Elephant significa elefante. Lion significa leão.' },
+        { texto: 'I was at school yesterday é uma frase correta.', resposta: true, explicacao: 'Correto! É uma frase válida em simple past.' },
+        { texto: 'O simple past de play é playd.', resposta: false, explicacao: 'Errado! O simple past de play é played.' },
+        { texto: 'Catch significa pegar.', resposta: true, explicacao: 'Correto! Catch = pegar.' },
+        { texto: 'Basketball significa basquete.', resposta: true, explicacao: 'Correto! Basketball = basquete.' },
+        { texto: 'Small significa grande.', resposta: false, explicacao: 'Errado! Small significa pequeno. Big significa grande.' },
+        { texto: 'They were in the park é uma frase correta.', resposta: true, explicacao: 'Correto! Were é usado com they.' },
+        { texto: 'O simple past de go é goed.', resposta: false, explicacao: 'Errado! O simple past de go é went (irregular).' },
+        { texto: 'Throw significa lançar.', resposta: true, explicacao: 'Correto! Throw = lançar.' },
+        { texto: 'Swimming significa ciclismo.', resposta: false, explicacao: 'Errado! Swimming significa natação. Cycling significa ciclismo.' },
+        { texto: 'Fast significa rápido.', resposta: true, explicacao: 'Correto! Fast = rápido.' },
+        { texto: 'He was at home é uma frase correta.', resposta: true, explicacao: 'Correto! Was é usado com he.' },
+        { texto: 'O simple past de see é seed.', resposta: false, explicacao: 'Errado! O simple past de see é saw (irregular).' },
+        { texto: 'Run significa correr.', resposta: true, explicacao: 'Correto! Run = correr.' },
+        { texto: 'Lion significa macaco.', resposta: false, explicacao: 'Errado! Lion significa leão. Monkey significa macaco.' },
+        { texto: 'Wild significa selvagem.', resposta: true, explicacao: 'Correto! Wild = selvagem.' },
+        { texto: 'We were at the beach é uma frase correta.', resposta: true, explicacao: 'Correto! Were é usado com we.' },
+        { texto: 'O simple past de do é doed.', resposta: false, explicacao: 'Errado! O simple past de do é did (irregular).' },
+        { texto: 'Jump significa pular.', resposta: true, explicacao: 'Correto! Jump = pular.' },
+        { texto: 'Tennis significa vôlei.', resposta: false, explicacao: 'Errado! Tennis significa tênis. Volleyball significa vôlei.' },
+        { texto: 'Friendly significa amigável.', resposta: true, explicacao: 'Correto! Friendly = amigável.' },
+        { texto: 'You were at the party é uma frase correta.', resposta: true, explicacao: 'Correto! Were é usado com you.' },
+        { texto: 'O simple past de make é maked.', resposta: false, explicacao: 'Errado! O simple past de make é made (irregular).' },
+        { texto: 'Play com sports significa jogar.', resposta: true, explicacao: 'Correto! Play football = jogar futebol.' },
+        { texto: 'Monkey significa leão.', resposta: false, explicacao: 'Errado! Monkey significa macaco. Lion significa leão.' },
+        { texto: 'There were many animals é uma frase correta.', resposta: true, explicacao: 'Correto! Were é usado para plural.' },
+        { texto: 'O simple past de come é comed.', resposta: false, explicacao: 'Errado! O simple past de come é came (irregular).' },
+        { texto: 'Kick é um verbo usado em football.', resposta: true, explicacao: 'Correto! Kick = chutar (usado em futebol).' },
+        { texto: 'Volleyball significa basquete.', resposta: false, explicacao: 'Errado! Volleyball significa vôlei. Basketball significa basquete.' },
+        { texto: 'Slow significa lento.', resposta: true, explicacao: 'Correto! Slow = lento.' },
+        { texto: 'I was not at school é uma frase correta.', resposta: true, explicacao: 'Correto! É a forma negativa do simple past.' },
+        { texto: 'Was not é a forma negativa de was.', resposta: true, explicacao: 'Correto! Was not = não estava.' },
+        { texto: 'They went to the park é uma frase correta.', resposta: true, explicacao: 'Correto! Went é o simple past de go.' }
+    ],
+    flashcards: [
+        { pergunta: 'Como se diz futebol em inglês?', resposta: 'Football' },
+        { pergunta: 'O que significa play?', resposta: 'Jogar' },
+        { pergunta: 'Como se diz cachorro em inglês?', resposta: 'Dog' },
+        { pergunta: 'O que significa big?', resposta: 'Grande' },
+        { pergunta: 'Qual é a forma de I was?', resposta: 'Eu estava' },
+        { pergunta: 'Complete: There ___ a cat', resposta: 'was' },
+        { pergunta: 'O que significa kick?', resposta: 'Chutar' },
+        { pergunta: 'Como se diz elefante em inglês?', resposta: 'Elephant' },
+        { pergunta: 'Qual é a forma de I was at school?', resposta: 'Eu estava na escola' },
+        { pergunta: 'Qual é o simple past de play?', resposta: 'Played' },
+        { pergunta: 'O que significa catch?', resposta: 'Pegar' },
+        { pergunta: 'Como se diz basquete em inglês?', resposta: 'Basketball' },
+        { pergunta: 'O que significa small?', resposta: 'Pequeno' },
+        { pergunta: 'Complete: They ___ in the park', resposta: 'were' },
+        { pergunta: 'Qual é o simple past de go?', resposta: 'Went' },
+        { pergunta: 'O que significa throw?', resposta: 'Lançar' },
+        { pergunta: 'Como se diz natação em inglês?', resposta: 'Swimming' },
+        { pergunta: 'O que significa fast?', resposta: 'Rápido' },
+        { pergunta: 'Complete: He ___ at home', resposta: 'was' },
+        { pergunta: 'Qual é o simple past de see?', resposta: 'Saw' },
+        { pergunta: 'O que significa run?', resposta: 'Correr' },
+        { pergunta: 'Como se diz leão em inglês?', resposta: 'Lion' },
+        { pergunta: 'O que significa wild?', resposta: 'Selvagem' },
+        { pergunta: 'Complete: We ___ at the beach', resposta: 'were' },
+        { pergunta: 'Qual é o simple past de do?', resposta: 'Did' },
+        { pergunta: 'O que significa jump?', resposta: 'Pular' },
+        { pergunta: 'Como se diz tênis em inglês?', resposta: 'Tennis' },
+        { pergunta: 'O que significa friendly?', resposta: 'Amigável' },
+        { pergunta: 'Complete: You ___ at the party', resposta: 'were' },
+        { pergunta: 'Qual é o simple past de make?', resposta: 'Made' }
+    ]
+};
+        
+        // DADOS CIÊNCIAS
+        const cienciasData = {
+            resumo: `
+                <div class="card">
+                    <h3>🐫 Sistema Respiratório</h3>
+                    <p><strong>Função:</strong> Captar oxígênio do ar e eliminar gás carbônico.</p>
+                    <p><strong>Órgãos principais:</strong> Nariz, traqueia, brônquios, pulmões.</p>
+                    <p><strong>Processo:</strong> Inspiração (entrada de ar) e expiração (saída de ar).</p>
+                </div>
+                <div class="card">
+                    <h3>❤️ Sistema Circulatório</h3>
+                    <p><strong>Função:</strong> Transportar oxígênio e nutrientes para todo o corpo.</p>
+                    <p><strong>Órgãos principais:</strong> Coração, artérias, veias, capilares.</p>
+                    <p><strong>Processo:</strong> Coração bombeia sangue que circula pelo corpo.</p>
+                </div>
+                <div class="card">
+                    <h3>💧 Sistema Urinário</h3>
+                    <p><strong>Função:</strong> Eliminar resíduos do metabolismo (urina).</p>
+                    <p><strong>Órgãos principais:</strong> Rins, uretra, bexiga.</p>
+                    <p><strong>Processo:</strong> Rins filtram sangue e produzem urina.</p>
+                </div>
+                <div class="card">
+                    <h3>🚶 Sistema Locomotor</h3>
+                    <p><strong>Função:</strong> Permitir movimento do corpo.</p>
+                    <p><strong>Componentes:</strong> Ossos, músculos, articulações, tendões.</p>
+                    <p><strong>Processo:</strong> Músculos se contraem puxando ossos.</p>
+                </div>
+            `,
+            quizzes: [
+                { pergunta: 'Qual é a função do sistema respiratório?', opcoes: ['Bombear sangue', 'Captar oxígênio', 'Eliminar urina', 'Permitir movimento'], resposta: 1 },
+                { pergunta: 'Qual órgão é o principal do sistema respiratório?', opcoes: ['Coração', 'Pulmão', 'Rim', 'Músculo'], resposta: 1 },
+                { pergunta: 'O que é inspiração?', opcoes: ['Saída de ar', 'Entrada de ar', 'Batida do coração', 'Filtragem de sangue'], resposta: 1 },
+                { pergunta: 'O que é expiração?', opcoes: ['Entrada de ar', 'Saída de ar', 'Circulação de sangue', 'Contracção muscular'], resposta: 1 },
+                { pergunta: 'Qual é a função do sistema circulatório?', opcoes: ['Respirar', 'Transportar oxígênio', 'Eliminar urina', 'Mover ossos'], resposta: 1 },
+                { pergunta: 'Qual órgão bombeia o sangue?', opcoes: ['Pulmão', 'Rim', 'Coração', 'Músculo'], resposta: 2 },
+                { pergunta: 'O que são artérias?', opcoes: ['Vasos que trazem sangue', 'Vasos que levam sangue', 'Filamentos musculares', 'Estruturas ósseas'], resposta: 1 },
+                { pergunta: 'O que são veias?', opcoes: ['Vasos que levam sangue', 'Vasos que trazem sangue', 'Filamentos musculares', 'Estruturas ósseas'], resposta: 1 },
+                { pergunta: 'Qual é a função do sistema urinário?', opcoes: ['Respirar', 'Bombear sangue', 'Eliminar resíduos', 'Permitir movimento'], resposta: 2 },
+                { pergunta: 'Qual órgão filtra o sangue?', opcoes: ['Pulmão', 'Rim', 'Coração', 'Bexiga'], resposta: 1 },
+                { pergunta: 'O que é urina?', opcoes: ['Sangue', 'Resíduos do metabolismo', 'Ar', 'Linfa'], resposta: 1 },
+                { pergunta: 'Qual órgão armazena urina?', opcoes: ['Rim', 'Bexiga', 'Uretra', 'Pulmão'], resposta: 1 },
+                { pergunta: 'Qual é a função do sistema locomotor?', opcoes: ['Respirar', 'Bombear sangue', 'Permitir movimento', 'Eliminar urina'], resposta: 2 },
+                { pergunta: 'O que compõe o sistema locomotor?', opcoes: ['Pulmões e traqueia', 'Coração e veias', 'Ossos e músculos', 'Rins e bexiga'], resposta: 2 },
+                { pergunta: 'O que são tendões?', opcoes: ['Estruturas ósseas', 'Vasos sanguíneos', 'Conectam músculos a ossos', 'Filamentos nervosos'], resposta: 2 },
+                { pergunta: 'Como os músculos permitem movimento?', opcoes: ['Bombeando sangue', 'Respirando', 'Contraindo e puxando ossos', 'Filtrando sangue'], resposta: 2 },
+                { pergunta: 'O que são articulações?', opcoes: ['Vasos sanguíneos', 'Uniões entre ossos', 'Filamentos musculares', 'Estruturas respiratórias'], resposta: 1 },
+                { pergunta: 'Qual é o caminho do ar no sistema respiratório?', opcoes: ['Pulmão-traqueia-nariz', 'Nariz-traqueia-pulmão', 'Boca-brônquios-pulmão', 'Nariz-brônquios-pulmão'], resposta: 1 },
+                { pergunta: 'O que são capilares?', opcoes: ['Artérias grandes', 'Veias pequenas', 'Vasos muito finos', 'Estruturas ósseas'], resposta: 2 },
+                { pergunta: 'Qual sistema remove gás carbônico?', opcoes: ['Circulatório', 'Respiratório', 'Urinário', 'Locomotor'], resposta: 1 },
+                { pergunta: 'Qual sistema transporta nutrientes?', opcoes: ['Respiratório', 'Circulatório', 'Urinário', 'Locomotor'], resposta: 1 },
+                { pergunta: 'Qual sistema elimina resíduos?', opcoes: ['Respiratório', 'Circulatório', 'Urinário', 'Locomotor'], resposta: 2 },
+                { pergunta: 'Qual sistema permite andar?', opcoes: ['Respiratório', 'Circulatório', 'Urinário', 'Locomotor'], resposta: 3 },
+                { pergunta: 'Quantas câmaras tem o coração?', opcoes: ['2', '3', '4', '5'], resposta: 2 },
+                { pergunta: 'Qual é a velocidade normal do pulso?', opcoes: ['40-60 bpm', '60-100 bpm', '100-140 bpm', '140-180 bpm'], resposta: 1 },
+                { pergunta: 'Quantos rins temos?', opcoes: ['1', '2', '3', '4'], resposta: 1 },
+                { pergunta: 'Quantos ossos tem um adulto?', opcoes: ['150', '206', '250', '300'], resposta: 1 },
+                { pergunta: 'Qual é o osso mais longo do corpo?', opcoes: ['Tíbias', 'Fêmur', 'Húmero', 'Coluna'], resposta: 1 },
+                { pergunta: 'Quantos músculos tem o corpo humano?', opcoes: ['200', '300', '400', '600'], resposta: 3 },
+                { pergunta: 'O que é o diafragma?', opcoes: ['Osso', 'Músculo respiratório', 'Vaso sanguíneo', 'Estrutura renal'], resposta: 1 },
+                { pergunta: 'Qual é a função da traqueia?', opcoes: ['Bombear sangue', 'Conduzir ar', 'Filtrar sangue', 'Armazenar urina'], resposta: 1 },
+                { pergunta: 'O que são brônquios?', opcoes: ['Veias', 'Ramificações da traqueia', 'Ossos', 'Músculos'], resposta: 1 },
+                { pergunta: 'Qual é a função da bexiga?', opcoes: ['Bombear sangue', 'Respirar', 'Armazenar urina', 'Mover ossos'], resposta: 2 },
+                { pergunta: 'O que é a uretra?', opcoes: ['Vaso sanguíneo', 'Canal que leva urina', 'Músculo', 'Osso'], resposta: 1 },
+                { pergunta: 'Qual sistema trabalha junto com o respiratório?', opcoes: ['Locomotor', 'Circulatório', 'Urinário', 'Nenhum'], resposta: 1 },
+                { pergunta: 'Qual sistema trabalha junto com o circulatório?', opcoes: ['Respiratório', 'Locomotor', 'Urinário', 'Todos'], resposta: 3 },
+                { pergunta: 'O que é metabolismo?', opcoes: ['Movimento', 'Circulação', 'Processos químicos do corpo', 'Respiração'], resposta: 2 },
+                { pergunta: 'Qual sistema remove gás carbônico dos pulmões?', opcoes: ['Circulatório', 'Respiratório', 'Urinário', 'Locomotor'], resposta: 0 },
+                { pergunta: 'Qual é a pressão arterial normal?', opcoes: ['80/40', '120/80', '160/100', '200/120'], resposta: 1 }
+            ],
+            vf: [
+                { texto: 'O sistema respiratório capta oxígênio do ar.', resposta: true, explicacao: 'Correto! Função principal do sistema.' },
+                { texto: 'Os pulmões são o órgão principal do sistema respiratório.', resposta: true, explicacao: 'Correto! Pulmões trocam gases.' },
+                { texto: 'Inspiração é a saída de ar.', resposta: false, explicacao: 'Errado! Inspiração é entrada de ar.' },
+                { texto: 'O coração bombeia sangue.', resposta: true, explicacao: 'Correto! Função do coração.' },
+                { texto: 'Artérias levam sangue para o corpo.', resposta: true, explicacao: 'Correto! Artérias são vasos de saída.' },
+                { texto: 'Veias trazem sangue de volta ao coração.', resposta: true, explicacao: 'Correto! Veias são vasos de entrada.' },
+                { texto: 'O sistema circulatório transporta apenas oxígênio.', resposta: false, explicacao: 'Errado! Transporta oxígênio e nutrientes.' },
+                { texto: 'Os rins filtram o sangue.', resposta: true, explicacao: 'Correto! Rins produzem urina.' },
+                { texto: 'A bexiga armazena urina.', resposta: true, explicacao: 'Correto! Bexiga é um reservatório.' },
+                { texto: 'O sistema urinário elimina todos os resíduos.', resposta: false, explicacao: 'Errado! Elimina apenas resíduos do metabolismo.' },
+                { texto: 'O sistema locomotor permite movimento.', resposta: true, explicacao: 'Correto! Função principal.' },
+                { texto: 'Os ossos são estruturas rígidas.', resposta: true, explicacao: 'Correto! Ossos dão suporte.' },
+                { texto: 'Os músculos se contraem para mover ossos.', resposta: true, explicacao: 'Correto! Músculos puxam ossos.' },
+                { texto: 'Tendões conectam músculos a ossos.', resposta: true, explicacao: 'Correto! Tendões são conectores.' },
+                { texto: 'Articulações são uniões entre ossos.', resposta: true, explicacao: 'Correto! Permitem movimento.' },
+                { texto: 'O diafragma é um músculo respiratório.', resposta: true, explicacao: 'Correto! Essencial para respiração.' },
+                { texto: 'A traqueia leva ar aos pulmões.', resposta: true, explicacao: 'Correto! Traqueia é um condutor.' },
+                { texto: 'Brônquios são ramificações da traqueia.', resposta: true, explicacao: 'Correto! Levam ar aos pulmões.' },
+                { texto: 'Capilares são vasos muito finos.', resposta: true, explicacao: 'Correto! Permitem troca de gases.' },
+                { texto: 'O coração tem 2 câmaras.', resposta: false, explicacao: 'Errado! Tem 4 câmaras.' },
+                { texto: 'Temos 1 rim.', resposta: false, explicacao: 'Errado! Temos 2 rins.' },
+                { texto: 'Um adulto tem 206 ossos.', resposta: true, explicacao: 'Correto! Número aproximado.' },
+                { texto: 'O fêmur é o osso mais longo.', resposta: true, explicacao: 'Correto! Osso da coxa.' },
+                { texto: 'O corpo tem cerca de 600 músculos.', resposta: true, explicacao: 'Correto! Número aproximado.' },
+                { texto: 'A uretra armazena urina.', resposta: false, explicacao: 'Errado! A bexiga armazena.' },
+                { texto: 'O sistema respiratório trabalha com o circulatório.', resposta: true, explicacao: 'Correto! Trocam gases juntos.' },
+                { texto: 'O sistema locomotor é independente dos outros.', resposta: false, explicacao: 'Errado! Trabalha com todos.' },
+                { texto: 'Metabolismo é um processo químico do corpo.', resposta: true, explicacao: 'Correto! Processa nutrientes.' },
+                { texto: 'A pressão arterial normal é 120/80.', resposta: true, explicacao: 'Correto! Valor de referência.' },
+                { texto: 'O pulso normal é 60-100 bpm.', resposta: true, explicacao: 'Correto! Batidas por minuto.' },
+                { texto: 'Expiração é a entrada de ar.', resposta: false, explicacao: 'Errado! É a saída de ar.' },
+                { texto: 'O sangue arterial é mais oxigenado.', resposta: true, explicacao: 'Correto! Vem dos pulmões.' },
+                { texto: 'O sangue venoso é menos oxigenado.', resposta: true, explicacao: 'Correto! Volta do corpo.' },
+                { texto: 'Rins filtram cerca de 1,5 litros de urina por dia.', resposta: true, explicacao: 'Correto! Quantidade aproximada.' },
+                { texto: 'O sistema urinário só tem função de eliminação.', resposta: false, explicacao: 'Errado! Também regula água e sais.' },
+                { texto: 'Ossos vivos estão em constante renovação.', resposta: true, explicacao: 'Correto! Processo de remodelagem.' },
+                { texto: 'Músculos só se contraem.', resposta: false, explicacao: 'Errado! Também se relaxam.' },
+                { texto: 'Articulações permitem movimento entre ossos.', resposta: true, explicacao: 'Correto! Permitem flexibilidade.' },
+                { texto: 'O sistema respiratório é independente do circulatório.', resposta: false, explicacao: 'Errado! Trabalham juntos.' }
+            ],
+            flashcards: [
+                { pergunta: 'Qual é a função do sistema respiratório?', resposta: 'Captar oxígênio e eliminar gás carbônico' },
+                { pergunta: 'Cite 3 órgãos do sistema respiratório', resposta: 'Nariz, traqueia, pulmões' },
+                { pergunta: 'O que é inspiração?', resposta: 'Entrada de ar nos pulmões' },
+                { pergunta: 'O que é expiração?', resposta: 'Saída de ar dos pulmões' },
+                { pergunta: 'Qual é a função do sistema circulatório?', resposta: 'Transportar oxígênio e nutrientes' },
+                { pergunta: 'Qual órgão bombeia sangue?', resposta: 'Coração' },
+                { pergunta: 'O que são artérias?', resposta: 'Vasos que levam sangue do coração' },
+                { pergunta: 'O que são veias?', resposta: 'Vasos que trazem sangue ao coração' },
+                { pergunta: 'O que são capilares?', resposta: 'Vasos muito finos onde ocorre troca de gases' },
+                { pergunta: 'Quantas câmaras tem o coração?', resposta: '4 câmaras (2 átrios e 2 ventrículos)' },
+                { pergunta: 'Qual é a função do sistema urinário?', resposta: 'Eliminar resíduos do metabolismo' },
+                { pergunta: 'Cite 3 órgãos do sistema urinário', resposta: 'Rins, bexiga, uretra' },
+                { pergunta: 'Qual órgão filtra o sangue?', resposta: 'Rins' },
+                { pergunta: 'O que é urina?', resposta: 'Resíduos do metabolismo filtrados pelos rins' },
+                { pergunta: 'Qual órgão armazena urina?', resposta: 'Bexiga' },
+                { pergunta: 'Qual é a função do sistema locomotor?', resposta: 'Permitir movimento do corpo' },
+                { pergunta: 'Cite 4 componentes do sistema locomotor', resposta: 'Ossos, músculos, articulações, tendões' },
+                { pergunta: 'O que são tendões?', resposta: 'Estruturas que conectam músculos a ossos' },
+                { pergunta: 'O que são articulações?', resposta: 'Uniões entre ossos que permitem movimento' },
+                { pergunta: 'Quantos ossos tem um adulto?', resposta: 'Aproximadamente 206 ossos' },
+                { pergunta: 'Qual é o osso mais longo do corpo?', resposta: 'Fêmur (osso da coxa)' },
+                { pergunta: 'Quantos músculos tem o corpo?', resposta: 'Aproximadamente 600 músculos' },
+                { pergunta: 'O que é o diafragma?', resposta: 'Músculo respiratório essencial para respiração' },
+                { pergunta: 'O que são brônquios?', resposta: 'Ramificações da traqueia que levam ar aos pulmões' },
+                { pergunta: 'Qual é a pressão arterial normal?', resposta: '120/80 mmHg' },
+                { pergunta: 'Qual é o pulso normal?', resposta: '60-100 batidas por minuto' },
+                { pergunta: 'Quantos rins temos?', resposta: '2 rins' },
+                { pergunta: 'O que é metabolismo?', resposta: 'Conjunto de processos químicos do corpo' },
+                { pergunta: 'Como os músculos permitem movimento?', resposta: 'Contraindo e puxando os ossos' },
+                { pergunta: 'Qual sistema trabalha com o respiratório?', resposta: 'Sistema circulatório' },
+                { pergunta: 'Qual é a função da uretra?', resposta: 'Conduzir urina da bexiga para fora do corpo' }
+            ]
+        };
+        
+        // DADOS MATEMÁTICA
+        const matematicaData = {
+            resumo: `
+                <div class="card">
+                    <h3>📋 Poliedros e Corpos Redondos</h3>
+                    <p><strong>Poliedros:</strong> Sólidos geométricos com faces planas.</p>
+                    <p><strong>Exemplos:</strong> Cubo (6 faces quadradas), Pirâmide (base + faces triangulares), Prisma.</p>
+                    <p><strong>Corpos Redondos:</strong> Sólidos com superfícies curvas.</p>
+                    <p><strong>Exemplos:</strong> Esfera, Cilindro, Cone.</p>
+                </div>
+                <div class="card">
+                    <h3>📈 Porcentagem</h3>
+                    <p><strong>Definição:</strong> Fração de 100 partes.</p>
+                    <p><strong>Cálculo:</strong> (Parte / Total) × 100 = %</p>
+                    <p><strong>Exemplo:</strong> 25% de 200 = (25/100) × 200 = 50</p>
+                    <p><strong>Aplicações:</strong> Desconto, acréscimo, juros, impostos.</p>
+                </div>
+                <div class="card">
+                    <h3>📊 Análise de Gráficos</h3>
+                    <p><strong>Tipos:</strong> Barras, linhas, pizza, dispersão.</p>
+                    <p><strong>Interpretação:</strong> Ler eixos (x e y), entender escala, identificar tendências.</p>
+                    <p><strong>Gráfico de Barras:</strong> Compara categorias.</p>
+                    <p><strong>Gráfico de Linhas:</strong> Mostra variação ao longo do tempo.</p>
+                    <p><strong>Gráfico de Pizza:</strong> Mostra proporções do total.</p>
+                </div>
+                <div class="card">
+                    <h3>🎲 Probabilidade</h3>
+                    <p><strong>Definição:</strong> Chance de um evento ocorrer.</p>
+                    <p><strong>Fórmula:</strong> P = (Casos favoráveis) / (Casos possíveis)</p>
+                    <p><strong>Exemplo:</strong> Probabilidade de tirar 6 em um dado = 1/6 ≈ 16,7%</p>
+                    <p><strong>Eventos Simples:</strong> Um único resultado.</p>
+                </div>
+            `,
+            quizzes: [
+                { pergunta: 'Qual é um exemplo de poliedro?', opcoes: ['Esfera', 'Cilindro', 'Cubo', 'Cone'], resposta: 2 },
+                { pergunta: 'Quantas faces tem um cubo?', opcoes: ['4', '5', '6', '8'], resposta: 2 },
+                { pergunta: 'Qual é um corpo redondo?', opcoes: ['Pirâmide', 'Esfera', 'Prisma', 'Cubo'], resposta: 1 },
+                { pergunta: 'Qual é a definição de porcentagem?', opcoes: ['Fração de 10', 'Fração de 100', 'Fração de 50', 'Fração de 1000'], resposta: 1 },
+                { pergunta: 'Como calcular 25% de 200?', opcoes: ['25 + 200', '(25/100) × 200', '200 / 25', '25 × 200'], resposta: 1 },
+                { pergunta: 'Qual é o resultado de 50% de 80?', opcoes: ['40', '50', '80', '160'], resposta: 0 },
+                { pergunta: 'Qual é o resultado de 10% de 500?', opcoes: ['50', '100', '150', '200'], resposta: 0 },
+                { pergunta: 'Qual é o resultado de 20% de 150?', opcoes: ['20', '30', '50', '75'], resposta: 1 },
+                { pergunta: 'Qual tipo de gráfico compara categorias?', opcoes: ['Linhas', 'Barras', 'Pizza', 'Dispersão'], resposta: 1 },
+                { pergunta: 'Qual tipo de gráfico mostra variação ao longo do tempo?', opcoes: ['Barras', 'Linhas', 'Pizza', 'Dispersão'], resposta: 1 },
+                { pergunta: 'Qual tipo de gráfico mostra proporções do total?', opcoes: ['Barras', 'Linhas', 'Pizza', 'Dispersão'], resposta: 2 },
+                { pergunta: 'Como interpretar um gráfico?', opcoes: ['Ignorar eixos', 'Ler eixos e escala', 'Apenas contar barras', 'Não é necessário'], resposta: 1 },
+                { pergunta: 'Qual é a fórmula de probabilidade?', opcoes: ['P = Total / Favoráveis', 'P = Favoráveis / Possíveis', 'P = Possíveis + Favoráveis', 'P = Favoráveis - Possíveis'], resposta: 1 },
+                { pergunta: 'Qual é a probabilidade de tirar 6 em um dado?', opcoes: ['1/6', '1/3', '1/2', '1/1'], resposta: 0 },
+                { pergunta: 'Qual é a probabilidade de tirar cara em uma moeda?', opcoes: ['1/3', '1/4', '1/2', '1/1'], resposta: 2 },
+                { pergunta: 'Qual é a probabilidade de tirar um número par em um dado?', opcoes: ['1/6', '1/3', '1/2', '2/3'], resposta: 2 },
+                { pergunta: 'Qual é a probabilidade de tirar um número maior que 4 em um dado?', opcoes: ['1/6', '1/3', '1/2', '2/3'], resposta: 1 },
+                { pergunta: 'Um cilindro é um poliedro?', opcoes: ['Sim', 'Não', 'Talvez', 'Depende'], resposta: 1 },
+                { pergunta: 'Uma pirâmide é um poliedro?', opcoes: ['Não', 'Sim', 'Talvez', 'Depende'], resposta: 1 },
+                { pergunta: 'Quantos vértices tem um cubo?', opcoes: ['6', '8', '12', '4'], resposta: 1 },
+                { pergunta: 'Quantas arestas tem um cubo?', opcoes: ['6', '8', '12', '4'], resposta: 2 },
+                { pergunta: 'Qual é 30% de 100?', opcoes: ['30', '70', '3', '300'], resposta: 0 },
+                { pergunta: 'Qual é 15% de 200?', opcoes: ['15', '30', '50', '100'], resposta: 1 },
+                { pergunta: 'Qual é 5% de 1000?', opcoes: ['5', '50', '500', '5000'], resposta: 1 },
+                { pergunta: 'Se um produto custa 100 e tem 20% de desconto, qual é o preço final?', opcoes: ['20', '80', '120', '180'], resposta: 1 },
+                { pergunta: 'Se um produto custa 50 e tem 10% de acréscimo, qual é o preço final?', opcoes: ['45', '55', '60', '65'], resposta: 1 },
+                { pergunta: 'Qual é a probabilidade de um evento certo?', opcoes: ['0', '0.5', '1', 'Infinito'], resposta: 2 },
+                { pergunta: 'Qual é a probabilidade de um evento impossível?', opcoes: ['0', '0.5', '1', 'Infinito'], resposta: 0 },
+                { pergunta: 'Qual é a soma de todas as probabilidades de um espaço amostral?', opcoes: ['0', '0.5', '1', 'Infinito'], resposta: 2 },
+                { pergunta: 'Em um baralho de 52 cartas, qual é a probabilidade de tirar um ás?', opcoes: ['1/52', '4/52', '13/52', '26/52'], resposta: 1 },
+                { pergunta: 'Em uma urna com 3 bolas vermelhas e 2 azuis, qual é a probabilidade de tirar vermelha?', opcoes: ['2/5', '3/5', '1/5', '4/5'], resposta: 1 },
+                { pergunta: 'Qual é o resultado de 40% de 250?', opcoes: ['100', '150', '200', '250'], resposta: 0 },
+                { pergunta: 'Qual é o resultado de 75% de 400?', opcoes: ['200', '300', '350', '400'], resposta: 1 },
+                { pergunta: 'Um cone é um corpo redondo?', opcoes: ['Não', 'Sim', 'Talvez', 'Depende'], resposta: 1 },
+                { pergunta: 'Um prisma é um poliedro?', opcoes: ['Não', 'Sim', 'Talvez', 'Depende'], resposta: 1 },
+                { pergunta: 'Qual é a probabilidade de tirar um número ímpar em um dado?', opcoes: ['1/6', '1/3', '1/2', '2/3'], resposta: 2 },
+                { pergunta: 'Qual é a probabilidade de tirar um número menor que 3 em um dado?', opcoes: ['1/6', '1/3', '1/2', '2/3'], resposta: 1 },
+                { pergunta: 'Qual é o resultado de 60% de 300?', opcoes: ['60', '120', '180', '240'], resposta: 2 },
+                { pergunta: 'Qual é o resultado de 35% de 200?', opcoes: ['35', '65', '70', '135'], resposta: 2 }
+            ],
+            vf: [
+                { texto: 'Um cubo é um poliedro.', resposta: true, explicacao: 'Correto! Cubo tem faces planas.' },
+                { texto: 'Uma esfera é um poliedro.', resposta: false, explicacao: 'Errado! Esfera é um corpo redondo.' },
+                { texto: 'Um cilindro é um corpo redondo.', resposta: true, explicacao: 'Correto! Cilindro tem superfície curva.' },
+                { texto: 'Um cone é um poliedro.', resposta: false, explicacao: 'Errado! Cone é um corpo redondo.' },
+                { texto: 'Porcentagem é uma fração de 100.', resposta: true, explicacao: 'Correto! % = por cem.' },
+                { texto: '50% de 100 é 50.', resposta: true, explicacao: 'Correto! (50/100) × 100 = 50.' },
+                { texto: '25% de 200 é 50.', resposta: true, explicacao: 'Correto! (25/100) × 200 = 50.' },
+                { texto: '10% de 500 é 100.', resposta: false, explicacao: 'Errado! 10% de 500 = 50.' },
+                { texto: 'Um gráfico de barras compara categorias.', resposta: true, explicacao: 'Correto! Barras comparam dados.' },
+                { texto: 'Um gráfico de linhas mostra variação ao longo do tempo.', resposta: true, explicacao: 'Correto! Linhas mostram tendências.' },
+                { texto: 'Um gráfico de pizza mostra proporções.', resposta: true, explicacao: 'Correto! Pizza mostra partes do total.' },
+                { texto: 'Probabilidade é sempre entre 0 e 1.', resposta: true, explicacao: 'Correto! 0 = impossível, 1 = certo.' },
+                { texto: 'A probabilidade de tirar 6 em um dado é 1/6.', resposta: true, explicacao: 'Correto! Um resultado em 6 possíveis.' },
+                { texto: 'A probabilidade de tirar cara em uma moeda é 1/2.', resposta: true, explicacao: 'Correto! Um resultado em 2 possíveis.' },
+                { texto: 'A probabilidade de um evento certo é 0.', resposta: false, explicacao: 'Errado! Evento certo tem probabilidade 1.' },
+                { texto: 'A probabilidade de um evento impossível é 1.', resposta: false, explicacao: 'Errado! Evento impossível tem probabilidade 0.' },
+                { texto: 'Um cubo tem 6 faces.', resposta: true, explicacao: 'Correto! Cubo tem 6 faces quadradas.' },
+                { texto: 'Um cubo tem 8 vértices.', resposta: true, explicacao: 'Correto! Cubo tem 8 cantos.' },
+                { texto: 'Um cubo tem 12 arestas.', resposta: true, explicacao: 'Correto! Cubo tem 12 bordas.' },
+                { texto: 'Uma pirâmide tem uma base e faces triangulares.', resposta: true, explicacao: 'Correto! Estrutura de pirâmide.' },
+                { texto: '20% de 100 é 20.', resposta: true, explicacao: 'Correto! (20/100) × 100 = 20.' },
+                { texto: '30% de 200 é 60.', resposta: true, explicacao: 'Correto! (30/100) × 200 = 60.' },
+                { texto: '15% de 300 é 45.', resposta: true, explicacao: 'Correto! (15/100) × 300 = 45.' },
+                { texto: 'Um desconto de 20% em 100 resulta em 80.', resposta: true, explicacao: 'Correto! 100 - 20 = 80.' },
+                { texto: 'Um acréscimo de 10% em 100 resulta em 110.', resposta: true, explicacao: 'Correto! 100 + 10 = 110.' },
+                { texto: 'A soma de todas as probabilidades é 1.', resposta: true, explicacao: 'Correto! Propriedade fundamental.' },
+                { texto: 'Um evento pode ter probabilidade maior que 1.', resposta: false, explicacao: 'Errado! Probabilidade máxima é 1.' },
+                { texto: 'Um evento pode ter probabilidade negativa.', resposta: false, explicacao: 'Errado! Probabilidade mínima é 0.' },
+                { texto: 'Gráficos ajudam a interpretar dados.', resposta: true, explicacao: 'Correto! Gráficos visualizam dados.' },
+                { texto: 'Um prisma é um poliedro.', resposta: true, explicacao: 'Correto! Prisma tem faces planas.' },
+                { texto: 'Uma esfera tem vértices.', resposta: false, explicacao: 'Errado! Esfera não tem vértices.' },
+                { texto: 'Um cilindro tem vértices.', resposta: false, explicacao: 'Errado! Cilindro não tem vértices.' },
+                { texto: 'Um cone tem um vértice.', resposta: true, explicacao: 'Correto! Cone tem um ápice.' },
+                { texto: 'Porcentagem pode ser maior que 100%.', resposta: true, explicacao: 'Correto! Ex: 150% = 1,5 vezes.' },
+                { texto: 'Um aumento de 50% em 100 resulta em 150.', resposta: true, explicacao: 'Correto! 100 + 50 = 150.' },
+                { texto: 'Uma redução de 25% em 200 resulta em 150.', resposta: true, explicacao: 'Correto! 200 - 50 = 150.' },
+                { texto: 'A probabilidade de tirar um número par em um dado é 1/2.', resposta: true, explicacao: 'Correto! 3 pares em 6 = 1/2.' },
+                { texto: 'A probabilidade de tirar um número ímpar em um dado é 1/2.', resposta: true, explicacao: 'Correto! 3 ímpares em 6 = 1/2.' },
+                { texto: 'Um gráfico de dispersão mostra relação entre variáveis.', resposta: true, explicacao: 'Correto! Dispersão mostra correlação.' }
+            ],
+            flashcards: [
+                { pergunta: 'O que é um poliedro?', resposta: 'Sólido geométrico com faces planas' },
+                { pergunta: 'Cite 3 exemplos de poliedros', resposta: 'Cubo, pirâmide, prisma' },
+                { pergunta: 'Quantas faces tem um cubo?', resposta: '6 faces quadradas' },
+                { pergunta: 'Quantos vértices tem um cubo?', resposta: '8 vértices' },
+                { pergunta: 'Quantas arestas tem um cubo?', resposta: '12 arestas' },
+                { pergunta: 'O que é um corpo redondo?', resposta: 'Sólido com superfícies curvas' },
+                { pergunta: 'Cite 3 exemplos de corpos redondos', resposta: 'Esfera, cilindro, cone' },
+                { pergunta: 'O que é porcentagem?', resposta: 'Fração de 100 partes' },
+                { pergunta: 'Qual é a fórmula para calcular porcentagem?', resposta: '(Parte / Total) × 100' },
+                { pergunta: 'Quanto é 50% de 100?', resposta: '50' },
+                { pergunta: 'Quanto é 25% de 200?', resposta: '50' },
+                { pergunta: 'Quanto é 10% de 500?', resposta: '50' },
+                { pergunta: 'Qual é um tipo de gráfico?', resposta: 'Barras, linhas, pizza, dispersão' },
+                { pergunta: 'Para que serve um gráfico de barras?', resposta: 'Comparar categorias' },
+                { pergunta: 'Para que serve um gráfico de linhas?', resposta: 'Mostrar variação ao longo do tempo' },
+                { pergunta: 'Para que serve um gráfico de pizza?', resposta: 'Mostrar proporções do total' },
+                { pergunta: 'O que é probabilidade?', resposta: 'Chance de um evento ocorrer' },
+                { pergunta: 'Qual é a fórmula de probabilidade?', resposta: 'P = Favoráveis / Possíveis' },
+                { pergunta: 'Qual é a probabilidade de tirar 6 em um dado?', resposta: '1/6 ou aproximadamente 16,7%' },
+                { pergunta: 'Qual é a probabilidade de tirar cara em uma moeda?', resposta: '1/2 ou 50%' },
+                { pergunta: 'Qual é a probabilidade de um evento certo?', resposta: '1 ou 100%' },
+                { pergunta: 'Qual é a probabilidade de um evento impossível?', resposta: '0 ou 0%' },
+                { pergunta: 'Qual é a soma de todas as probabilidades?', resposta: '1 ou 100%' },
+                { pergunta: 'Quanto é 20% de 100?', resposta: '20' },
+                { pergunta: 'Quanto é 30% de 200?', resposta: '60' },
+                { pergunta: 'Quanto é 15% de 300?', resposta: '45' },
+                { pergunta: 'O que é um desconto de 20% em 100?', resposta: '80' },
+                { pergunta: 'O que é um acréscimo de 10% em 100?', resposta: '110' },
+                { pergunta: 'Qual é a probabilidade de tirar um número par em um dado?', resposta: '1/2 ou 50%' },
+                { pergunta: 'Qual é a probabilidade de tirar um número ímpar em um dado?', resposta: '1/2 ou 50%' }
+            ]
+        };
+        
+        // DADOS GEO (REAL)
+        const geoData = {
+            resumo: `
+                <div class="card">
+                    <h3>🏛️ Relevo</h3>
+                    <p><strong>Montanhas:</strong> Formação rápida, altitude elevada, encostas íngremes.</p>
+                    <p><strong>Planaltos:</strong> Formação lenta, altitude elevada, superfície plana.</p>
+                    <p><strong>Planícies:</strong> Terreno plano, altitude baixa, formação sedimentar.</p>
+                    <p><strong>Depressões:</strong> Área deprimida, altitude mais baixa que o entorno.</p>
+                </div>
+                <div class="card">
+                    <h3>📑 Altura vs Altitude</h3>
+                    <p><strong>Altura:</strong> Distância vertical de um ponto até a superfície (não tem referência fixa).</p>
+                    <p><strong>Altitude:</strong> Distância vertical de um ponto até o nível do mar (tem referência fixa).</p>
+                </div>
+                <div class="card">
+                    <h3>⚡ Agentes Endógenos</h3>
+                    <p><strong>Tectonismo:</strong> Movimento das placas tectônicas, forma montaões e fossas.</p>
+                    <p><strong>Vulcanismo:</strong> Erupção de magma, forma vulcões e altera o relevo.</p>
+                </div>
+                <div class="card">
+                    <h3>🌪️ Agentes Exógenos</h3>
+                    <p><strong>Erosão:</strong> Transporte de material pela água, vento ou gelo.</p>
+                    <p><strong>Tipos:</strong> Eólica (vento), Pluvial (chuva), Fluvial (rios), Marinha (mar), Glacial (gelo).</p>
+                    <p><strong>Intemperismo:</strong> Desintegração de rochas no local.</p>
+                    <p><strong>Tipos:</strong> Físico, Químico, Biológico.</p>
+                </div>
+                <div class="card">
+                    <h3>🌊 Ciclo Hidrológico</h3>
+                    <p><strong>Evaporação:</strong> Água sobe para a atmosfera.</p>
+                    <p><strong>Condensação:</strong> Vapor vira gotículas (nuvens).</p>
+                    <p><strong>Precipitação:</strong> Água cai (chuva, neve, granizo).</p>
+                </div>
+                <div class="card">
+                    <h3>💧 Águas Superficiais</h3>
+                    <p><strong>Rios:</strong> Cursos de água que fluem para o mar ou lago.</p>
+                    <p><strong>Bacia Hidrográfica:</strong> Área de terra que drena para um rio principal.</p>
+                </div>
+                <div class="card">
+                    <h3>🌌 Formação da Atmosfera</h3>
+                    <p><strong>Origem:</strong> Desgaseificação do planeta nos primeiros bilhões de anos.</p>
+                    <p><strong>Mudança Principal:</strong> Surgimento da vida (fotossíntese) adicionou oxígênio.</p>
+                </div>
+                <div class="card">
+                    <h3>💫 Composição da Atmosfera</h3>
+                    <p><strong>Nitrogênio (N₂):</strong> 78%</p>
+                    <p><strong>Oxígênio (O₂):</strong> 21%</p>
+                    <p><strong>Outros gases:</strong> 1% (Ar, CO₂, etc)</p>
+                </div>
+                <div class="card">
+                    <h3>🌍 Camadas da Atmosfera</h3>
+                    <p><strong>Troposfera:</strong> Onde vivemos, tem clima, 0-12 km.</p>
+                    <p><strong>Estratosfera:</strong> Camada de ozônio, 12-50 km.</p>
+                    <p><strong>Mesosfera:</strong> Mais fria, 50-85 km.</p>
+                    <p><strong>Termosfera:</strong> Muito quente, 85-500 km.</p>
+                    <p><strong>Exosfera:</strong> Última camada, acima de 500 km.</p>
+                </div>
+                <div class="card">
+                    <h3>🌡️ Elementos vs Fatores Climáticos</h3>
+                    <p><strong>Elementos:</strong> Temperatura, pressão atmosférica, umidade (variam dia a dia).</p>
+                    <p><strong>Fatores:</strong> Latitude, altitude, maritimidade, continentalidade, massas de ar (definem o clima de uma região).</p>
+                </div>
+            `,
+            quizzes: [
+                { pergunta: 'Qual é a diferença entre montanhas e planaltos?', opcoes: ['Mesma coisa', 'Montanhas são rápidas e altas, planaltos são lentos e altos', 'Montanhas são baixas', 'Não há diferença'], resposta: 1 },
+                { pergunta: 'O que é altura?', opcoes: ['Distância do nível do mar', 'Distância vertical sem referência fixa', 'Profundidade', 'Largura'], resposta: 1 },
+                { pergunta: 'O que é altitude?', opcoes: ['Distância vertical sem referência', 'Distância do nível do mar', 'Temperatura', 'Pressão'], resposta: 1 },
+                { pergunta: 'Qual é um agente endógeno?', opcoes: ['Chuva', 'Vento', 'Tectonismo', 'Erosion'], resposta: 2 },
+                { pergunta: 'O que faz o tectonismo?', opcoes: ['Erode rochas', 'Move placas tectônicas', 'Causa chuva', 'Aquece a atmosfera'], resposta: 1 },
+                { pergunta: 'O que é vulcanismo?', opcoes: ['Movimento de água', 'Erupção de magma', 'Formação de nuvens', 'Ciclo da água'], resposta: 1 },
+                { pergunta: 'Qual é um agente exógeno?', opcoes: ['Magma', 'Placa tectônica', 'Chuva', 'Magmatismo'], resposta: 2 },
+                { pergunta: 'O que é erosão?', opcoes: ['Desintegração de rochas', 'Transporte de material', 'Formação de solo', 'Ciclo da água'], resposta: 1 },
+                { pergunta: 'Qual é um tipo de erosão?', opcoes: ['Química', 'Biológica', 'Fluvial', 'Atmosférica'], resposta: 2 },
+                { pergunta: 'O que é intemperismo?', opcoes: ['Transporte de material', 'Desintegração de rochas no local', 'Formação de montanhas', 'Ciclo da água'], resposta: 1 },
+                { pergunta: 'Qual é um tipo de intemperismo?', opcoes: ['Fluvial', 'Marinha', 'Químico', 'Eólico'], resposta: 2 },
+                { pergunta: 'Qual é a primeira etapa do ciclo hidrológico?', opcoes: ['Condensação', 'Evaporação', 'Precipitação', 'Infiltração'], resposta: 1 },
+                { pergunta: 'O que é condensação?', opcoes: ['Vapor vira gotículas', 'Gotículas viram vapor', 'Água cai', 'Água infiltra'], resposta: 0 },
+                { pergunta: 'O que é precipitação?', opcoes: ['Água sobe', 'Água cai', 'Água infiltra', 'Água evapora'], resposta: 1 },
+                { pergunta: 'O que é um rio?', opcoes: ['Lago', 'Curso de água que flui', 'Chuva', 'Nuvem'], resposta: 1 },
+                { pergunta: 'O que é uma bacia hidrográfica?', opcoes: ['Um rio', 'Área que drena para um rio', 'Uma montanha', 'Uma nuvem'], resposta: 1 },
+                { pergunta: 'Como se formou a atmosfera?', opcoes: ['Sempre existiu', 'Desgaseificação do planeta', 'Vento solar', 'Vulcões'], resposta: 1 },
+                { pergunta: 'Qual foi a mudança principal na atmosfera?', opcoes: ['Aumento de CO₂', 'Surgimento da vida e oxígênio', 'Resfriamento', 'Aumento de nitrogênio'], resposta: 1 },
+                { pergunta: 'Qual é o gás mais abundante na atmosfera?', opcoes: ['Oxígênio', 'Nitrogênio', 'CO₂', 'Ar'], resposta: 1 },
+                { pergunta: 'Qual é o segundo gás mais abundante?', opcoes: ['Nitrogênio', 'Oxígênio', 'CO₂', 'Ar'], resposta: 1 },
+                { pergunta: 'Qual é a troposfera?', opcoes: ['Camada de ozônio', 'Onde vivemos', 'Camada mais quente', 'Camada mais fria'], resposta: 1 },
+                { pergunta: 'Qual é a altitude da troposfera?', opcoes: ['0-50 km', '0-12 km', '12-50 km', '50-85 km'], resposta: 1 },
+                { pergunta: 'Qual camada tem ozônio?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+                { pergunta: 'Qual é a camada mais fria?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 2 },
+                { pergunta: 'Qual é a camada mais quente?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 3 },
+                { pergunta: 'O que são elementos climáticos?', opcoes: ['Fatores que definem clima', 'Temperatura, pressão, umidade', 'Latitude, altitude', 'Massas de ar'], resposta: 1 },
+                { pergunta: 'O que são fatores climáticos?', opcoes: ['Elementos que variam', 'Latitude, altitude, maritimidade', 'Temperatura, pressão', 'Umidade, vento'], resposta: 1 },
+                { pergunta: 'Qual é um elemento climático?', opcoes: ['Latitude', 'Altitude', 'Temperatura', 'Maritimidade'], resposta: 2 },
+                { pergunta: 'Qual é um fator climático?', opcoes: ['Temperatura', 'Pressão', 'Latitude', 'Umidade'], resposta: 2 },
+                { pergunta: 'O que é maritimidade?', opcoes: ['Proximidade do mar', 'Altitude', 'Latitude', 'Temperatura'], resposta: 0 },
+                { pergunta: 'O que é continentalidade?', opcoes: ['Proximidade do mar', 'Distância do mar', 'Latitude', 'Altitude'], resposta: 1 },
+                { pergunta: 'Planícies têm altitude...', opcoes: ['Elevada', 'Baixa', 'Média', 'Variável'], resposta: 1 },
+                { pergunta: 'Depressões são...', opcoes: ['Altas', 'Mais altas que o entorno', 'Mais baixas que o entorno', 'Planas'], resposta: 2 },
+                { pergunta: 'Qual tipo de erosão é causada pelo vento?', opcoes: ['Pluvial', 'Fluvial', 'Eólica', 'Marinha'], resposta: 2 },
+                { pergunta: 'Qual tipo de erosão é causada pelo rio?', opcoes: ['Pluvial', 'Fluvial', 'Eólica', 'Glacial'], resposta: 1 },
+                { pergunta: 'Qual tipo de erosão é causada pelo mar?', opcoes: ['Pluvial', 'Fluvial', 'Eólica', 'Marinha'], resposta: 3 },
+                { pergunta: 'Qual tipo de erosão é causada pelo gelo?', opcoes: ['Pluvial', 'Fluvial', 'Eólica', 'Glacial'], resposta: 3 },
+                { pergunta: 'Qual tipo de intemperismo quebra rochas?', opcoes: ['Químico', 'Físico', 'Biológico', 'Atmosférico'], resposta: 1 },
+                { pergunta: 'Qual tipo de intemperismo dissolve rochas?', opcoes: ['Físico', 'Químico', 'Biológico', 'Atmosférico'], resposta: 1 },
+                { pergunta: 'Qual tipo de intemperismo é causado por organismos?', opcoes: ['Físico', 'Químico', 'Biológico', 'Atmosférico'], resposta: 2 }
+            ],
+            vf: [
+                { texto: 'Montanhas e planaltos são a mesma coisa.', resposta: false, explicacao: 'Errado! Montanhas são rápidas e altas, planaltos são lentos e altos.' },
+                { texto: 'Altura e altitude são a mesma coisa.', resposta: false, explicacao: 'Errado! Altura não tem referência fixa, altitude tem (nível do mar).' },
+                { texto: 'Tectonismo é um agente endógeno.', resposta: true, explicacao: 'Correto! Tectonismo move placas tectônicas.' },
+                { texto: 'Vulcanismo é um agente exógeno.', resposta: false, explicacao: 'Errado! Vulcanismo é um agente endógeno.' },
+                { texto: 'Chuva é um agente exógeno.', resposta: true, explicacao: 'Correto! Chuva causa erosão pluvial.' },
+                { texto: 'Erosão é o transporte de material.', resposta: true, explicacao: 'Correto! Erosão move material de um lugar para outro.' },
+                { texto: 'Intemperismo é o mesmo que erosão.', resposta: false, explicacao: 'Errado! Intemperismo desintegra no local, erosão transporta.' },
+                { texto: 'O ciclo hidrológico tem 3 etapas principais.', resposta: true, explicacao: 'Correto! Evaporação, condensação e precipitação.' },
+                { texto: 'Rios fluem para o mar.', resposta: true, explicacao: 'Correto! Rios são cursos de água que fluem para o mar ou lago.' },
+                { texto: 'Uma bacia hidrográfica é um rio.', resposta: false, explicacao: 'Errado! Bacia hidrográfica é a área que drena para um rio.' },
+                { texto: 'A atmosfera sempre existiu.', resposta: false, explicacao: 'Errado! Atmosfera se formou por desgaseificação do planeta.' },
+                { texto: 'A vida adicionou oxígênio à atmosfera.', resposta: true, explicacao: 'Correto! Fotossíntese produziu oxígênio.' },
+                { texto: 'Nitrogênio é 78% da atmosfera.', resposta: true, explicacao: 'Correto! Né o gás mais abundante.' },
+                { texto: 'Oxígênio é 78% da atmosfera.', resposta: false, explicacao: 'Errado! Oxígênio é 21%, nitrogênio é 78%.' },
+                { texto: 'Troposfera é onde vivemos.', resposta: true, explicacao: 'Correto! Troposfera vai de 0-12 km.' },
+                { texto: 'Estratosfera tem ozônio.', resposta: true, explicacao: 'Correto! Camada de ozônio protege de UV.' },
+                { texto: 'Mesosfera é a mais quente.', resposta: false, explicacao: 'Errado! Termosfera é a mais quente.' },
+                { texto: 'Termosfera é a mais fria.', resposta: false, explicacao: 'Errado! Mesosfera é a mais fria.' },
+                { texto: 'Elementos climáticos variam dia a dia.', resposta: true, explicacao: 'Correto! Temperatura, pressão, umidade variam.' },
+                { texto: 'Fatores climáticos definem o clima de uma região.', resposta: true, explicacao: 'Correto! Latitude, altitude, maritimidade, etc.' },
+                { texto: 'Latitude é um elemento climático.', resposta: false, explicacao: 'Errado! Latitude é um fator climático.' },
+                { texto: 'Temperatura é um fator climático.', resposta: false, explicacao: 'Errado! Temperatura é um elemento climático.' },
+                { texto: 'Maritimidade é proximidade do mar.', resposta: true, explicacao: 'Correto! Afeta o clima de uma região.' },
+                { texto: 'Continentalidade é distância do mar.', resposta: true, explicacao: 'Correto! Causa climas mais extremos.' },
+                { texto: 'Planícies têm altitude elevada.', resposta: false, explicacao: 'Errado! Planícies têm altitude baixa.' },
+                { texto: 'Depressões são mais altas que o entorno.', resposta: false, explicacao: 'Errado! Depressões são mais baixas.' },
+                { texto: 'Erosão eólica é causada pelo vento.', resposta: true, explicacao: 'Correto! Vento transporta material.' },
+                { texto: 'Erosão fluvial é causada pelo rio.', resposta: true, explicacao: 'Correto! Rios transportam material.' },
+                { texto: 'Erosão marinha é causada pelo mar.', resposta: true, explicacao: 'Correto! Mar transporta material.' },
+                { texto: 'Erosão glacial é causada pelo gelo.', resposta: true, explicacao: 'Correto! Gelo transporta material.' },
+                { texto: 'Intemperismo físico quebra rochas.', resposta: true, explicacao: 'Correto! Temperatura, gelo, etc quebram rochas.' },
+                { texto: 'Intemperismo químico dissolve rochas.', resposta: true, explicacao: 'Correto! Água, ácidos dissolvem rochas.' },
+                { texto: 'Intemperismo biológico é causado por organismos.', resposta: true, explicacao: 'Correto! Raízes, bactérias quebram rochas.' },
+                { texto: 'Condensação é quando vapor vira gotículas.', resposta: true, explicacao: 'Correto! Forma nuvens.' },
+                { texto: 'Precipitação é quando água cai.', resposta: true, explicacao: 'Correto! Chuva, neve, granizo.' },
+                { texto: 'Evaporação é quando água sobe.', resposta: true, explicacao: 'Correto! Água vira vapor.' },
+                { texto: 'Troposfera vai de 0-12 km.', resposta: true, explicacao: 'Correto! Camada mais baixa.' },
+                { texto: 'Estratosfera vai de 12-50 km.', resposta: true, explicacao: 'Correto! Camada com ozônio.' },
+                { texto: 'Mesosfera vai de 50-85 km.', resposta: true, explicacao: 'Correto! Camada mais fria.' }
+            ],
+            flashcards: [
+                { pergunta: 'O que diferencia montanhas de planaltos?', resposta: 'Montanhas são rápidas e altas, planaltos são lentos e altos' },
+                { pergunta: 'Qual é a diferença entre altura e altitude?', resposta: 'Altura não tem referência fixa, altitude tem (nível do mar)' },
+                { pergunta: 'Quais são os agentes endógenos?', resposta: 'Tectonismo e vulcanismo' },
+                { pergunta: 'O que faz o tectonismo?', resposta: 'Move placas tectônicas, forma montanhas' },
+                { pergunta: 'O que faz o vulcanismo?', resposta: 'Erupção de magma, altera o relevo' },
+                { pergunta: 'Quais são os agentes exógenos?', resposta: 'Erosão e intemperismo' },
+                { pergunta: 'O que é erosão?', resposta: 'Transporte de material pela água, vento ou gelo' },
+                { pergunta: 'Cite 5 tipos de erosão', resposta: 'Eólica, pluvial, fluvial, marinha, glacial' },
+                { pergunta: 'O que é intemperismo?', resposta: 'Desintegração de rochas no local' },
+                { pergunta: 'Cite 3 tipos de intemperismo', resposta: 'Físico, químico, biológico' },
+                { pergunta: 'Quais são as 3 etapas do ciclo hidrológico?', resposta: 'Evaporação, condensação, precipitação' },
+                { pergunta: 'O que é um rio?', resposta: 'Curso de água que flui para o mar ou lago' },
+                { pergunta: 'O que é uma bacia hidrográfica?', resposta: 'Área de terra que drena para um rio principal' },
+                { pergunta: 'Como se formou a atmosfera?', resposta: 'Por desgaseificação do planeta nos primeiros bilhões de anos' },
+                { pergunta: 'Qual foi a mudança principal na atmosfera?', resposta: 'Surgimento da vida (fotossíntese) adicionou oxígênio' },
+                { pergunta: 'Qual é a composição da atmosfera?', resposta: 'Né 78%, O₂ 21%, outros 1%' },
+                { pergunta: 'Cite as 5 camadas da atmosfera', resposta: 'Troposfera, estratosfera, mesosfera, termosfera, exosfera' },
+                { pergunta: 'Qual camada tem ozônio?', resposta: 'Estratosfera' },
+                { pergunta: 'Qual camada é a mais fria?', resposta: 'Mesosfera' },
+                { pergunta: 'Qual camada é a mais quente?', resposta: 'Termosfera' },
+                { pergunta: 'O que são elementos climáticos?', resposta: 'Temperatura, pressão atmosférica, umidade' },
+                { pergunta: 'O que são fatores climáticos?', resposta: 'Latitude, altitude, maritimidade, continentalidade, massas de ar' },
+                { pergunta: 'O que é maritimidade?', resposta: 'Proximidade do mar' },
+                { pergunta: 'O que é continentalidade?', resposta: 'Distância do mar' },
+                { pergunta: 'Qual é a altitude da troposfera?', resposta: '0-12 km' },
+                { pergunta: 'Qual é a altitude da estratosfera?', resposta: '12-50 km' },
+                { pergunta: 'Qual é a altitude da mesosfera?', resposta: '50-85 km' },
+                { pergunta: 'Qual é a altitude da termosfera?', resposta: '85-500 km' },
+                { pergunta: 'O que é uma planície?', resposta: 'Terreno plano com altitude baixa' },
+                { pergunta: 'O que é uma depressão?', resposta: 'Área mais baixa que o entorno' }
+            ]
+        };
+        
+        // DADOS HISTÓRIA
+        const historiaData = {
+            resumo: `
+                <div class="card">
+                    <h3>⚔️ Cruzadas</h3>
+                    <p><strong>O que eram:</strong> Expedições militares realizadas entre os séculos XI e XIII para recuperar a Terra Santa (Jerusalém) do controle dos muçulmanos.</p>
+                    <p><strong>Causas:</strong> Motivações religiosas, econômicas e políticas. A Igreja Católica organizava as cruzadas.</p>
+                    <p><strong>Principais Cruzadas:</strong> Primeira (1096-1099), Segunda (1147-1149), Terceira (1189-1192), entre outras.</p>
+                    <p><strong>Resultados:</strong> Apesar de algumas vitórias iniciais, as cruzadas não conseguiram manter o controle da Terra Santa. Mas tiveram grande impacto no comércio e na troca cultural entre Oriente e Ocidente.</p>
+                </div>
+                <div class="card">
+                    <h3>🏰 Renascimento Comercial e Urbano</h3>
+                    <p><strong>Período:</strong> Séculos XI a XIV, principalmente na Idade Média tardia.</p>
+                    <p><strong>Causas:</strong> Aumento da produção agrícola, desenvolvimento do comércio, retorno das Cruzadas com novas rotas comerciais.</p>
+                    <p><strong>Características:</strong> Crescimento das cidades, desenvolvimento do comércio de longa distância, surgimento da burguesia, fortalecimento das cidades italianas (Veneza, Gênova, Florença).</p>
+                    <p><strong>Impacto:</strong> Transformação da sociedade medieval, enfraquecimento do feudalismo, surgimento de novas classes sociais.</p>
+                </div>
+                <div class="card">
+                    <h3>🎨 Renascimento Cultural</h3>
+                    <p><strong>Período:</strong> Séculos XIV a XVI, principalmente na Itália.</p>
+                    <p><strong>Características:</strong> Retorno aos valores clássicos greco-romanos, valorização da razão e da observação da natureza, desenvolvimento das artes e ciências.</p>
+                    <p><strong>Grandes nomes:</strong> Leonardo da Vinci, Michelangelo, Raffaello (artes); Maquiavel, Petrarca (literatura); Copérnico, Galileu (ciências).</p>
+                    <p><strong>Impacto:</strong> Transformação do pensamento europeu, desenvolvimento do humanismo, base para a Ciência Moderna.</p>
+                </div>
+                <div class="card">
+                    <h3>👑 Feudalismo</h3>
+                    <p><strong>Sistema político e social:</strong> Baseado em relações de vassalagem e dependência pessoal.</p>
+                    <p><strong>Estrutura social:</strong> Rei no topo, nobres (senhores feudais), clero, povo (servos e camponeses).</p>
+                    <p><strong>Características:</strong> Poder descentralizado, economia baseada na terra, relações pessoais de lealdade.</p>
+                    <p><strong>Declínio:</strong> Com o Renascimento Comercial e a formação dos Estados Nacionais, o feudalismo enfraqueceu.</p>
+                </div>
+                <div class="card">
+                    <h3>⚡ Absolutismo</h3>
+                    <p><strong>Conceito:</strong> Sistema de governo onde o poder está concentrado nas mãos do rei (poder absoluto).</p>
+                    <p><strong>Lema:</strong> "O Estado sou eu" (Luís XIV da França).</p>
+                    <p><strong>Características:</strong> Centralização do poder, exército nacional, burocracia estatal, controle da economia.</p>
+                    <p><strong>Contexto:</strong> Surgiu com a formação dos Estados Nacionais (séculos XV-XVI) e se consolidou nos séculos XVII-XVIII.</p>
+                </div>
+                <div class="card">
+                    <h3>📜 Documentos Históricos</h3>
+                    <p><strong>Importância:</strong> Fontes primárias que nos ajudam a entender o passado.</p>
+                    <p><strong>Tipos:</strong> Cartas, diários, leis, tratados, inscrições, moedas, artefatos.</p>
+                    <p><strong>Como analisar:</strong> Considerar a data, o autor, o contexto, a intenção do documento.</p>
+                </div>
+            `,
+            quizzes: [
+                { pergunta: 'Qual foi o principal objetivo das Cruzadas?', opcoes: ['Conquistar a América', 'Recuperar a Terra Santa', 'Expandir o Império Romano', 'Derrotar os mongóis'], resposta: 1 },
+                { pergunta: 'Em que século começaram as Cruzadas?', opcoes: ['X', 'XI', 'XII', 'XIII'], resposta: 1 },
+                { pergunta: 'Quantas Cruzadas principais houve?', opcoes: ['3', '5', '7', '9'], resposta: 2 },
+                { pergunta: 'Qual cidade italiana foi importante no Renascimento Comercial?', opcoes: ['Roma', 'Veneza', 'Nápoles', 'Milão'], resposta: 1 },
+                { pergunta: 'O que caracterizava o Renascimento Comercial?', opcoes: ['Declínio do comércio', 'Crescimento das cidades', 'Fim das rotas comerciais', 'Isolamento europeu'], resposta: 1 },
+                { pergunta: 'Qual foi a principal causa do Renascimento Comercial?', opcoes: ['Guerras religiosas', 'Aumento da produção agrícola', 'Invasões bárbaras', 'Queda do Império Romano'], resposta: 1 },
+                { pergunta: 'Em que período ocorreu o Renascimento Cultural?', opcoes: ['Séculos VIII-X', 'Séculos XI-XIII', 'Séculos XIV-XVI', 'Séculos XVII-XIX'], resposta: 2 },
+                { pergunta: 'Qual foi a principal característica do Renascimento Cultural?', opcoes: ['Retorno ao feudalismo', 'Retorno aos valores clássicos greco-romanos', 'Rejeição da razão', 'Isolamento cultural'], resposta: 1 },
+                { pergunta: 'Quem foi Leonardo da Vinci?', opcoes: ['Filósofo grego', 'Artista e cientista do Renascimento', 'Rei da França', 'Papa da Igreja Católica'], resposta: 1 },
+                { pergunta: 'Qual era a estrutura social do Feudalismo?', opcoes: ['Igualitária', 'Rei, nobres, clero, povo', 'Apenas nobres e povo', 'Apenas comerciantes'], resposta: 1 },
+                { pergunta: 'O que era a vassalagem?', opcoes: ['Uma moeda medieval', 'Uma relação de dependência pessoal', 'Uma arma de guerra', 'Uma forma de arte'], resposta: 1 },
+                { pergunta: 'Qual era a base econômica do Feudalismo?', opcoes: ['Comércio internacional', 'Indústria', 'Terra e agricultura', 'Mineração'], resposta: 2 },
+                { pergunta: 'Quando começou o declínio do Feudalismo?', opcoes: ['Século V', 'Século X', 'Século XI com o Renascimento Comercial', 'Século XX'], resposta: 2 },
+                { pergunta: 'O que é Absolutismo?', opcoes: ['Democracia antiga', 'Governo onde o rei tem poder absoluto', 'Anarquia', 'Governo dos nobres'], resposta: 1 },
+                { pergunta: 'Qual foi o lema do Absolutismo?', opcoes: ['Liberdade, igualdade, fraternidade', 'O Estado sou eu', 'Poder ao povo', 'Todos são iguais'], resposta: 1 },
+                { pergunta: 'Quem foi Luís XIV?', opcoes: ['Rei da Itália', 'Rei da Espanha', 'Rei da França absolutista', 'Imperador da Alemanha'], resposta: 2 },
+                { pergunta: 'Qual era a característica principal do Absolutismo?', opcoes: ['Descentralização do poder', 'Democracia direta', 'Centralização do poder no rei', 'Poder dos nobres'], resposta: 2 },
+                { pergunta: 'Quando se consolidou o Absolutismo?', opcoes: ['Séculos V-VII', 'Séculos XI-XIII', 'Séculos XV-XVI', 'Séculos XVII-XVIII'], resposta: 3 },
+                { pergunta: 'Qual era o objetivo da burocracia no Absolutismo?', opcoes: ['Enfraquecimento do rei', 'Controle estatal centralizado', 'Aumento do poder dos nobres', 'Diminuição de impostos'], resposta: 1 },
+                { pergunta: 'O que é um documento histórico?', opcoes: ['Um livro de ficção', 'Uma fonte primária que ajuda a entender o passado', 'Uma obra de arte moderna', 'Um mapa geográfico'], resposta: 1 },
+                { pergunta: 'Quais são exemplos de documentos históricos?', opcoes: ['Apenas livros', 'Cartas, diários, leis, tratados, artefatos', 'Apenas moedas', 'Apenas pinturas'], resposta: 1 },
+                { pergunta: 'Como devemos analisar um documento histórico?', opcoes: ['Ignorar a data', 'Considerar data, autor, contexto e intenção', 'Apenas ler o conteúdo', 'Não fazer perguntas'], resposta: 1 },
+                { pergunta: 'Qual foi o impacto das Cruzadas no comércio europeu?', opcoes: ['Nenhum impacto', 'Diminuição do comércio', 'Abertura de novas rotas comerciais', 'Isolamento europeu'], resposta: 2 },
+                { pergunta: 'Qual classe social surgiu com o Renascimento Comercial?', opcoes: ['Servos', 'Burguesia', 'Clero', 'Escravos'], resposta: 1 },
+                { pergunta: 'Qual foi a principal mudança trazida pelo Renascimento?', opcoes: ['Fortalecimento do feudalismo', 'Transformação do pensamento europeu', 'Isolamento cultural', 'Rejeição da arte'], resposta: 1 },
+                { pergunta: 'Quem era Michelangelo?', opcoes: ['Filósofo grego', 'Artista do Renascimento', 'Rei da Itália', 'Papa medieval'], resposta: 1 },
+                { pergunta: 'Qual foi a contribuição de Copérnico?', opcoes: ['Pintura da Mona Lisa', 'Teoria heliocêntrica', 'Invenção da imprensa', 'Escrita da Divina Comédia'], resposta: 1 },
+                { pergunta: 'O que era o humanismo?', opcoes: ['Rejeição da razão', 'Valorização do ser humano e da razão', 'Isolamento cultural', 'Retorno ao feudalismo'], resposta: 1 },
+                { pergunta: 'Qual era a função do rei no Feudalismo?', opcoes: ['Nenhuma', 'Proteção dos vassalos', 'Trabalhar a terra', 'Ser escravo dos nobres'], resposta: 1 },
+                { pergunta: 'Como os servos eram tratados no Feudalismo?', opcoes: ['Como homens livres', 'Como propriedade do senhor feudal', 'Como reis', 'Como comerciantes'], resposta: 1 },
+                { pergunta: 'Qual foi a importância da Primeira Cruzada?', opcoes: ['Nenhuma importância', 'Conquistou a Terra Santa', 'Abriu rotas comerciais', 'Destruiu a Europa'], resposta: 1 },
+                { pergunta: 'Qual era a motivação religiosa das Cruzadas?', opcoes: ['Conquistar ouro', 'Recuperar a Terra Santa do controle muçulmano', 'Expandir o Império Romano', 'Derrotar os mongóis'], resposta: 1 },
+                { pergunta: 'Qual foi o resultado final das Cruzadas?', opcoes: ['Sucesso total', 'Fracasso total', 'Algumas vitórias, mas não mantiveram controle', 'Nenhum impacto'], resposta: 2 },
+                { pergunta: 'Qual cidade foi centro do Renascimento Cultural?', opcoes: ['Paris', 'Londres', 'Florença', 'Berlim'], resposta: 2 },
+                { pergunta: 'O que caracterizava a economia do Renascimento Comercial?', opcoes: ['Isolamento', 'Comércio de longa distância', 'Economia de subsistência', 'Nenhuma troca comercial'], resposta: 1 },
+                { pergunta: 'Qual foi o impacto do Renascimento na Ciência?', opcoes: ['Rejeição da observação', 'Desenvolvimento da Ciência Moderna', 'Isolamento científico', 'Nenhum impacto'], resposta: 1 },
+                { pergunta: 'Como o Absolutismo se relacionava com a Igreja?', opcoes: ['Separação total', 'Rei controlava a Igreja', 'Igreja controlava o rei', 'Igualdade de poderes'], resposta: 1 },
+                { pergunta: 'Qual era a base do poder absoluto do rei?', opcoes: ['Voto popular', 'Direito divino', 'Força militar', 'Riqueza comercial'], resposta: 1 },
+                { pergunta: 'Qual foi a transformação social trazida pelo Renascimento Comercial?', opcoes: ['Fortalecimento do feudalismo', 'Enfraquecimento do feudalismo', 'Isolamento social', 'Nenhuma mudança'], resposta: 1 },
+                { pergunta: 'Qual era o papel da Igreja nas Cruzadas?', opcoes: ['Nenhum papel', 'Organizar as cruzadas', 'Combater os cruzados', 'Ignorar as cruzadas'], resposta: 1 }
+            ],
+            vf: [
+                { texto: 'As Cruzadas ocorreram entre os séculos XI e XIII.', resposta: true, explicacao: 'Correto! As Cruzadas foram expedições militares dos séculos XI a XIII.' },
+                { texto: 'O objetivo das Cruzadas era conquistar a América.', resposta: false, explicacao: 'Errado! O objetivo era recuperar a Terra Santa (Jerusalém).' },
+                { texto: 'As Cruzadas tiveram sucesso permanente.', resposta: false, explicacao: 'Errado! Apesar de algumas vitórias, não mantiveram o controle da Terra Santa.' },
+                { texto: 'As Cruzadas impactaram o comércio europeu.', resposta: true, explicacao: 'Correto! Abriram novas rotas comerciais entre Oriente e Ocidente.' },
+                { texto: 'O Renascimento Comercial ocorreu nos séculos XI a XIV.', resposta: true, explicacao: 'Correto! Período de crescimento das cidades e do comércio.' },
+                { texto: 'Veneza foi uma cidade importante no Renascimento Comercial.', resposta: true, explicacao: 'Correto! Veneza, Gênova e Florença foram centros comerciais importantes.' },
+                { texto: 'O Renascimento Comercial enfraqueceu o feudalismo.', resposta: true, explicacao: 'Correto! O crescimento das cidades e do comércio transformou a sociedade medieval.' },
+                { texto: 'A burguesia surgiu com o Renascimento Comercial.', resposta: true, explicacao: 'Correto! A classe dos comerciantes e artesãos ganhou importância.' },
+                { texto: 'O Renascimento Cultural ocorreu nos séculos XIV a XVI.', resposta: true, explicacao: 'Correto! Período de desenvolvimento das artes e ciências.' },
+                { texto: 'Leonardo da Vinci foi apenas um artista.', resposta: false, explicacao: 'Errado! Leonardo foi artista, cientista e inventor.' },
+                { texto: 'O Renascimento valorizava os valores clássicos greco-romanos.', resposta: true, explicacao: 'Correto! Retorno aos valores da Antiguidade Clássica.' },
+                { texto: 'Michelangelo foi um pintor e escultor do Renascimento.', resposta: true, explicacao: 'Correto! Michelangelo criou obras-primas como o David.' },
+                { texto: 'O Renascimento rejeitava a razão.', resposta: false, explicacao: 'Errado! O Renascimento valorizava a razão e a observação.' },
+                { texto: 'O Feudalismo era um sistema igualitário.', resposta: false, explicacao: 'Errado! O Feudalismo era hierárquico com rei, nobres, clero e povo.' },
+                { texto: 'A vassalagem era uma relação de dependência pessoal.', resposta: true, explicacao: 'Correto! Vassalo jurava lealdade ao senhor feudal.' },
+                { texto: 'A base econômica do Feudalismo era a terra.', resposta: true, explicacao: 'Correto! A economia feudal era baseada na agricultura e na propriedade de terras.' },
+                { texto: 'Os servos eram homens livres no Feudalismo.', resposta: false, explicacao: 'Errado! Os servos eram propriedade do senhor feudal.' },
+                { texto: 'O Feudalismo durou até o século XX.', resposta: false, explicacao: 'Errado! O Feudalismo começou a declinar com o Renascimento Comercial.' },
+                { texto: 'O Absolutismo é um governo democrático.', resposta: false, explicacao: 'Errado! O Absolutismo concentra o poder no rei.' },
+                { texto: 'Luís XIV foi um rei absolutista francês.', resposta: true, explicacao: 'Correto! Luís XIV é o exemplo máximo do Absolutismo.' },
+                { texto: 'O lema do Absolutismo era "O Estado sou eu".', resposta: true, explicacao: 'Correto! Frase atribuída a Luís XIV.' },
+                { texto: 'O Absolutismo descentralizava o poder.', resposta: false, explicacao: 'Errado! O Absolutismo centralizava o poder no rei.' },
+                { texto: 'O Absolutismo se consolidou nos séculos XVII-XVIII.', resposta: true, explicacao: 'Correto! Período de apogeu do poder absoluto dos reis.' },
+                { texto: 'A burocracia era importante no Absolutismo.', resposta: true, explicacao: 'Correto! Exército nacional e burocracia estatal centralizavam o poder.' },
+                { texto: 'Documentos históricos são sempre precisos.', resposta: false, explicacao: 'Errado! Documentos refletem a perspectiva de quem os criou.' },
+                { texto: 'Cartas são exemplos de documentos históricos.', resposta: true, explicacao: 'Correto! Cartas são fontes primárias importantes.' },
+                { texto: 'Moedas podem ser documentos históricos.', resposta: true, explicacao: 'Correto! Moedas fornecem informações sobre a época.' },
+                { texto: 'Devemos ignorar o contexto ao analisar documentos.', resposta: false, explicacao: 'Errado! O contexto é essencial para entender um documento.' },
+                { texto: 'O Renascimento foi um movimento apenas artístico.', resposta: false, explicacao: 'Errado! O Renascimento abrangeu artes, ciências, filosofia e economia.' },
+                { texto: 'Copérnico contribuiu para a Ciência Moderna.', resposta: true, explicacao: 'Correto! Copérnico propôs a teoria heliocêntrica.' },
+                { texto: 'O Humanismo rejeitava o ser humano.', resposta: false, explicacao: 'Errado! O Humanismo valorizava o ser humano e a razão.' },
+                { texto: 'As Cruzadas foram organizadas pela Igreja Católica.', resposta: true, explicacao: 'Correto! A Igreja foi a principal organizadora das Cruzadas.' },
+                { texto: 'O Renascimento Comercial criou novas classes sociais.', resposta: true, explicacao: 'Correto! Surgimento da burguesia e enfraquecimento da nobreza.' },
+                { texto: 'Florença foi um centro do Renascimento Cultural.', resposta: true, explicacao: 'Correto! Florença foi o principal centro do Renascimento.' },
+                { texto: 'O Absolutismo eliminou completamente o poder dos nobres.', resposta: false, explicacao: 'Errado! Os nobres mantinham poder, mas subordinados ao rei.' },
+                { texto: 'As Cruzadas tiveram impacto cultural entre Oriente e Ocidente.', resposta: true, explicacao: 'Correto! Houve troca de conhecimentos e produtos.' },
+                { texto: 'O Renascimento rejeitava a observação da natureza.', resposta: false, explicacao: 'Errado! O Renascimento valorizava a observação científica.' },
+                { texto: 'Maquiavel foi um pensador do Renascimento.', resposta: true, explicacao: 'Correto! Maquiavel escreveu sobre política e poder.' },
+                { texto: 'O Feudalismo tinha poder centralizado.', resposta: false, explicacao: 'Errado! O Feudalismo tinha poder descentralizado nos senhores feudais.' },
+                { texto: 'As rotas comerciais das Cruzadas beneficiaram a Europa.', resposta: true, explicacao: 'Correto! Trouxeram produtos, conhecimentos e riqueza.' }
+            ],
+            flashcards: [
+                { pergunta: 'O que eram as Cruzadas?', resposta: 'Expedições militares para recuperar a Terra Santa (Jerusalém)' },
+                { pergunta: 'Quantos séculos duraram as Cruzadas?', resposta: 'Aproximadamente 200 anos (séculos XI a XIII)' },
+                { pergunta: 'Qual foi a principal causa das Cruzadas?', resposta: 'Motivações religiosas, econômicas e políticas' },
+                { pergunta: 'Qual foi o resultado final das Cruzadas?', resposta: 'Não conseguiram manter controle permanente da Terra Santa' },
+                { pergunta: 'Qual foi o impacto das Cruzadas no comércio?', resposta: 'Abertura de novas rotas comerciais entre Oriente e Ocidente' },
+                { pergunta: 'O que foi o Renascimento Comercial?', resposta: 'Período de crescimento das cidades e desenvolvimento do comércio' },
+                { pergunta: 'Quando ocorreu o Renascimento Comercial?', resposta: 'Séculos XI a XIV' },
+                { pergunta: 'Quais foram as causas do Renascimento Comercial?', resposta: 'Aumento da produção agrícola e novas rotas comerciais' },
+                { pergunta: 'Qual classe social surgiu com o Renascimento Comercial?', resposta: 'A burguesia (comerciantes e artesãos)' },
+                { pergunta: 'Qual foi o impacto do Renascimento Comercial no Feudalismo?', resposta: 'Enfraquecimento e declínio do sistema feudal' },
+                { pergunta: 'O que foi o Renascimento Cultural?', resposta: 'Período de desenvolvimento das artes, ciências e humanismo' },
+                { pergunta: 'Quando ocorreu o Renascimento Cultural?', resposta: 'Séculos XIV a XVI' },
+                { pergunta: 'Onde começou o Renascimento Cultural?', resposta: 'Na Itália, principalmente em Florença' },
+                { pergunta: 'Qual foi a principal característica do Renascimento?', resposta: 'Retorno aos valores clássicos greco-romanos' },
+                { pergunta: 'Cite 3 grandes nomes do Renascimento', resposta: 'Leonardo da Vinci, Michelangelo, Raffaello' },
+                { pergunta: 'O que foi o Feudalismo?', resposta: 'Sistema político e social baseado em vassalagem' },
+                { pergunta: 'Qual era a estrutura social do Feudalismo?', resposta: 'Rei, nobres, clero, povo (servos e camponeses)' },
+                { pergunta: 'O que era a vassalagem?', resposta: 'Relação de dependência pessoal entre vassalo e senhor' },
+                { pergunta: 'Qual era a base econômica do Feudalismo?', resposta: 'Terra e agricultura' },
+                { pergunta: 'Como era o poder no Feudalismo?', resposta: 'Descentralizado nos senhores feudais' },
+                { pergunta: 'O que é Absolutismo?', resposta: 'Sistema de governo onde o rei tem poder absoluto' },
+                { pergunta: 'Qual foi o lema do Absolutismo?', resposta: '"O Estado sou eu" (Luís XIV)' },
+                { pergunta: 'Quem foi Luís XIV?', resposta: 'Rei da França absolutista, exemplo máximo do Absolutismo' },
+                { pergunta: 'Quando se consolidou o Absolutismo?', resposta: 'Séculos XVII-XVIII' },
+                { pergunta: 'Qual era a característica principal do Absolutismo?', resposta: 'Centralização do poder no rei' },
+                { pergunta: 'Como era a burocracia no Absolutismo?', resposta: 'Centralizada e controlada pelo rei' },
+                { pergunta: 'O que é um documento histórico?', resposta: 'Fonte primária que ajuda a entender o passado' },
+                { pergunta: 'Cite 5 tipos de documentos históricos', resposta: 'Cartas, diários, leis, tratados, moedas, artefatos' },
+                { pergunta: 'Como devemos analisar um documento?', resposta: 'Considerar data, autor, contexto e intenção' },
+                { pergunta: 'Por que estudamos documentos históricos?', resposta: 'Para entender e aprender com o passado' }
+            ]
+        };
+        
+        // ESTADO
+        let currentSubject = 'geo1';
+        let player = { points: 0, level: 1, correct: 0 };
+        let treasureStreak = 0;
+        
+        // FUNÇÕES
+        function selectSubject(subject) {
+            currentSubject = subject;
+            document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Recarregar seção atual
+            const activeSection = document.querySelector('.section.active').id;
+            showSection(activeSection);
+        }
+        
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            let data;
+            if (currentSubject === 'geo1') data = geo1Data;
+            else if (currentSubject === 'geo2') data = geo2Data;
+            else if (currentSubject === 'ingles') data = inglesData;
+            else if (currentSubject === 'ciencias') data = cienciasData;
+            else if (currentSubject === 'matematica') data = matematicaData;
+            else if (currentSubject === 'historia') data = historiaData;
+            else data = geoData;
+            
+            if (id === 'resumo') {
+                let titulo = '📖 Resumo';
+                if (currentSubject === 'geo1') titulo += ' - Geografia 1';
+                else if (currentSubject === 'geo2') titulo += ' - Geografia 2';
+                else if (currentSubject === 'ingles') titulo += ' - Inglês';
+                else if (currentSubject === 'ciencias') titulo += ' - Ciências';
+                else if (currentSubject === 'matematica') titulo += ' - Matemática';
+                else if (currentSubject === 'historia') titulo += ' - História';
+                else titulo += ' - GEO (Real)';
+                document.getElementById('resumo-title').textContent = titulo;
+                document.getElementById('resumo-content').innerHTML = data.resumo;
+            }
+            if (id === 'quizzes') loadQuizzes(data.quizzes);
+            if (id === 'vf') loadVF(data.vf);
+            if (id === 'flashcards') loadFlashcards(data.flashcards);
+            if (id === 'tesouro') loadTreasure(data.quizzes);
+        }
+        
+        function updateStats() {
+            document.getElementById('points').textContent = player.points;
+            document.getElementById('level').textContent = Math.floor(player.points / 100) + 1;
+            document.getElementById('correct').textContent = player.correct;
+        }
+        
+        function addPoints(pts) {
+            player.points += pts;
+            updateStats();
+        }
+        
+        function loadQuizzes(quizzes) {
+            if (quizzes.length === 0) {
+                document.getElementById('quizzes-content').innerHTML = '<p style="color: #666;">Conteúdo em desenvolvimento...</p>';
+                return;
+            }
+            let html = '';
+            quizzes.forEach((q, i) => {
+                html += `<div class="quiz-item">
+                    <p>${i+1}. ${q.pergunta}</p>
+                    <div class="options">
+                        ${q.opcoes.map((op, j) => `
+                            <button class="option-btn" onclick="checkQuiz(${i}, ${j}, ${q.resposta})">${String.fromCharCode(65+j)}) ${op}</button>
+                        `).join('')}
+                    </div>
+                </div>`;
+            });
+            document.getElementById('quizzes-content').innerHTML = html;
+        }
+        
+        function checkQuiz(qIndex, oIndex, correct) {
+            const btn = event.target;
+            if (oIndex === correct) {
+                btn.classList.add('correct');
+                addPoints(10);
+                player.correct++;
+            } else {
+                btn.classList.add('incorrect');
+            }
+            btn.disabled = true;
+            updateStats();
+        }
+        
+        function loadVF(questoes) {
+            if (questoes.length === 0) {
+                document.getElementById('vf-content').innerHTML = '<p style="color: #666;">Conteúdo em desenvolvimento...</p>';
+                return;
+            }
+            let html = '';
+            questoes.forEach((q, i) => {
+                html += `<div class="vf-card" id="vf-${i}">
+                    <div class="vf-question">${i+1}. ${q.texto}</div>
+                    <div class="vf-buttons">
+                        <button class="vf-btn vf-btn-true" onclick="checkVF(${i}, true, ${q.resposta})">✅ Verdadeiro</button>
+                        <button class="vf-btn vf-btn-false" onclick="checkVF(${i}, false, ${q.resposta})">❌ Falso</button>
+                    </div>
+                    <div class="vf-explanation" id="exp-${i}">${q.explicacao}</div>
+                </div>`;
+            });
+            document.getElementById('vf-content').innerHTML = html;
+        }
+        
+        function checkVF(qIndex, answer, correct) {
+            const card = document.getElementById(`vf-${qIndex}`);
+            const exp = document.getElementById(`exp-${qIndex}`);
+            
+            if (answer === correct) {
+                card.style.background = '#d4edda';
+                addPoints(5);
+                player.correct++;
+            } else {
+                card.style.background = '#f8d7da';
+            }
+            
+            exp.classList.add('show');
+            card.querySelectorAll('button').forEach(b => b.disabled = true);
+            updateStats();
+        }
+        
+        function loadFlashcards(flashcards) {
+            if (flashcards.length === 0) {
+                document.getElementById('flashcards-content').innerHTML = '<p style="color: #666;">Conteúdo em desenvolvimento...</p>';
+                return;
+            }
+            let html = '';
+            flashcards.forEach((f, i) => {
+                html += `<div class="flashcard" onclick="toggleFlashcard(${i})" id="fc-${i}">
+                    <div class="flashcard-text">${f.pergunta}</div>
+                </div>`;
+            });
+            document.getElementById('flashcards-content').innerHTML = html;
+        }
+        
+        function toggleFlashcard(i) {
+            const card = document.getElementById(`fc-${i}`);
+            let data;
+            if (currentSubject === 'geo1') data = geo1Data;
+            else if (currentSubject === 'geo2') data = geo2Data;
+            else if (currentSubject === 'ingles') data = inglesData;
+            else if (currentSubject === 'ciencias') data = cienciasData;
+            else if (currentSubject === 'matematica') data = matematicaData;
+            else data = geoData;
+            
+            const f = data.flashcards[i];
+            if (card.textContent.includes(f.pergunta)) {
+                card.innerHTML = `<div class="flashcard-text">${f.resposta}</div>`;
+            } else {
+                card.innerHTML = `<div class="flashcard-text">${f.pergunta}</div>`;
+            }
+        }
+        
+        function loadTreasure(quizzes) {
+            if (quizzes.length === 0) {
+                document.getElementById('treasure-content').innerHTML = '<p style="color: #666;">Conteúdo em desenvolvimento...</p>';
+                return;
+            }
+            let html = `<div class="treasure-progress">
+                <div class="progress-step ${treasureStreak >= 1 ? 'completed' : ''} ${treasureStreak === 1 ? 'active' : ''}">1</div>
+                <div class="progress-step ${treasureStreak >= 2 ? 'completed' : ''} ${treasureStreak === 2 ? 'active' : ''}">2</div>
+                <div class="progress-step ${treasureStreak >= 3 ? 'completed' : ''} ${treasureStreak === 3 ? 'active' : ''}">3</div>
+            </div>`;
+            
+            if (treasureStreak >= 3) {
+                html += '<div style="text-align: center; font-size: 2rem; margin: 30px 0;">💎 TESOURO ENCONTRADO! 💎</div>';
+                html += '<button class="btn" onclick="resetTreasure()" style="width: 100%; margin-top: 20px;">🔄 Tentar Novamente</button>';
+            } else {
+                const q = quizzes[Math.floor(Math.random() * quizzes.length)];
+                html += `<div class="quiz-item">
+                    <p>🎯 ${q.pergunta}</p>
+                    <div class="options">
+                        ${q.opcoes.map((op, j) => `
+                            <button class="option-btn" onclick="checkTreasure(${q.resposta}, ${j})">${String.fromCharCode(65+j)}) ${op}</button>
+                        `).join('')}
+                    </div>
+                </div>`;
+            }
+            
+            document.getElementById('treasure-content').innerHTML = html;
+        }
+        
+        function checkTreasure(correct, selected) {
+            if (correct === selected) {
+                treasureStreak++;
+                addPoints(50);
+                player.correct++;
+                if (treasureStreak >= 3) {
+                    addPoints(500);
+                    alert('🎉 TESOURO ENCONTRADO! +500 PONTOS BÔNUS!');
+                }
+            } else {
+                treasureStreak = 0;
+                alert('❌ Errou! Começando novamente...');
+            }
+            updateStats();
+            let data;
+            if (currentSubject === 'geo1') data = geo1Data;
+            else if (currentSubject === 'geo2') data = geo2Data;
+            else if (currentSubject === 'ingles') data = inglesData;
+            else if (currentSubject === 'ciencias') data = cienciasData;
+            else if (currentSubject === 'matematica') data = matematicaData;
+            else if (currentSubject === 'historia') data = historiaData;
+            else data = geoData;
+            loadTreasure(data.quizzes);
+        }
+        
+        function resetTreasure() {
+            treasureStreak = 0;
+            let data;
+            if (currentSubject === 'geo1') data = geo1Data;
+            else if (currentSubject === 'geo2') data = geo2Data;
+            else if (currentSubject === 'ingles') data = inglesData;
+            else if (currentSubject === 'ciencias') data = cienciasData;
+            else if (currentSubject === 'matematica') data = matematicaData;
+            else if (currentSubject === 'historia') data = historiaData;
+            else data = geoData;
+            loadTreasure(data.quizzes);
+        }
+        
+        // INICIALIZAR
+        updateStats();
+    </script>
+</body>
+</html>

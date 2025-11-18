@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>📚 Meu Estudo - Geografia 6º Ano</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .app-wrapper { 
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #f5f7fa;
+        }
+        
+        .header-principal {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 100;
+        }
+        .header-principal h1 { font-size: 2rem; margin-bottom: 5px; }
+        .header-principal p { font-size: 0.95rem; opacity: 0.95; }
+        
+        .nav-principal {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            background: white;
+            overflow-x: auto;
+            border-bottom: 3px solid #667eea;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .nav-btn {
+            padding: 10px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .nav-btn:hover { 
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+        .nav-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .container-principal {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .secao { display: none; }
+        .secao.ativa { display: block; animation: slideIn 0.4s ease; }
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-top: 4px solid #667eea;
+        }
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .card h3 {
+            color: #764ba2;
+            margin-top: 18px;
+            margin-bottom: 12px;
+            font-size: 1.15rem;
+        }
+        .card p { line-height: 1.8; margin-bottom: 12px; }
+        .card ul, .card ol { margin-left: 25px; margin-bottom: 12px; }
+        .card li { margin-bottom: 10px; line-height: 1.6; }
+        
+        .imagem-resumo {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 10px;
+            margin: 15px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .imagem-resumo:hover { transform: scale(1.02); }
+        
+        .quiz-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f0 100%);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .quiz-card p { margin-bottom: 12px; font-weight: 700; color: #333; }
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .quiz-btn {
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .quiz-btn:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .flashcard {
+            background: white;
+            border: 3px solid #667eea;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.4s ease;
+            font-weight: 700;
+            color: #333;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .flashcard:hover { 
+            transform: scale(1.03);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+        }
+        .flashcard.virado {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .vf-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f0 100%);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .vf-card p { margin-bottom: 12px; font-weight: 700; color: #333; }
+        .vf-buttons { display: flex; gap: 10px; }
+        .vf-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .vf-true { 
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+        .vf-false { 
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        .vf-true:hover, .vf-false:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
+            margin-top: 15px;
+        }
+        .image-gallery img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .image-gallery img:hover { 
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s;
+        }
+        .modal.ativo { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #667eea;
+            transition: all 0.2s;
+        }
+        .close-modal:hover { 
+            color: #764ba2;
+            transform: scale(1.2);
+        }
+        
+        .footer {
+            background: white;
+            padding: 15px;
+            text-align: center;
+            border-top: 2px solid #667eea;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- HEADER -->
+        <div class="header-principal">
+            <h1>📚 Meu Estudo</h1>
+            <p>Geografia 6º Ano - Prova de Recuperação</p>
+        </div>
+
+        <!-- NAVEGAÇÃO -->
+        <div class="nav-principal">
+            <button class="nav-btn active" onclick="mostrarSecao('conteudos')">📖 Conteúdos</button>
+            <button class="nav-btn" onclick="mostrarSecao('quizzes')">🎯 Quizzes</button>
+            <button class="nav-btn" onclick="mostrarSecao('flashcards')">🎴 Flashcards</button>
+            <button class="nav-btn" onclick="mostrarSecao('secao-vf')">✅ V/F</button>
+            <button class="nav-btn" onclick="mostrarSecao('imagens')">📸 Imagens</button>
+        </div>
+
+        <!-- CONTEÚDO -->
+        <div class="container-principal">
+            <!-- CONTEÚDOS -->
+            <div id="conteudos" class="secao ativa">
+                <div class="card">
+                    <h2>📖 Resumo Completo de Geografia</h2>
+                    
+                    <h3>🌊 AGENTES EXTERNOS DO RELEVO</h3>
+                    <p>Os agentes externos (ou exógenos) atuam na SUPERFÍCIE da Terra e transformam o relevo de forma LENTA e CONTÍNUA.</p>
+                    <p><strong>Principais Agentes Externos:</strong></p>
+                    <ul>
+                        <li><strong>💧 CHUVA E ESCOAMENTO:</strong> A água da chuva escoa pela superfície, causando erosão e transporte de sedimentos. Forma vales, ravinas e cânions.</li>
+                        <li><strong>🌊 AÇÃO DO MAR (MARINHA):</strong> As ondas e correntes marinhas modificam o litoral, formando praias, falésias e recortes costeiros.</li>
+                        <li><strong>💨 VENTO:</strong> Transporta partículas de rocha e areia, formando dunas e causando erosão eólica.</li>
+                        <li><strong>❄️ GELO:</strong> Congela a água nas fraturas das rochas, causando desintegração e fragmentação.</li>
+                        <li><strong>🪨 INTEMPERISMO:</strong> Decomposição química e física das rochas pela ação de água, oxigênio e ácidos.</li>
+                    </ul>
+                    <img src="/public/images/IMG_3682.jpeg" alt="Agentes Externos" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+
+                    <h3>🌋 AGENTES INTERNOS DO RELEVO</h3>
+                    <p>Os agentes internos (ou endógenos) atuam no INTERIOR da Terra e transformam o relevo de forma VIOLENTA e RÁPIDA.</p>
+                    <p><strong>Principais Agentes Internos:</strong></p>
+                    <ul>
+                        <li><strong>🌋 VULCANISMO:</strong> Expele lava, cinzas e gases do interior da Terra. Forma vulcões, caldeiras e novos relevos.</li>
+                        <li><strong>📍 TECTONISMO:</strong> Movimento das placas tectônicas que causa terremotos, tsunamis e formação de montanhas.</li>
+                        <li><strong>🔥 MAGMATISMO:</strong> Formação de rochas magmáticas no interior da Terra.</li>
+                    </ul>
+                    <img src="/public/images/IMG_3683.jpeg" alt="Agentes Internos" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+
+                    <h3>☀️ BALANÇO DE ENERGIA DA TERRA</h3>
+                    <p>O BALANÇO DE ENERGIA é o equilíbrio entre a radiação solar que entra e a radiação que sai do planeta.</p>
+                    <p><strong>Como Funciona:</strong></p>
+                    <ol>
+                        <li>☀️ RADIAÇÃO SOLAR INCIDENTE: O Sol emite radiação que chega à Terra</li>
+                        <li>🔄 REFLEXÃO (ALBEDO): Parte da radiação é refletida de volta ao espaço pela atmosfera, nuvens e superfície</li>
+                        <li>🌍 ABSORÇÃO: A atmosfera e a superfície terrestre absorvem parte da radiação</li>
+                        <li>🔥 RADIAÇÃO TERRESTRE: A Terra aquecida emite radiação infravermelha (calor)</li>
+                        <li>⚖️ EQUILÍBRIO: Quando a energia que entra = energia que sai, a temperatura é estável</li>
+                    </ol>
+                    <p><strong>DISTRIBUIÇÃO DA RADIAÇÃO SOLAR:</strong></p>
+                    <ul>
+                        <li>📊 30% é REFLETIDA de volta ao espaço (pelo albedo - nuvens, gelo, superfícies claras)</li>
+                        <li>📊 70% é ABSORVIDA pela atmosfera e superfície terrestre</li>
+                        <li>🌍 Essa energia absorvida aquece o planeta</li>
+                    </ul>
+                    <img src="/public/images/IMG_3680.jpeg" alt="Balanço de Energia" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+
+                    <h3>🌡️ EFEITO ESTUFA E AQUECIMENTO GLOBAL</h3>
+                    <p>O EFEITO ESTUFA é um processo natural onde gases atmosféricos retêm o calor da Terra.</p>
+                    <p><strong>Processo do Efeito Estufa:</strong></p>
+                    <ol>
+                        <li>☀️ Radiação solar entra na atmosfera</li>
+                        <li>🌍 A superfície absorve e aquece</li>
+                        <li>🔥 A Terra emite radiação infravermelha (calor)</li>
+                        <li>🛡️ GASES DE EFEITO ESTUFA RETÊM ESSE CALOR na atmosfera</li>
+                        <li>🌡️ Resultado: AQUECIMENTO DA TERRA</li>
+                    </ol>
+                    <p><strong>Gases de Efeito Estufa:</strong></p>
+                    <ul>
+                        <li>💨 Dióxido de Carbono (CO₂) - Queimação de combustíveis fósseis</li>
+                        <li>💨 Metano (CH₄) - Pecuária e decomposição de lixo</li>
+                        <li>💨 Óxido Nitroso (N₂O) - Fertilizantes agrícolas</li>
+                    </ul>
+                    <img src="/public/images/IMG_3681.jpeg" alt="Efeito Estufa" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+
+                    <h3>☀️ RADIAÇÃO SOLAR</h3>
+                    <p>A radiação solar é a energia que o Sol emite e que chega à Terra.</p>
+                    <p><strong>Distribuição da Radiação Solar:</strong></p>
+                    <ul>
+                        <li>📊 30% é REFLETIDA de volta ao espaço</li>
+                        <li>📊 70% é ABSORVIDA pela atmosfera e superfície terrestre</li>
+                        <li>🌍 Essa energia absorvida aquece o planeta</li>
+                    </ul>
+
+                    <h3>🌤️ CAMADAS DA ATMOSFERA</h3>
+                    <p>A atmosfera é dividida em 5 camadas principais, cada uma com características diferentes.</p>
+                    <ul>
+                        <li><strong>1️⃣ TROPOSFERA (0-12 km):</strong> A camada mais próxima da Terra onde VIVEMOS. Contém 80% da massa atmosférica. Aqui ocorrem os fenômenos meteorológicos: chuva, vento, nuvens, tempestades</li>
+                        <li><strong>2️⃣ ESTRATOSFERA (12-50 km):</strong> Contém a CAMADA DE OZÔNIO que protege a Terra dos raios ultravioleta. A temperatura aumenta com a altitude nesta camada</li>
+                        <li><strong>3️⃣ MESOSFERA (50-85 km):</strong> É a camada MAIS FRIA da atmosfera (até -90°C). Aqui os meteoritos se queimam ao entrar na atmosfera</li>
+                        <li><strong>4️⃣ TERMOSFERA (85-500 km):</strong> Tem temperatura MUITO ALTA (até 1500°C). Aqui ocorrem as auroras boreais e austrais</li>
+                        <li><strong>5️⃣ EXOSFERA (acima de 500 km):</strong> A camada mais EXTERNA da atmosfera. É a transição entre a atmosfera e o espaço sideral</li>
+                    </ul>
+                    <img src="/public/images/IMG_3679.jpeg" alt="Camadas da Atmosfera" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+
+                    <h3>💨 MASSAS DE AR E FRENTES</h3>
+                    <p>Uma MASSA DE AR é um grande volume de ar com características semelhantes de temperatura e umidade.</p>
+                    <p><strong>Frentes de Ar:</strong> Quando duas massas de ar com características diferentes se encontram, formam uma FRENTE DE AR.</p>
+                    <ul>
+                        <li>🔵 FRENTE FRIA: Massa de ar frio avança sobre massa de ar quente</li>
+                        <li>🔴 FRENTE QUENTE: Massa de ar quente avança sobre massa de ar frio</li>
+                        <li>⛈️ Isso causa mudanças bruscas de tempo: chuvas, tempestades, quedas de temperatura</li>
+                    </ul>
+                    <img src="/public/images/IMG_3677.jpeg" alt="Massas de Ar" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+                </div>
+            </div>
+
+            <!-- QUIZZES -->
+            <div id="quizzes" class="secao">
+                <div class="card">
+                    <h2>🎯 Quizzes</h2>
+                    <div id="quizzes-grid"></div>
+                </div>
+            </div>
+
+            <!-- FLASHCARDS -->
+            <div id="flashcards" class="secao">
+                <div class="card">
+                    <h2>🎴 Flashcards</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Clique para virar e ver a resposta</p>
+                    <div id="flashcards-area"></div>
+                </div>
+            </div>
+
+            <!-- VERDADEIRO/FALSO -->
+            <div id="secao-vf" class="secao">
+                <div class="card">
+                    <h2>✅ Questões Verdadeiro/Falso</h2>
+                    <div id="questoes-vf-grid"></div>
+                </div>
+            </div>
+
+            <!-- IMAGENS -->
+            <div id="imagens" class="secao">
+                <div class="card">
+                    <h2>📸 Galeria de Imagens</h2>
+                    <div class="image-gallery" id="imagens-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>💪 Continue estudando! Você está indo bem! 🎓</p>
+        </div>
+    </div>
+
+    <!-- MODAL PARA IMAGENS -->
+    <div id="imageModal" class="modal" onclick="fecharImageModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal" onclick="fecharImageModal()">&times;</span>
+            <img id="modalImage" src="" alt="" style="width: 100%; border-radius: 8px;">
+        </div>
+    </div>
+
+    <script>
+        // DADOS
+        const quizzes = [
+            { pergunta: 'Os agentes externos transformam o relevo de forma:', opcoes: ['Violenta e rápida', 'Lenta e contínua', 'Muito rápida', 'Não transformam'], resposta: 1 },
+            { pergunta: 'Os agentes internos atuam no:', opcoes: ['Superfície da Terra', 'Interior da Terra', 'Oceano', 'Atmosfera'], resposta: 1 },
+            { pergunta: 'Qual é um agente externo?', opcoes: ['Vulcanismo', 'Tectonismo', 'Chuva', 'Magmatismo'], resposta: 2 },
+            { pergunta: 'Qual é um agente interno?', opcoes: ['Vento', 'Gelo', 'Intemperismo', 'Vulcanismo'], resposta: 3 },
+            { pergunta: 'Qual percentual da radiação solar é refletida?', opcoes: ['70%', '50%', '30%', '10%'], resposta: 2 },
+            { pergunta: 'Qual percentual da radiação solar é absorvida?', opcoes: ['30%', '50%', '70%', '90%'], resposta: 2 },
+            { pergunta: 'O que retém o calor na atmosfera?', opcoes: ['Nuvens', 'Gases de efeito estufa', 'Ozônio', 'Água'], resposta: 1 },
+            { pergunta: 'Qual é a camada mais próxima da Terra?', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Qual camada contém a camada de ozônio?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Qual é a camada mais fria?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 2 },
+            { pergunta: 'Qual é a camada mais quente?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 3 },
+            { pergunta: 'Onde ocorrem fenômenos meteorológicos?', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Qual gás é principal causador do efeito estufa?', opcoes: ['Oxigênio', 'Nitrogênio', 'Dióxido de Carbono', 'Argônio'], resposta: 2 },
+            { pergunta: 'O que é uma frente de ar?', opcoes: ['Vento forte', 'Encontro de massas de ar', 'Nuvem', 'Tempestade'], resposta: 1 },
+            { pergunta: 'Qual agente externo forma dunas?', opcoes: ['Chuva', 'Vento', 'Gelo', 'Mar'], resposta: 1 },
+            { pergunta: 'Qual agente externo modifica o litoral?', opcoes: ['Vento', 'Gelo', 'Mar', 'Chuva'], resposta: 2 },
+            { pergunta: 'O intemperismo é:', opcoes: ['Agente interno', 'Agente externo', 'Tipo de rocha', 'Tipo de clima'], resposta: 1 },
+            { pergunta: 'Qual camada tem auroras boreais?', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 2 },
+            { pergunta: 'Qual camada os meteoritos se queimam?', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 1 },
+            { pergunta: 'A Exosfera é a transição para:', opcoes: ['Oceano', 'Continente', 'Espaço sideral', 'Manto terrestre'], resposta: 2 }
+        ];
+
+        const questoesVF = [
+            { texto: 'Os agentes externos transformam o relevo de forma lenta e contínua.', resposta: true },
+            { texto: 'Os agentes internos atuam na superfície da Terra.', resposta: false },
+            { texto: 'O vulcanismo é um agente endógeno.', resposta: true },
+            { texto: 'A chuva é um agente endógeno.', resposta: false },
+            { texto: '30% da radiação solar é refletida de volta ao espaço.', resposta: true },
+            { texto: '70% da radiação solar é absorvida pela Terra.', resposta: true },
+            { texto: 'O efeito estufa é causado principalmente pelo ozônio.', resposta: false },
+            { texto: 'A troposfera é a camada onde vivemos.', resposta: true },
+            { texto: 'A estratosfera contém a camada de ozônio.', resposta: true },
+            { texto: 'A mesosfera é a camada mais quente da atmosfera.', resposta: false },
+            { texto: 'A termosfera tem temperatura muito alta.', resposta: true },
+            { texto: 'A exosfera é a transição entre a atmosfera e o espaço.', resposta: true },
+            { texto: 'Uma massa de ar é um pequeno volume de ar.', resposta: false },
+            { texto: 'As frentes de ar causam mudanças bruscas de tempo.', resposta: true },
+            { texto: 'O vento forma dunas no deserto.', resposta: true },
+            { texto: 'O mar modifica o litoral.', resposta: true },
+            { texto: 'O intemperismo é um agente interno.', resposta: false },
+            { texto: 'As auroras boreais ocorrem na termosfera.', resposta: true },
+            { texto: 'Os meteoritos se queimam na mesosfera.', resposta: true },
+            { texto: 'O dióxido de carbono é um gás de efeito estufa.', resposta: true }
+        ];
+
+        const flashcards = [
+            { pergunta: 'O que são agentes externos?', resposta: 'Agentes que atuam na superfície e transformam o relevo de forma lenta e contínua' },
+            { pergunta: 'O que são agentes internos?', resposta: 'Agentes que atuam no interior e transformam o relevo de forma violenta e rápida' },
+            { pergunta: 'Como funciona o balanço de energia?', resposta: '30% refletida + 70% absorvida = Equilíbrio térmico' },
+            { pergunta: 'O que é efeito estufa?', resposta: 'Gases atmosféricos retêm o calor da Terra' },
+            { pergunta: 'Cite as 5 camadas da atmosfera', resposta: 'Troposfera, Estratosfera, Mesosfera, Termosfera, Exosfera' },
+            { pergunta: 'Qual camada tem ozônio?', resposta: 'Estratosfera' },
+            { pergunta: 'O que é uma massa de ar?', resposta: 'Grande volume de ar com características semelhantes' },
+            { pergunta: 'O que é uma frente de ar?', resposta: 'Encontro de duas massas de ar diferentes' }
+        ];
+
+        const imagens = [
+            '/public/images/IMG_3676.jpeg',
+            '/public/images/IMG_3677.jpeg',
+            '/public/images/IMG_3678.jpeg',
+            '/public/images/IMG_3679.jpeg',
+            '/public/images/IMG_3680.jpeg',
+            '/public/images/IMG_3681.jpeg',
+            '/public/images/IMG_3682.jpeg',
+            '/public/images/IMG_3683.jpeg',
+            '/public/images/IMG_3684.jpeg',
+            '/public/images/IMG_3685.jpeg',
+            '/public/images/IMG_3686.jpeg',
+            '/public/images/IMG_3687.jpeg',
+            '/public/images/IMG_3688.jpeg',
+            '/public/images/IMG_3689.jpeg',
+            '/public/images/IMG_3690.jpeg',
+            '/public/images/IMG_3691.jpeg'
+        ];
+
+        // FUNÇÕES
+        function mostrarSecao(secaoId) {
+            document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa'));
+            document.getElementById(secaoId).classList.add('ativa');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function carregarQuizzes() {
+            const grid = document.getElementById('quizzes-grid');
+            grid.innerHTML = quizzes.map((q, i) => `
+                <div class="quiz-card">
+                    <p>Pergunta ${i+1}: ${q.pergunta}</p>
+                    <div class="quiz-options">
+                        ${q.opcoes.map((op, j) => `
+                            <button class="quiz-btn" onclick="verificarQuiz(${i}, ${j})">${String.fromCharCode(65+j)}) ${op}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function verificarQuiz(quizIndex, respostaIndex) {
+            const quiz = quizzes[quizIndex];
+            if (respostaIndex === quiz.resposta) {
+                alert('✅ Correto!');
+            } else {
+                alert(`❌ Errado! A resposta correta é: ${String.fromCharCode(65+quiz.resposta)}) ${quiz.opcoes[quiz.resposta]}`);
+            }
+        }
+
+        function carregarFlashcards() {
+            const area = document.getElementById('flashcards-area');
+            area.innerHTML = flashcards.map((fc, i) => `
+                <div class="flashcard" onclick="virarFlashcard(this, ${i})">
+                    <div>${fc.pergunta}</div>
+                </div>
+            `).join('');
+        }
+
+        function virarFlashcard(element, index) {
+            const fc = flashcards[index];
+            if (element.classList.contains('virado')) {
+                element.innerHTML = `<div>${fc.pergunta}</div>`;
+                element.classList.remove('virado');
+            } else {
+                element.innerHTML = `<div>${fc.resposta}</div>`;
+                element.classList.add('virado');
+            }
+        }
+
+        function carregarQuestoesVF() {
+            const grid = document.getElementById('questoes-vf-grid');
+            grid.innerHTML = questoesVF.map((q, i) => `
+                <div class="vf-card">
+                    <p>Questão ${i+1}: ${q.texto}</p>
+                    <div class="vf-buttons">
+                        <button class="vf-btn vf-true" onclick="verificarVF(${i}, true)">✅ Verdadeiro</button>
+                        <button class="vf-btn vf-false" onclick="verificarVF(${i}, false)">❌ Falso</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function verificarVF(index, resposta) {
+            const questao = questoesVF[index];
+            if (resposta === questao.resposta) {
+                alert('✅ Correto!');
+            } else {
+                alert(`❌ Errado! A resposta correta é: ${questao.resposta ? 'Verdadeiro' : 'Falso'}`);
+            }
+        }
+
+        function carregarImagens() {
+            const grid = document.getElementById('imagens-grid');
+            grid.innerHTML = imagens.map(img => `
+                <img src="${img}" alt="Imagem do livro" onclick="abrirImageModal(this.src)">
+            `).join('');
+        }
+
+        function abrirImageModal(src) {
+            document.getElementById('imageModal').classList.add('ativo');
+            document.getElementById('modalImage').src = src;
+        }
+
+        function fecharImageModal() {
+            document.getElementById('imageModal').classList.remove('ativo');
+        }
+
+        // INICIALIZAR
+        window.addEventListener('load', () => {
+            carregarQuizzes();
+            carregarFlashcards();
+            carregarQuestoesVF();
+            carregarImagens();
+        });
+    </script>
+</body>
+</html>

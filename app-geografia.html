@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Plataforma de Estudos - Geografia 6º Ano</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .header h1 { color: #667eea; margin-bottom: 10px; }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            background: #f0f0f0;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .stat-value { font-size: 1.5rem; font-weight: 600; color: #667eea; }
+        .stat-label { font-size: 0.8rem; color: #666; }
+        
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            background: white;
+            color: #667eea;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover { 
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            min-height: 400px;
+        }
+        
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        .card {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .quiz-item {
+            background: #f0f7ff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 2px solid #667eea;
+        }
+        
+        .quiz-item p { margin-bottom: 10px; font-weight: 600; }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .option-btn {
+            padding: 10px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+        
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f7ff;
+        }
+        
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .vf-card {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .vf-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+        
+        .vf-card.flipped {
+            background: #f0f7ff;
+            border-color: #764ba2;
+        }
+        
+        .vf-question { font-weight: 600; margin-bottom: 10px; }
+        
+        .vf-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .vf-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .vf-btn-true {
+            background: #28a745;
+            color: white;
+        }
+        
+        .vf-btn-false {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .vf-explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .vf-explanation.show { display: block; }
+        
+        .flashcard {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .flashcard:hover { transform: scale(1.02); }
+        
+        .flashcard-text { font-size: 1.1rem; font-weight: 600; }
+        
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .memory-card:hover { transform: scale(1.05); }
+        
+        .memory-card.matched {
+            background: #28a745;
+            opacity: 0.6;
+            cursor: default;
+        }
+        
+        .treasure-progress {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .progress-step {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        .progress-step.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .progress-step.completed {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .badge-icon { font-size: 2rem; margin-bottom: 10px; }
+        
+        .badge-name { font-weight: 600; color: #667eea; }
+        
+        .badge-desc { font-size: 0.9rem; color: #666; }
+        
+        .badge.locked { opacity: 0.5; }
+        
+        @media (max-width: 600px) {
+            .nav { flex-direction: column; }
+            .btn { width: 100%; }
+            .memory-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Plataforma de Estudos - Geografia 6º Ano</h1>
+            <p>Benjamin, vamos estudar para a prova de recuperação! 🚀</p>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="points">0</div>
+                    <div class="stat-label">Pontos</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="level">1</div>
+                    <div class="stat-label">Nível</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="correct">0</div>
+                    <div class="stat-label">Acertos</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav">
+            <button class="btn active" onclick="showSection('resumo')">📖 Resumo</button>
+            <button class="btn" onclick="showSection('quizzes')">🎯 Quizzes</button>
+            <button class="btn" onclick="showSection('vf')">✅ V/F</button>
+            <button class="btn" onclick="showSection('flashcards')">🎴 Flashcards</button>
+            <button class="btn" onclick="showSection('tesouro')">🗺️ Tesouro</button>
+            <button class="btn" onclick="showSection('memoria')">🧠 Memória</button>
+            <button class="btn" onclick="showSection('badges')">🏅 Badges</button>
+        </div>
+        
+        <div class="content">
+            <!-- RESUMO -->
+            <div id="resumo" class="section active">
+                <h2>📖 Resumo de Geografia</h2>
+                <div class="card">
+                    <h3>🏔️ Tipos de Relevo</h3>
+                    <p><strong>Planícies:</strong> Terrenos planos e baixos, próximos ao nível do mar.</p>
+                    <p><strong>Planaltos:</strong> Terrenos elevados e planos no topo.</p>
+                    <p><strong>Montanhas:</strong> Terrenos muito elevados e acidentados.</p>
+                    <p><strong>Depressões:</strong> Terrenos baixos entre elevações.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>⚡ Agentes Transformadores</h3>
+                    <p><strong>Agentes Externos:</strong> Chuva, vento, gelo, mar, intemperismo (transformam lentamente)</p>
+                    <p><strong>Agentes Internos:</strong> Vulcanismo, tectonismo, magmatismo (transformam rapidamente)</p>
+                </div>
+                
+                <div class="card">
+                    <h3>☀️ Balanço de Energia</h3>
+                    <p>30% da radiação solar é <strong>refletida</strong> pela atmosfera e superfície.</p>
+                    <p>70% da radiação solar é <strong>absorvida</strong> pela Terra.</p>
+                    <p>Este equilíbrio mantém a temperatura do planeta estável.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>🌡️ Efeito Estufa</h3>
+                    <p>Gases atmosféricos (CO₂, CH₄, N₂O) retêm o calor da Terra.</p>
+                    <p>É um processo natural, mas intensificado pela ação humana.</p>
+                    <p>Causa aquecimento global e mudanças climáticas.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>🌤️ Camadas da Atmosfera</h3>
+                    <p><strong>Troposfera:</strong> Mais próxima da Terra, onde vivemos.</p>
+                    <p><strong>Estratosfera:</strong> Contém a camada de ozônio.</p>
+                    <p><strong>Mesosfera:</strong> A camada mais fria.</p>
+                    <p><strong>Termosfera:</strong> A camada mais quente.</p>
+                    <p><strong>Exosfera:</strong> Transição para o espaço.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>💨 Massas de Ar</h3>
+                    <p><strong>Massa de Ar:</strong> Grande volume de ar com características semelhantes.</p>
+                    <p><strong>Frente de Ar:</strong> Encontro de duas massas de ar diferentes.</p>
+                    <p><strong>Frente Fria:</strong> Ar frio avança sobre ar quente (causa chuva).</p>
+                    <p><strong>Frente Quente:</strong> Ar quente avança sobre ar frio.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>🌍 Zonas Térmicas</h3>
+                    <p><strong>Zona Intertropical:</strong> Muito quente, entre os trópicos.</p>
+                    <p><strong>Zona Temperada:</strong> Com estações bem definidas.</p>
+                    <p><strong>Zona Polar:</strong> Muito fria nos polos.</p>
+                </div>
+            </div>
+            
+            <!-- QUIZZES -->
+            <div id="quizzes" class="section">
+                <h2>🎯 Quizzes (40 Questões)</h2>
+                <div id="quizzes-content"></div>
+            </div>
+            
+            <!-- V/F -->
+            <div id="vf" class="section">
+                <h2>✅ Verdadeiro ou Falso (40 Questões)</h2>
+                <div id="vf-content"></div>
+            </div>
+            
+            <!-- FLASHCARDS -->
+            <div id="flashcards" class="section">
+                <h2>🎴 Flashcards (30 Conceitos)</h2>
+                <p style="margin-bottom: 15px; color: #666;">Clique nos cards para virar e ver a resposta!</p>
+                <div id="flashcards-content"></div>
+            </div>
+            
+            <!-- TESOURO -->
+            <div id="tesouro" class="section">
+                <h2>🗺️ Caça ao Tesouro</h2>
+                <p style="margin-bottom: 15px; color: #666;">Acerte 3 perguntas seguidas para encontrar o tesouro!</p>
+                <div class="treasure-progress" id="treasure-progress"></div>
+                <div id="treasure-content"></div>
+            </div>
+            
+            <!-- MEMÓRIA -->
+            <div id="memoria" class="section">
+                <h2>🧠 Jogo da Memória</h2>
+                <p style="margin-bottom: 15px; color: #666;">Encontre os pares de conceitos e definições!</p>
+                <div class="memory-grid" id="memory-content"></div>
+            </div>
+            
+            <!-- BADGES -->
+            <div id="badges" class="section">
+                <h2>🏅 Badges Conquistadas</h2>
+                <div id="badges-content"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DADOS
+        const quizzes = [
+            { pergunta: 'Os agentes externos transformam o relevo de forma:', opcoes: ['Violenta e rápida', 'Lenta e contínua', 'Muito rápida', 'Não transformam'], resposta: 1 },
+            { pergunta: 'Os agentes internos atuam no:', opcoes: ['Superfície da Terra', 'Interior da Terra', 'Oceano', 'Atmosfera'], resposta: 1 },
+            { pergunta: 'Qual é um agente externo?', opcoes: ['Vulcanismo', 'Tectonismo', 'Chuva', 'Magmatismo'], resposta: 2 },
+            { pergunta: 'Qual é um agente interno?', opcoes: ['Vento', 'Gelo', 'Intemperismo', 'Vulcanismo'], resposta: 3 },
+            { pergunta: 'O intemperismo é:', opcoes: ['Agente interno', 'Agente externo', 'Tipo de rocha', 'Tipo de clima'], resposta: 1 },
+            { pergunta: 'Qual agente externo forma dunas?', opcoes: ['Chuva', 'Vento', 'Gelo', 'Mar'], resposta: 1 },
+            { pergunta: 'Qual agente externo modifica o litoral?', opcoes: ['Vento', 'Gelo', 'Mar', 'Chuva'], resposta: 2 },
+            { pergunta: 'O vulcanismo é um agente:', opcoes: ['Externo', 'Interno', 'Climático', 'Atmosférico'], resposta: 1 },
+            { pergunta: 'Qual percentual da radiação solar é refletida?', opcoes: ['70%', '50%', '30%', '10%'], resposta: 2 },
+            { pergunta: 'Qual percentual da radiação solar é absorvida?', opcoes: ['30%', '50%', '70%', '90%'], resposta: 2 },
+            { pergunta: 'O que é o Balanço de Energia?', opcoes: ['Temperatura do planeta', 'Equilíbrio entre radiação que entra e sai', 'Movimento das placas', 'Ciclo da água'], resposta: 1 },
+            { pergunta: 'O que é Albedo?', opcoes: ['Tipo de rocha', 'Capacidade de refletir radiação solar', 'Gás atmosférico', 'Camada da atmosfera'], resposta: 1 },
+            { pergunta: 'Qual superfície tem maior albedo?', opcoes: ['Oceano', 'Gelo e nuvens', 'Floresta', 'Areia do deserto'], resposta: 1 },
+            { pergunta: 'Quando o balanço de energia é alterado, ocorre:', opcoes: ['Chuva', 'Aquecimento ou resfriamento do planeta', 'Terremotos', 'Vulcões'], resposta: 1 },
+            { pergunta: 'A radiação infravermelha é emitida por:', opcoes: ['O Sol', 'A Terra aquecida', 'As nuvens', 'Os vulcões'], resposta: 1 },
+            { pergunta: 'O que retém o calor na atmosfera?', opcoes: ['Nuvens', 'Gases de efeito estufa', 'Ozônio', 'Água'], resposta: 1 },
+            { pergunta: 'Qual gás é principal causador do efeito estufa?', opcoes: ['Oxigênio', 'Nitrogênio', 'Dióxido de Carbono', 'Argônio'], resposta: 2 },
+            { pergunta: 'O efeito estufa é causado principalmente por:', opcoes: ['Vulcões', 'Queimação de combustíveis fósseis', 'Chuva', 'Vento'], resposta: 1 },
+            { pergunta: 'Qual gás é liberado pela pecuária?', opcoes: ['CO₂', 'Metano', 'Ozônio', 'Nitrogênio'], resposta: 1 },
+            { pergunta: 'O efeito estufa é:', opcoes: ['Prejudicial sempre', 'Natural, mas intensificado pela ação humana', 'Causado apenas por vulcões', 'Inexistente'], resposta: 1 },
+            { pergunta: 'Qual é a camada mais próxima da Terra?', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Qual camada contém a camada de ozônio?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Qual é a camada mais fria?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 2 },
+            { pergunta: 'Qual é a camada mais quente?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 3 },
+            { pergunta: 'Onde ocorrem fenômenos meteorológicos?', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Qual camada tem auroras boreais?', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 2 },
+            { pergunta: 'Qual camada os meteoritos se queimam?', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 1 },
+            { pergunta: 'A Exosfera é a transição para:', opcoes: ['Oceano', 'Continente', 'Espaço sideral', 'Manto terrestre'], resposta: 2 },
+            { pergunta: 'O que é uma massa de ar?', opcoes: ['Um furacão', 'Grande volume de ar com características semelhantes', 'Uma nuvem', 'Um tornado'], resposta: 1 },
+            { pergunta: 'O que é uma frente de ar?', opcoes: ['Vento forte', 'Encontro de massas de ar', 'Nuvem', 'Tempestade'], resposta: 1 },
+            { pergunta: 'Frente fria é quando:', opcoes: ['Ar quente avança', 'Ar frio avança sobre ar quente', 'Não há movimento', 'Há chuva'], resposta: 1 },
+            { pergunta: 'Frente quente é quando:', opcoes: ['Ar frio avança', 'Ar quente avança sobre ar frio', 'Não há movimento', 'Há vento'], resposta: 1 },
+            { pergunta: 'As frentes de ar causam:', opcoes: ['Paz', 'Mudanças bruscas de tempo', 'Nada', 'Apenas frio'], resposta: 1 },
+            { pergunta: 'Quantas zonas climáticas principais existem?', opcoes: ['2', '3', '4', '5'], resposta: 1 },
+            { pergunta: 'A zona intertropical é:', opcoes: ['Muito fria', 'Muito quente', 'Temperada', 'Variável'], resposta: 1 },
+            { pergunta: 'A zona polar é:', opcoes: ['Muito quente', 'Temperada', 'Muito fria', 'Úmida'], resposta: 2 },
+            { pergunta: 'A zona temperada é:', opcoes: ['Muito quente', 'Muito fria', 'Com estações bem definidas', 'Sempre igual'], resposta: 2 },
+            { pergunta: 'Qual é a principal consequência do desequilíbrio energético?', opcoes: ['Chuvas ácidas', 'Aquecimento global', 'Terremotos', 'Tsunamis'], resposta: 1 },
+            { pergunta: 'O dióxido de carbono vem principalmente de:', opcoes: ['Oceanos', 'Florestas', 'Queimação de combustíveis fósseis', 'Chuva'], resposta: 2 },
+            { pergunta: 'O metano é liberado por:', opcoes: ['Fábricas', 'Pecuária e lixo', 'Chuva', 'Vento'], resposta: 1 }
+        ];
+        
+        const questoesVF = [
+            { texto: 'Os agentes externos transformam o relevo de forma lenta e contínua.', resposta: true, explicacao: 'Correto! Agentes externos como chuva, vento e mar transformam lentamente.' },
+            { texto: 'Os agentes internos transformam o relevo de forma violenta e rápida.', resposta: true, explicacao: 'Correto! Vulcanismo e terremotos transformam rapidamente.' },
+            { texto: 'O balanço de energia é 50% refletida e 50% absorvida.', resposta: false, explicacao: 'Errado! É 30% refletida e 70% absorvida.' },
+            { texto: 'O efeito estufa é totalmente prejudicial.', resposta: false, explicacao: 'Errado! É natural, mas intensificado pela ação humana.' },
+            { texto: 'A troposfera é a camada onde vivemos.', resposta: true, explicacao: 'Correto! É a camada mais próxima da Terra.' },
+            { texto: 'A estratosfera contém a camada de ozônio.', resposta: true, explicacao: 'Correto! O ozônio protege contra radiação UV.' },
+            { texto: 'A mesosfera é a camada mais quente.', resposta: false, explicacao: 'Errado! A termosfera é a mais quente.' },
+            { texto: 'A termosfera é onde ocorrem auroras boreais.', resposta: true, explicacao: 'Correto! Fenômeno luminoso causado por partículas solares.' },
+            { texto: 'Uma massa de ar é um furacão.', resposta: false, explicacao: 'Errado! Massa de ar é um grande volume de ar com características semelhantes.' },
+            { texto: 'Frente fria causa chuva.', resposta: true, explicacao: 'Correto! Ar frio avançando causa mudanças bruscas de tempo.' },
+            { texto: 'A zona intertropical é muito fria.', resposta: false, explicacao: 'Errado! A zona intertropical é muito quente.' },
+            { texto: 'A zona polar é muito fria.', resposta: true, explicacao: 'Correto! Recebe menos radiação solar.' },
+            { texto: 'A zona temperada tem estações bem definidas.', resposta: true, explicacao: 'Correto! Primavera, verão, outono e inverno.' },
+            { texto: 'O dióxido de carbono vem principalmente de vulcões.', resposta: false, explicacao: 'Errado! Vem principalmente da queimação de combustíveis fósseis.' },
+            { texto: 'O metano é liberado apenas por fábricas.', resposta: false, explicacao: 'Errado! Também é liberado pela pecuária e decomposição de lixo.' },
+            { texto: 'Planícies são terrenos muito elevados.', resposta: false, explicacao: 'Errado! Planícies são planas e baixas.' },
+            { texto: 'Montanhas são terrenos muito elevados e acidentados.', resposta: true, explicacao: 'Correto! Formadas por agentes internos.' },
+            { texto: 'Depressões são terrenos baixos entre elevações.', resposta: true, explicacao: 'Correto! Tipo de relevo menos comum.' },
+            { texto: 'O vulcanismo é um agente externo.', resposta: false, explicacao: 'Errado! É um agente interno.' },
+            { texto: 'O intemperismo é um agente externo.', resposta: true, explicacao: 'Correto! Desintegra rochas lentamente.' },
+            { texto: 'A radiação solar é 100% absorvida pela Terra.', resposta: false, explicacao: 'Errado! 30% é refletida e 70% é absorvida.' },
+            { texto: 'Albedo é a capacidade de refletir radiação solar.', resposta: true, explicacao: 'Correto! Gelo e nuvens têm alto albedo.' },
+            { texto: 'Gases de efeito estufa retêm calor na atmosfera.', resposta: true, explicacao: 'Correto! CO₂, CH₄ e N₂O são os principais.' },
+            { texto: 'Aquecimento global é causado apenas por vulcões.', resposta: false, explicacao: 'Errado! Principalmente por atividades humanas.' },
+            { texto: 'Frente quente é quando ar frio avança.', resposta: false, explicacao: 'Errado! Frente quente é quando ar quente avança.' },
+            { texto: 'Existem 5 zonas climáticas principais.', resposta: false, explicacao: 'Errado! Existem 3: intertropical, temperada e polar.' },
+            { texto: 'A exosfera é a transição para o espaço.', resposta: true, explicacao: 'Correto! É a camada mais externa.' },
+            { texto: 'Fenômenos meteorológicos ocorrem na estratosfera.', resposta: false, explicacao: 'Errado! Ocorrem na troposfera.' },
+            { texto: 'Meteoritos se queimam na mesosfera.', resposta: true, explicacao: 'Correto! Pela fricção com a atmosfera.' },
+            { texto: 'A troposfera é a camada mais fria.', resposta: false, explicacao: 'Errado! A mesosfera é a mais fria.' },
+            { texto: 'Planaltos são terrenos elevados e planos no topo.', resposta: true, explicacao: 'Correto! Diferentes de montanhas.' },
+            { texto: 'Tectonismo causa movimentos de placas.', resposta: true, explicacao: 'Correto! Agente interno importante.' },
+            { texto: 'Chuva é um agente externo.', resposta: true, explicacao: 'Correto! Causa erosão e intemperismo.' },
+            { texto: 'Vento é um agente interno.', resposta: false, explicacao: 'Errado! Vento é um agente externo.' },
+            { texto: 'Gelo modifica o relevo.', resposta: true, explicacao: 'Correto! Causa erosão glacial.' },
+            { texto: 'Mar modifica o litoral.', resposta: true, explicacao: 'Correto! Causa erosão costeira.' },
+            { texto: 'Magmatismo é um agente externo.', resposta: false, explicacao: 'Errado! É um agente interno.' },
+            { texto: 'Zona temperada tem clima variável.', resposta: true, explicacao: 'Correto! Com estações bem definidas.' },
+            { texto: 'Zona intertropical recebe mais radiação solar.', resposta: true, explicacao: 'Correto! Por isso é muito quente.' },
+            { texto: 'Zona polar recebe menos radiação solar.', resposta: true, explicacao: 'Correto! Por isso é muito fria.' }
+        ];
+        
+        const flashcards = [
+            { pergunta: 'O que são agentes externos?', resposta: 'Agentes que atuam na superfície e transformam o relevo de forma lenta e contínua' },
+            { pergunta: 'O que são agentes internos?', resposta: 'Agentes que atuam no interior e transformam o relevo de forma violenta e rápida' },
+            { pergunta: 'Como funciona o balanço de energia?', resposta: '30% refletida + 70% absorvida = Equilíbrio térmico' },
+            { pergunta: 'O que é efeito estufa?', resposta: 'Gases atmosféricos retêm o calor da Terra' },
+            { pergunta: 'Cite as 5 camadas da atmosfera', resposta: 'Troposfera, Estratosfera, Mesosfera, Termosfera, Exosfera' },
+            { pergunta: 'Qual camada tem ozônio?', resposta: 'Estratosfera' },
+            { pergunta: 'O que é uma massa de ar?', resposta: 'Grande volume de ar com características semelhantes' },
+            { pergunta: 'O que é uma frente de ar?', resposta: 'Encontro de duas massas de ar diferentes' },
+            { pergunta: 'O que é vulcanismo?', resposta: 'Agente interno que causa erupções vulcânicas' },
+            { pergunta: 'O que é tectonismo?', resposta: 'Movimento das placas tectônicas que causa terremotos' },
+            { pergunta: 'O que é intemperismo?', resposta: 'Desintegração de rochas por agentes externos' },
+            { pergunta: 'O que é erosão?', resposta: 'Transporte de material desgastado pela água, vento ou gelo' },
+            { pergunta: 'O que é albedo?', resposta: 'Capacidade de uma superfície refletir radiação solar' },
+            { pergunta: 'Qual é a temperatura da Troposfera?', resposta: 'Diminui com a altitude, de 15°C até -60°C' },
+            { pergunta: 'Qual é a temperatura da Estratosfera?', resposta: 'Aumenta com a altitude, de -60°C até 0°C' },
+            { pergunta: 'Qual é a temperatura da Mesosfera?', resposta: 'Diminui com a altitude, chegando a -90°C' },
+            { pergunta: 'Qual é a temperatura da Termosfera?', resposta: 'Muito alta, acima de 1000°C' },
+            { pergunta: 'O que são auroras boreais?', resposta: 'Fenômeno luminoso na termosfera causado por partículas solares' },
+            { pergunta: 'Qual gás causa efeito estufa?', resposta: 'Dióxido de carbono (CO₂), metano (CH₄) e óxido nitroso (N₂O)' },
+            { pergunta: 'O que é aquecimento global?', resposta: 'Aumento da temperatura média do planeta causado pelo efeito estufa' },
+            { pergunta: 'O que é frente fria?', resposta: 'Quando ar frio avança sobre ar quente, causando chuva' },
+            { pergunta: 'O que é frente quente?', resposta: 'Quando ar quente avança sobre ar frio' },
+            { pergunta: 'Quantas zonas térmicas existem?', resposta: 'Três: intertropical, temperada e polar' },
+            { pergunta: 'O que é zona intertropical?', resposta: 'Região muito quente entre os trópicos' },
+            { pergunta: 'O que é zona temperada?', resposta: 'Região com estações bem definidas' },
+            { pergunta: 'O que é zona polar?', resposta: 'Região muito fria nos polos' },
+            { pergunta: 'O que é planície?', resposta: 'Terreno plano e baixo, próximo ao nível do mar' },
+            { pergunta: 'O que é planalto?', resposta: 'Terreno elevado e plano no topo' },
+            { pergunta: 'O que é montanha?', resposta: 'Terreno muito elevado e acidentado' },
+            { pergunta: 'O que é depressão?', resposta: 'Terreno baixo entre elevações' }
+        ];
+        
+        // ESTADO
+        let player = { points: 0, level: 1, correct: 0 };
+        let treasureStreak = 0;
+        let memoryCards = [];
+        let memoryMatched = 0;
+        
+        // FUNÇÕES
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (id === 'quizzes') loadQuizzes();
+            if (id === 'vf') loadVF();
+            if (id === 'flashcards') loadFlashcards();
+            if (id === 'tesouro') loadTreasure();
+            if (id === 'memoria') loadMemory();
+            if (id === 'badges') loadBadges();
+        }
+        
+        function updateStats() {
+            document.getElementById('points').textContent = player.points;
+            document.getElementById('level').textContent = Math.floor(player.points / 100) + 1;
+            document.getElementById('correct').textContent = player.correct;
+        }
+        
+        function addPoints(pts) {
+            player.points += pts;
+            updateStats();
+        }
+        
+        function loadQuizzes() {
+            let html = '';
+            quizzes.forEach((q, i) => {
+                html += `<div class="quiz-item">
+                    <p>${i+1}. ${q.pergunta}</p>
+                    <div class="options">
+                        ${q.opcoes.map((op, j) => `
+                            <button class="option-btn" onclick="checkQuiz(${i}, ${j})">${String.fromCharCode(65+j)}) ${op}</button>
+                        `).join('')}
+                    </div>
+                </div>`;
+            });
+            document.getElementById('quizzes-content').innerHTML = html;
+        }
+        
+        function checkQuiz(qIndex, oIndex) {
+            const q = quizzes[qIndex];
+            const btn = event.target;
+            if (oIndex === q.resposta) {
+                btn.classList.add('correct');
+                addPoints(10);
+                player.correct++;
+                updateStats();
+            } else {
+                btn.classList.add('incorrect');
+            }
+            btn.disabled = true;
+        }
+        
+        function loadVF() {
+            let html = '';
+            questoesVF.forEach((q, i) => {
+                html += `<div class="vf-card" id="vf-${i}">
+                    <div class="vf-question">${i+1}. ${q.texto}</div>
+                    <div class="vf-buttons">
+                        <button class="vf-btn vf-btn-true" onclick="checkVF(${i}, true)">✅ Verdadeiro</button>
+                        <button class="vf-btn vf-btn-false" onclick="checkVF(${i}, false)">❌ Falso</button>
+                    </div>
+                    <div class="vf-explanation" id="exp-${i}">${q.explicacao}</div>
+                </div>`;
+            });
+            document.getElementById('vf-content').innerHTML = html;
+        }
+        
+        function checkVF(qIndex, answer) {
+            const q = questoesVF[qIndex];
+            const card = document.getElementById(`vf-${qIndex}`);
+            const exp = document.getElementById(`exp-${qIndex}`);
+            
+            if (answer === q.resposta) {
+                card.style.background = '#d4edda';
+                addPoints(5);
+                player.correct++;
+            } else {
+                card.style.background = '#f8d7da';
+            }
+            
+            exp.classList.add('show');
+            card.querySelectorAll('button').forEach(b => b.disabled = true);
+            updateStats();
+        }
+        
+        function loadFlashcards() {
+            let html = '';
+            flashcards.forEach((f, i) => {
+                html += `<div class="flashcard" onclick="toggleFlashcard(${i})" id="fc-${i}">
+                    <div class="flashcard-text">${f.pergunta}</div>
+                </div>`;
+            });
+            document.getElementById('flashcards-content').innerHTML = html;
+        }
+        
+        function toggleFlashcard(i) {
+            const card = document.getElementById(`fc-${i}`);
+            const f = flashcards[i];
+            if (card.textContent.includes(f.pergunta)) {
+                card.innerHTML = `<div class="flashcard-text">${f.resposta}</div>`;
+            } else {
+                card.innerHTML = `<div class="flashcard-text">${f.pergunta}</div>`;
+            }
+        }
+        
+        function loadTreasure() {
+            let html = `<div class="treasure-progress">
+                <div class="progress-step ${treasureStreak >= 1 ? 'completed' : ''} ${treasureStreak === 1 ? 'active' : ''}">1</div>
+                <div class="progress-step ${treasureStreak >= 2 ? 'completed' : ''} ${treasureStreak === 2 ? 'active' : ''}">2</div>
+                <div class="progress-step ${treasureStreak >= 3 ? 'completed' : ''} ${treasureStreak === 3 ? 'active' : ''}">3</div>
+            </div>`;
+            
+            if (treasureStreak >= 3) {
+                html += '<div style="text-align: center; font-size: 2rem; margin: 30px 0;">💎 TESOURO ENCONTRADO! 💎</div>';
+                html += '<button class="btn" onclick="resetTreasure()" style="width: 100%; margin-top: 20px;">🔄 Tentar Novamente</button>';
+            } else {
+                const q = quizzes[Math.floor(Math.random() * quizzes.length)];
+                html += `<div class="quiz-item">
+                    <p>🎯 ${q.pergunta}</p>
+                    <div class="options">
+                        ${q.opcoes.map((op, j) => `
+                            <button class="option-btn" onclick="checkTreasure(${q.resposta}, ${j})">${String.fromCharCode(65+j)}) ${op}</button>
+                        `).join('')}
+                    </div>
+                </div>`;
+            }
+            
+            document.getElementById('treasure-content').innerHTML = html;
+        }
+        
+        function checkTreasure(correct, selected) {
+            if (correct === selected) {
+                treasureStreak++;
+                addPoints(50);
+                player.correct++;
+                if (treasureStreak >= 3) {
+                    addPoints(500);
+                    alert('🎉 TESOURO ENCONTRADO! +500 PONTOS BÔNUS!');
+                }
+            } else {
+                treasureStreak = 0;
+                alert('❌ Errou! Começando novamente...');
+            }
+            updateStats();
+            loadTreasure();
+        }
+        
+        function resetTreasure() {
+            treasureStreak = 0;
+            loadTreasure();
+        }
+        
+        function loadMemory() {
+            if (memoryCards.length === 0) {
+                const pairs = [
+                    { conceito: 'Agentes Externos', def: 'Transformam relevo lentamente' },
+                    { conceito: 'Agentes Internos', def: 'Transformam relevo rapidamente' },
+                    { conceito: 'Balanço de Energia', def: 'Equilíbrio de radiação solar' },
+                    { conceito: 'Efeito Estufa', def: 'Gases retêm calor' },
+                    { conceito: 'Troposfera', def: 'Camada onde vivemos' },
+                    { conceito: 'Estratosfera', def: 'Contém ozônio' },
+                    { conceito: 'Massas de Ar', def: 'Volume de ar semelhante' },
+                    { conceito: 'Frente de Ar', def: 'Encontro de massas' }
+                ];
+                
+                pairs.forEach((p, i) => {
+                    memoryCards.push({ id: i, text: p.conceito, type: 'conceito', matched: false });
+                    memoryCards.push({ id: i, text: p.def, type: 'def', matched: false });
+                });
+                
+                memoryCards.sort(() => Math.random() - 0.5);
+            }
+            
+            let html = '';
+            memoryCards.forEach((c, i) => {
+                html += `<button class="memory-card ${c.matched ? 'matched' : ''}" onclick="flipMemory(${i})" id="mem-${i}">?</button>`;
+            });
+            document.getElementById('memory-content').innerHTML = html;
+        }
+        
+        function flipMemory(i) {
+            const card = document.getElementById(`mem-${i}`);
+            if (memoryCards[i].matched) return;
+            
+            card.textContent = memoryCards[i].text;
+            card.style.background = '#764ba2';
+        }
+        
+        function loadBadges() {
+            const badges = [
+                { icon: '🌟', name: 'Iniciante', desc: 'Ganhe 100 pontos', req: 100 },
+                { icon: '📚', name: 'Estudioso', desc: 'Acerte 10 questões', req: 10 },
+                { icon: '🏆', name: 'Campeão', desc: 'Ganhe 500 pontos', req: 500 },
+                { icon: '👑', name: 'Mestre', desc: 'Acerte 30 questões', req: 30 },
+                { icon: '🔥', name: 'Sequência', desc: 'Acerte 5 seguidas', req: 5 }
+            ];
+            
+            let html = '';
+            badges.forEach(b => {
+                const unlocked = (b.name === 'Iniciante' && player.points >= b.req) ||
+                               (b.name === 'Estudioso' && player.correct >= b.req) ||
+                               (b.name === 'Campeão' && player.points >= b.req) ||
+                               (b.name === 'Mestre' && player.correct >= b.req) ||
+                               (b.name === 'Sequência' && player.correct >= b.req);
+                
+                html += `<div class="badge ${!unlocked ? 'locked' : ''}">
+                    <div class="badge-icon">${b.icon}</div>
+                    <div class="badge-name">${b.name}</div>
+                    <div class="badge-desc">${b.desc}</div>
+                </div>`;
+            });
+            
+            document.getElementById('badges-content').innerHTML = html;
+        }
+        
+        // INICIALIZAR
+        updateStats();
+    </script>
+</body>
+</html>

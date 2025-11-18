@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>🎯 Quiz - Balanço de Energia e Efeito Estufa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quiz-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #f5f7fa;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .header h1 { font-size: 1.8rem; margin-bottom: 8px; }
+        .header p { font-size: 0.95rem; opacity: 0.95; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.3s ease;
+        }
+        
+        .container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quiz-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            max-width: 700px;
+            width: 100%;
+            animation: slideIn 0.4s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            color: #333;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            background: #e8f0ff;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .option.selected {
+            background: #e8f0ff;
+            border-color: #667eea;
+        }
+        
+        .option.correct {
+            background: #d5f4e6;
+            border-color: #27ae60;
+        }
+        
+        .option.incorrect {
+            background: #fadbd8;
+            border-color: #e74c3c;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .feedback.show { display: block; }
+        
+        .feedback.correct {
+            background: #d5f4e6;
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .feedback.incorrect {
+            background: #fadbd8;
+            color: #e74c3c;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-restart {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-restart:hover {
+            background: #e0e0e0;
+            transform: translateY(-3px);
+        }
+        
+        .results {
+            text-align: center;
+            display: none;
+        }
+        
+        .results.show { display: block; }
+        
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 3rem;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .score-text {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .results h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .results p {
+            color: #666;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .explanation {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+            text-align: left;
+        }
+        
+        .explanation-title {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .explanation-text {
+            color: #555;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-wrapper">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🎯 Quiz Interativo</h1>
+            <p>Balanço de Energia e Efeito Estufa</p>
+        </div>
+        
+        <!-- PROGRESS BAR -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <!-- CONTAINER -->
+        <div class="container">
+            <div class="quiz-card">
+                <!-- QUIZ -->
+                <div id="quiz-content">
+                    <div class="question-number" id="questionNumber"></div>
+                    <div class="question-text" id="questionText"></div>
+                    <div class="options" id="optionsContainer"></div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn btn-next" id="nextBtn" onclick="proximaPergunta()" disabled>Próxima →</button>
+                    </div>
+                </div>
+                
+                <!-- RESULTADOS -->
+                <div id="results-content" class="results">
+                    <div class="score-circle" id="scoreCircle"></div>
+                    <h2 id="resultsTitle"></h2>
+                    <div class="score-text" id="scoreText"></div>
+                    <p id="resultsMessage"></p>
+                    <div class="buttons">
+                        <button class="btn btn-restart" onclick="reiniciarQuiz()">🔄 Fazer Novamente</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PERGUNTAS SOBRE BALANÇO DE ENERGIA E EFEITO ESTUFA
+        const perguntas = [
+            {
+                pergunta: "Qual é o percentual de radiação solar que é REFLETIDA de volta ao espaço?",
+                opcoes: ["10%", "30%", "50%", "70%"],
+                resposta: 1,
+                explicacao: "Aproximadamente 30% da radiação solar é refletida de volta ao espaço pela atmosfera, nuvens e superfícies claras (albedo). Os outros 70% são absorvidos."
+            },
+            {
+                pergunta: "Qual é o percentual de radiação solar que é ABSORVIDA pela Terra e atmosfera?",
+                opcoes: ["30%", "50%", "70%", "90%"],
+                resposta: 2,
+                explicacao: "Aproximadamente 70% da radiação solar é absorvida pela atmosfera e superfície terrestre. Essa energia absorvida aquece o planeta."
+            },
+            {
+                pergunta: "O que é o Balanço de Energia da Terra?",
+                opcoes: ["A quantidade de chuva que cai", "O equilíbrio entre radiação solar que entra e radiação que sai do planeta", "A temperatura média do planeta", "O movimento das placas tectônicas"],
+                resposta: 1,
+                explicacao: "O Balanço de Energia é o equilíbrio entre a radiação solar que entra na Terra e a radiação infravermelha que sai. Quando entra = sai, a temperatura é estável."
+            },
+            {
+                pergunta: "Qual é o principal gás causador do efeito estufa?",
+                opcoes: ["Oxigênio (O₂)", "Nitrogênio (N₂)", "Dióxido de Carbono (CO₂)", "Argônio (Ar)"],
+                resposta: 2,
+                explicacao: "O Dióxido de Carbono (CO₂) é o principal gás de efeito estufa. Ele é liberado pela queimação de combustíveis fósseis e aumenta o aquecimento global."
+            },
+            {
+                pergunta: "Como funciona o efeito estufa?",
+                opcoes: [
+                    "Gases bloqueiam a entrada de radiação solar",
+                    "Gases retêm o calor (radiação infravermelha) na atmosfera",
+                    "Gases aumentam a reflexão de radiação solar",
+                    "Gases diminuem a absorção de radiação solar"
+                ],
+                resposta: 1,
+                explicacao: "O efeito estufa funciona quando gases atmosféricos retêm a radiação infravermelha (calor) que a Terra emite, impedindo que escape para o espaço."
+            },
+            {
+                pergunta: "Qual é a fonte principal de emissão de CO₂?",
+                opcoes: ["Vulcões", "Queimação de combustíveis fósseis", "Oceanos", "Florestas"],
+                resposta: 1,
+                explicacao: "A queimação de combustíveis fósseis (petróleo, carvão, gás natural) é a principal fonte de emissão de CO₂ para a atmosfera."
+            },
+            {
+                pergunta: "O que é o Albedo?",
+                opcoes: [
+                    "A temperatura da atmosfera",
+                    "A capacidade de uma superfície refletir radiação solar",
+                    "A velocidade do vento",
+                    "A quantidade de chuva"
+                ],
+                resposta: 1,
+                explicacao: "Albedo é a capacidade de uma superfície refletir radiação solar. Superfícies claras (gelo, nuvens) têm alto albedo; superfícies escuras (oceano) têm baixo albedo."
+            },
+            {
+                pergunta: "Qual é a consequência do aquecimento global causado pelo efeito estufa?",
+                opcoes: [
+                    "Aumento da neve nos polos",
+                    "Diminuição do nível dos oceanos",
+                    "Aumento da temperatura média do planeta",
+                    "Diminuição da radiação solar"
+                ],
+                resposta: 2,
+                explicacao: "O aquecimento global causado pelo efeito estufa resulta no aumento da temperatura média do planeta, derretimento de gelo, aumento do nível dos oceanos e mudanças climáticas."
+            },
+            {
+                pergunta: "Qual gás é liberado pela pecuária e decomposição de lixo?",
+                opcoes: ["Dióxido de Carbono", "Metano (CH₄)", "Óxido Nitroso", "Vapor de água"],
+                resposta: 1,
+                explicacao: "O Metano (CH₄) é liberado pela pecuária (gado) e pela decomposição de lixo em aterros. É um gás de efeito estufa muito potente."
+            },
+            {
+                pergunta: "O que acontece quando o balanço de energia é alterado?",
+                opcoes: [
+                    "A temperatura do planeta permanece igual",
+                    "Ocorre aquecimento ou resfriamento do planeta",
+                    "Não há nenhuma consequência",
+                    "Aumenta a reflexão de radiação solar"
+                ],
+                resposta: 1,
+                explicacao: "Quando o balanço de energia é alterado (mais radiação retida que refletida), ocorre aquecimento do planeta. Se menos radiação for retida, ocorre resfriamento."
+            }
+        ];
+
+        let perguntaAtual = 0;
+        let pontuacao = 0;
+        let respostaSelecionada = null;
+        let respondido = false;
+
+        // INICIALIZAR
+        function inicializar() {
+            mostrarPergunta();
+        }
+
+        function mostrarPergunta() {
+            const pergunta = perguntas[perguntaAtual];
+            
+            // Atualizar número da pergunta
+            document.getElementById('questionNumber').textContent = `Pergunta ${perguntaAtual + 1} de ${perguntas.length}`;
+            
+            // Atualizar texto da pergunta
+            document.getElementById('questionText').textContent = pergunta.pergunta;
+            
+            // Atualizar barra de progresso
+            const progresso = ((perguntaAtual + 1) / perguntas.length) * 100;
+            document.getElementById('progressFill').style.width = progresso + '%';
+            
+            // Limpar opções anteriores
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            // Adicionar novas opções
+            pergunta.opcoes.forEach((opcao, index) => {
+                const label = document.createElement('label');
+                label.className = 'option';
+                label.innerHTML = `
+                    <input type="radio" name="opcao" value="${index}" onchange="selecionarOpcao(${index})">
+                    <span>${opcao}</span>
+                `;
+                optionsContainer.appendChild(label);
+            });
+            
+            // Limpar feedback
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('feedback').textContent = '';
+            
+            // Resetar estado
+            respostaSelecionada = null;
+            respondido = false;
+            document.getElementById('nextBtn').disabled = true;
+        }
+
+        function selecionarOpcao(index) {
+            if (respondido) return;
+            
+            respostaSelecionada = index;
+            
+            // Atualizar visual das opções
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.remove('selected');
+                if (i === index) opt.classList.add('selected');
+            });
+            
+            // Habilitar botão próxima
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function proximaPergunta() {
+            if (respostaSelecionada === null) return;
+            
+            respondido = true;
+            const pergunta = perguntas[perguntaAtual];
+            const feedback = document.getElementById('feedback');
+            
+            // Verificar resposta
+            if (respostaSelecionada === pergunta.resposta) {
+                pontuacao++;
+                feedback.className = 'feedback show correct';
+                feedback.innerHTML = `
+                    <div>✅ <strong>Correto!</strong></div>
+                    <div class="explanation">
+                        <div class="explanation-title">💡 Explicação:</div>
+                        <div class="explanation-text">${pergunta.explicacao}</div>
+                    </div>
+                `;
+                document.querySelectorAll('.option')[respostaSelecionada].classList.add('correct');
+            } else {
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = `
+                    <div>❌ <strong>Incorreto!</strong> A resposta correta é: <strong>${pergunta.opcoes[pergunta.resposta]}</strong></div>
+                    <div class="explanation">
+                        <div class="explanation-title">💡 Explicação:</div>
+                        <div class="explanation-text">${pergunta.explicacao}</div>
+                    </div>
+                `;
+                document.querySelectorAll('.option')[respostaSelecionada].classList.add('incorrect');
+                document.querySelectorAll('.option')[pergunta.resposta].classList.add('correct');
+            }
+            
+            // Desabilitar opções
+            document.querySelectorAll('.option input').forEach(input => input.disabled = true);
+            
+            // Mudar texto do botão
+            if (perguntaAtual < perguntas.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Próxima →';
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = () => {
+                    perguntaAtual++;
+                    mostrarPergunta();
+                };
+            } else {
+                document.getElementById('nextBtn').textContent = 'Ver Resultados';
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = mostrarResultados;
+            }
+        }
+
+        function mostrarResultados() {
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('results-content').classList.add('show');
+            
+            const percentual = Math.round((pontuacao / perguntas.length) * 100);
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.textContent = percentual + '%';
+            
+            document.getElementById('scoreText').textContent = `${pontuacao} de ${perguntas.length} acertos`;
+            
+            let titulo = '';
+            let mensagem = '';
+            
+            if (percentual === 100) {
+                titulo = '🌟 Perfeito!';
+                mensagem = 'Você acertou todas as questões! Parabéns, você é um especialista em Balanço de Energia e Efeito Estufa!';
+            } else if (percentual >= 80) {
+                titulo = '🎉 Excelente!';
+                mensagem = 'Ótimo desempenho! Você tem um ótimo conhecimento sobre Balanço de Energia e Efeito Estufa!';
+            } else if (percentual >= 60) {
+                titulo = '👍 Bom!';
+                mensagem = 'Bom trabalho! Você compreende bem os conceitos. Revise as questões que errou para melhorar!';
+            } else if (percentual >= 40) {
+                titulo = '💪 Continue tentando!';
+                mensagem = 'Você está no caminho certo! Estude mais sobre Balanço de Energia e Efeito Estufa e tente novamente!';
+            } else {
+                titulo = '📚 Estude mais!';
+                mensagem = 'Revise o conteúdo sobre Balanço de Energia e Efeito Estufa e tente novamente!';
+            }
+            
+            document.getElementById('resultsTitle').textContent = titulo;
+            document.getElementById('resultsMessage').textContent = mensagem;
+        }
+
+        function reiniciarQuiz() {
+            perguntaAtual = 0;
+            pontuacao = 0;
+            respostaSelecionada = null;
+            respondido = false;
+            
+            document.getElementById('quiz-content').style.display = 'block';
+            document.getElementById('results-content').classList.remove('show');
+            
+            mostrarPergunta();
+        }
+
+        // Iniciar
+        inicializar();
+    </script>
+</body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>📚 Geografia 6º Ano - Estudo Completo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .header p { font-size: 0.9rem; opacity: 0.9; }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+            background: white;
+            overflow-x: auto;
+            border-bottom: 2px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .nav-btn {
+            padding: 10px 15px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s;
+            color: #666;
+        }
+        
+        .nav-btn:hover { background: #e0e0e0; }
+        
+        .nav-btn.ativo {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .secao { display: none; }
+        .secao.ativo { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-top: 4px solid #667eea;
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .card h3 {
+            color: #764ba2;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .card p { line-height: 1.7; margin-bottom: 10px; }
+        .card ul, .card ol { margin-left: 20px; margin-bottom: 10px; }
+        .card li { margin-bottom: 8px; }
+        
+        .imagem-resumo {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        
+        .quiz-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .quiz-item p { margin-bottom: 10px; font-weight: 600; }
+        
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        
+        .quiz-btn {
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .quiz-btn:hover { background: #764ba2; }
+        
+        .flashcard {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .flashcard:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
+        .flashcard.virado {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .vf-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .vf-item p { margin-bottom: 10px; font-weight: 600; }
+        
+        .vf-buttons { display: flex; gap: 8px; }
+        
+        .vf-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .vf-true { background: #27ae60; color: white; }
+        .vf-false { background: #e74c3c; color: white; }
+        
+        .vf-true:hover { background: #229954; }
+        .vf-false:hover { background: #c0392b; }
+        
+        .resposta-vf {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 4px;
+            color: #27ae60;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        
+        .modal.ativo { display: flex; align-items: center; justify-content: center; }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #667eea;
+        }
+        
+        .close-modal:hover { color: #764ba2; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>📚 Geografia 6º Ano</h1>
+            <p>Estude para a prova de recuperação!</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-btn ativo" onclick="mostrarSecao('resumo')">📖 Resumo</button>
+            <button class="nav-btn" onclick="mostrarSecao('quizzes')">🎯 Quizzes</button>
+            <button class="nav-btn" onclick="mostrarSecao('vf')">✅ V/F</button>
+            <button class="nav-btn" onclick="mostrarSecao('flashcards')">🎴 Flashcards</button>
+        </div>
+
+        <div class="content">
+            <div id="resumo" class="secao ativo">
+                <div class="card">
+                    <h2>📖 Resumo Completo de Geografia</h2>
+                    
+                    <h3>🏔️ TIPOS DE RELEVO</h3>
+                    <p>O relevo é a forma da superfície terrestre. Existem 4 tipos principais:</p>
+                    <ul>
+                        <li><strong>Planícies:</strong> Terrenos planos e baixos, próximos ao nível do mar</li>
+                        <li><strong>Planaltos:</strong> Terrenos elevados e planos no topo</li>
+                        <li><strong>Montanhas:</strong> Terrenos muito elevados e acidentados</li>
+                        <li><strong>Depressões:</strong> Terrenos baixos entre elevações</li>
+                    </ul>
+                    
+                    <h3>⚡ AGENTES TRANSFORMADORES DO RELEVO</h3>
+                    <p><strong>Agentes Externos (Exógenos):</strong> Atuam na superfície, transformação LENTA</p>
+                    <ul>
+                        <li>Chuva e escoamento</li>
+                        <li>Ação do mar</li>
+                        <li>Vento</li>
+                        <li>Gelo</li>
+                        <li>Intemperismo</li>
+                    </ul>
+                    <p><strong>Agentes Internos (Endógenos):</strong> Atuam no interior, transformação RÁPIDA</p>
+                    <ul>
+                        <li>Vulcanismo</li>
+                        <li>Tectonismo</li>
+                        <li>Magmatismo</li>
+                    </ul>
+                    
+                    <h3>☀️ BALANÇO DE ENERGIA</h3>
+                    <p>Equilíbrio entre radiação solar que entra e radiação que sai do planeta:</p>
+                    <ul>
+                        <li>📊 30% é REFLETIDA de volta ao espaço (albedo)</li>
+                        <li>📊 70% é ABSORVIDA pela atmosfera e superfície</li>
+                    </ul>
+                    <img src="/public/images/IMG_3680.jpeg" alt="Balanço de Energia" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+                    
+                    <h3>🌡️ EFEITO ESTUFA</h3>
+                    <p>Processo onde gases atmosféricos retêm o calor da Terra:</p>
+                    <ul>
+                        <li>💨 Dióxido de Carbono (CO₂)</li>
+                        <li>💨 Metano (CH₄)</li>
+                        <li>💨 Óxido Nitroso (N₂O)</li>
+                    </ul>
+                    <img src="/public/images/IMG_3681.jpeg" alt="Efeito Estufa" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+                    
+                    <h3>🌤️ CAMADAS DA ATMOSFERA</h3>
+                    <ul>
+                        <li><strong>Troposfera (0-12 km):</strong> Onde vivemos, fenômenos meteorológicos</li>
+                        <li><strong>Estratosfera (12-50 km):</strong> Contém camada de ozônio</li>
+                        <li><strong>Mesosfera (50-85 km):</strong> Mais fria, meteoritos se queimam</li>
+                        <li><strong>Termosfera (85-500 km):</strong> Muito quente, auroras</li>
+                        <li><strong>Exosfera (>500 km):</strong> Transição para o espaço</li>
+                    </ul>
+                    
+                    <h3>💨 MASSAS DE AR</h3>
+                    <p>Grande volume de ar com características semelhantes de temperatura e umidade.</p>
+                    <p><strong>Frentes de Ar:</strong> Encontro de massas de ar diferentes</p>
+                    <ul>
+                        <li>🔵 Frente Fria: Ar frio avança</li>
+                        <li>🔴 Frente Quente: Ar quente avança</li>
+                    </ul>
+                    
+                    <h3>🌍 ZONAS TÉRMICAS</h3>
+                    <ul>
+                        <li><strong>Intertropical:</strong> Muito quente, entre os trópicos</li>
+                        <li><strong>Temperada:</strong> Estações bem definidas</li>
+                        <li><strong>Polar:</strong> Muito fria</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="quizzes" class="secao">
+                <div class="card">
+                    <h2>🎯 Quizzes (40 Perguntas)</h2>
+                    <div id="quizzes-container"></div>
+                </div>
+            </div>
+
+            <div id="vf" class="secao">
+                <div class="card">
+                    <h2>✅ Verdadeiro/Falso (40 Questões)</h2>
+                    <div id="vf-container"></div>
+                </div>
+            </div>
+
+            <div id="flashcards" class="secao">
+                <div class="card">
+                    <h2>🎴 Flashcards</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Clique para virar</p>
+                    <div id="flashcards-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal" onclick="fecharImageModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal" onclick="fecharImageModal()">&times;</span>
+            <img id="modalImage" src="" alt="" style="width: 100%; border-radius: 8px;">
+        </div>
+    </div>
+
+    <script>
+        // DADOS COMPLETOS
+        const quizzes = [
+            // TIPOS DE RELEVO
+            { pergunta: 'Qual é um tipo de relevo?', opcoes: ['Rocha', 'Planície', 'Água', 'Ar'], resposta: 1 },
+            { pergunta: 'Planaltos são terrenos:', opcoes: ['Planos e baixos', 'Elevados e planos', 'Muito altos', 'Baixos'], resposta: 1 },
+            { pergunta: 'Montanhas são:', opcoes: ['Planas', 'Baixas', 'Muito elevadas e acidentadas', 'Nível do mar'], resposta: 2 },
+            { pergunta: 'Depressões são:', opcoes: ['Elevadas', 'Baixas entre elevações', 'Planas', 'Acidentadas'], resposta: 1 },
+            
+            // AGENTES TRANSFORMADORES
+            { pergunta: 'Os agentes externos transformam de forma:', opcoes: ['Rápida', 'Lenta e contínua', 'Muito rápida', 'Nunca'], resposta: 1 },
+            { pergunta: 'Os agentes internos transformam de forma:', opcoes: ['Lenta', 'Violenta e rápida', 'Nunca', 'Muito lenta'], resposta: 1 },
+            { pergunta: 'Qual é agente externo?', opcoes: ['Vulcanismo', 'Chuva', 'Tectonismo', 'Magmatismo'], resposta: 1 },
+            { pergunta: 'Qual é agente interno?', opcoes: ['Vento', 'Gelo', 'Vulcanismo', 'Intemperismo'], resposta: 2 },
+            { pergunta: 'O vento forma:', opcoes: ['Vulcões', 'Dunas', 'Terremotos', 'Tsunamis'], resposta: 1 },
+            { pergunta: 'O mar modifica:', opcoes: ['Montanhas', 'Litoral', 'Deserto', 'Floresta'], resposta: 1 },
+            { pergunta: 'O intemperismo é:', opcoes: ['Agente interno', 'Agente externo', 'Tipo de rocha', 'Tipo de clima'], resposta: 1 },
+            { pergunta: 'Tectonismo causa:', opcoes: ['Chuva', 'Terremotos', 'Vento', 'Nuvens'], resposta: 1 },
+            
+            // BALANÇO DE ENERGIA
+            { pergunta: 'Qual % da radiação é refletida?', opcoes: ['70%', '30%', '50%', '10%'], resposta: 1 },
+            { pergunta: 'Qual % da radiação é absorvida?', opcoes: ['30%', '50%', '70%', '90%'], resposta: 2 },
+            { pergunta: 'O que é albedo?', opcoes: ['Gás', 'Capacidade de refletir radiação', 'Rocha', 'Clima'], resposta: 1 },
+            { pergunta: 'Qual superfície tem maior albedo?', opcoes: ['Oceano', 'Gelo', 'Floresta', 'Areia'], resposta: 1 },
+            { pergunta: 'A Terra emite:', opcoes: ['Luz visível', 'Radiação infravermelha', 'Raios X', 'Raios gama'], resposta: 1 },
+            { pergunta: 'Desequilíbrio energético causa:', opcoes: ['Chuva', 'Aquecimento global', 'Vento', 'Nuvens'], resposta: 1 },
+            
+            // EFEITO ESTUFA
+            { pergunta: 'O que retém calor na atmosfera?', opcoes: ['Nuvens', 'Gases de efeito estufa', 'Ozônio', 'Água'], resposta: 1 },
+            { pergunta: 'Principal gás de efeito estufa:', opcoes: ['Oxigênio', 'CO₂', 'Nitrogênio', 'Argônio'], resposta: 1 },
+            { pergunta: 'Metano vem de:', opcoes: ['Fábricas', 'Pecuária', 'Carros', 'Casas'], resposta: 1 },
+            { pergunta: 'CO₂ vem principalmente de:', opcoes: ['Oceanos', 'Combustíveis fósseis', 'Plantas', 'Animais'], resposta: 1 },
+            { pergunta: 'Efeito estufa causa:', opcoes: ['Frio', 'Aquecimento global', 'Chuva', 'Vento'], resposta: 1 },
+            { pergunta: 'O efeito estufa é:', opcoes: ['Prejudicial sempre', 'Natural mas intensificado', 'Inexistente', 'Bom'], resposta: 1 },
+            
+            // CAMADAS DA ATMOSFERA
+            { pergunta: 'Onde vivemos?', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Ozônio está em:', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Camada mais fria:', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 2 },
+            { pergunta: 'Camada mais quente:', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 3 },
+            { pergunta: 'Fenômenos meteorológicos em:', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Auroras em:', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 2 },
+            { pergunta: 'Meteoritos se queimam em:', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 1 },
+            { pergunta: 'Exosfera é transição para:', opcoes: ['Oceano', 'Terra', 'Espaço', 'Manto'], resposta: 2 },
+            
+            // MASSAS DE AR
+            { pergunta: 'Massa de ar é:', opcoes: ['Furacão', 'Grande volume de ar', 'Nuvem', 'Tornado'], resposta: 1 },
+            { pergunta: 'Frente de ar é:', opcoes: ['Vento', 'Encontro de massas', 'Nuvem', 'Tempestade'], resposta: 1 },
+            { pergunta: 'Frente fria:', opcoes: ['Ar quente', 'Ar frio avança', 'Sem movimento', 'Chuva'], resposta: 1 },
+            { pergunta: 'Frente quente:', opcoes: ['Ar frio', 'Ar quente avança', 'Sem movimento', 'Vento'], resposta: 1 },
+            { pergunta: 'Frentes causam:', opcoes: ['Paz', 'Mudanças de tempo', 'Nada', 'Frio'], resposta: 1 },
+            
+            // ZONAS TÉRMICAS
+            { pergunta: 'Quantas zonas térmicas?', opcoes: ['2', '3', '4', '5'], resposta: 1 },
+            { pergunta: 'Zona intertropical:', opcoes: ['Fria', 'Quente', 'Temperada', 'Variável'], resposta: 1 },
+            { pergunta: 'Zona polar:', opcoes: ['Quente', 'Temperada', 'Fria', 'Úmida'], resposta: 2 },
+            { pergunta: 'Zona temperada:', opcoes: ['Quente', 'Fria', 'Com estações', 'Igual'], resposta: 2 },
+            { pergunta: 'Tipos de clima:', opcoes: ['2', '3', '4', '5'], resposta: 1 }
+        ];
+
+        const questoesVF = [
+            { texto: 'Planícies são terrenos elevados.', resposta: false },
+            { texto: 'Planaltos são terrenos elevados e planos.', resposta: true },
+            { texto: 'Montanhas são muito altas e acidentadas.', resposta: true },
+            { texto: 'Depressões são terrenos elevados.', resposta: false },
+            { texto: 'Agentes externos transformam lentamente.', resposta: true },
+            { texto: 'Agentes internos transformam rapidamente.', resposta: true },
+            { texto: 'Chuva é agente externo.', resposta: true },
+            { texto: 'Vulcanismo é agente externo.', resposta: false },
+            { texto: 'Vento forma dunas.', resposta: true },
+            { texto: 'Mar modifica o litoral.', resposta: true },
+            { texto: 'Intemperismo é agente interno.', resposta: false },
+            { texto: 'Tectonismo causa terremotos.', resposta: true },
+            { texto: '30% da radiação é refletida.', resposta: true },
+            { texto: '70% da radiação é absorvida.', resposta: true },
+            { texto: 'Albedo é a capacidade de refletir radiação.', resposta: true },
+            { texto: 'Gelo tem menor albedo que oceano.', resposta: false },
+            { texto: 'Terra emite radiação infravermelha.', resposta: true },
+            { texto: 'Desequilíbrio energético causa aquecimento.', resposta: true },
+            { texto: 'Nuvens aumentam o albedo.', resposta: true },
+            { texto: 'Radiação solar é infravermelha.', resposta: false },
+            { texto: 'Gases de efeito estufa retêm calor.', resposta: true },
+            { texto: 'CO₂ é gás de efeito estufa.', resposta: true },
+            { texto: 'Metano vem da pecuária.', resposta: true },
+            { texto: 'Efeito estufa é totalmente prejudicial.', resposta: false },
+            { texto: 'Combustíveis fósseis liberam CO₂.', resposta: true },
+            { texto: 'Efeito estufa intensifica aquecimento.', resposta: true },
+            { texto: 'Óxido nitroso vem de fertilizantes.', resposta: true },
+            { texto: 'Efeito estufa não existe na natureza.', resposta: false },
+            { texto: 'Troposfera é onde vivemos.', resposta: true },
+            { texto: 'Estratosfera tem ozônio.', resposta: true },
+            { texto: 'Mesosfera é a mais quente.', resposta: false },
+            { texto: 'Termosfera tem temperatura alta.', resposta: true },
+            { texto: 'Auroras ocorrem na termosfera.', resposta: true },
+            { texto: 'Meteoritos se queimam na mesosfera.', resposta: true },
+            { texto: 'Exosfera é transição para o espaço.', resposta: true },
+            { texto: 'Fenômenos meteorológicos na estratosfera.', resposta: false },
+            { texto: 'Massa de ar é um furacão.', resposta: false },
+            { texto: 'Frente de ar é encontro de massas.', resposta: true },
+            { texto: 'Frente fria é ar frio avançando.', resposta: true },
+            { texto: 'Zona intertropical é muito quente.', resposta: true },
+            { texto: 'Zona polar é muito fria.', resposta: true },
+            { texto: 'Zona temperada tem estações.', resposta: true },
+            { texto: 'Existem 2 zonas térmicas.', resposta: false }
+        ];
+
+        const flashcards = [
+            { pergunta: 'O que são agentes externos?', resposta: 'Atuam na superfície, transformação lenta e contínua' },
+            { pergunta: 'O que são agentes internos?', resposta: 'Atuam no interior, transformação violenta e rápida' },
+            { pergunta: 'Balanço de energia é?', resposta: 'Equilíbrio entre radiação que entra e sai' },
+            { pergunta: 'O que é efeito estufa?', resposta: 'Gases retêm calor na atmosfera' },
+            { pergunta: 'Cite as 5 camadas da atmosfera', resposta: 'Troposfera, Estratosfera, Mesosfera, Termosfera, Exosfera' },
+            { pergunta: 'O que é massa de ar?', resposta: 'Grande volume de ar com características semelhantes' },
+            { pergunta: 'O que é frente de ar?', resposta: 'Encontro de duas massas de ar diferentes' },
+            { pergunta: 'Cite as 3 zonas térmicas', resposta: 'Intertropical, Temperada, Polar' }
+        ];
+
+        function mostrarSecao(secaoId) {
+            document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativo'));
+            document.getElementById(secaoId).classList.add('ativo');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('ativo'));
+            event.target.classList.add('ativo');
+            
+            if (secaoId === 'quizzes') carregarQuizzes();
+            if (secaoId === 'vf') carregarVF();
+            if (secaoId === 'flashcards') carregarFlashcards();
+        }
+
+        function carregarQuizzes() {
+            const container = document.getElementById('quizzes-container');
+            container.innerHTML = quizzes.map((q, i) => `
+                <div class="quiz-item">
+                    <p>Pergunta ${i+1}: ${q.pergunta}</p>
+                    <div class="quiz-options">
+                        ${q.opcoes.map((op, j) => `
+                            <button class="quiz-btn" onclick="verificarQuiz(${i}, ${j})">${String.fromCharCode(65+j)}) ${op}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function verificarQuiz(quizIndex, respostaIndex) {
+            const quiz = quizzes[quizIndex];
+            if (respostaIndex === quiz.resposta) {
+                alert('✅ Correto!');
+            } else {
+                alert(`❌ Errado! A resposta correta é: ${String.fromCharCode(65+quiz.resposta)}) ${quiz.opcoes[quiz.resposta]}`);
+            }
+        }
+
+        function carregarVF() {
+            const container = document.getElementById('vf-container');
+            container.innerHTML = questoesVF.map((q, i) => `
+                <div class="vf-item">
+                    <p>Questão ${i+1}: ${q.texto}</p>
+                    <div class="vf-buttons">
+                        <button class="vf-btn vf-true" onclick="mostrarRespostaVF(${i}, true)">✅ Verdadeiro</button>
+                        <button class="vf-btn vf-false" onclick="mostrarRespostaVF(${i}, false)">❌ Falso</button>
+                    </div>
+                    <div class="resposta-vf" id="resposta-${i}">
+                        Resposta: ${q.resposta ? 'Verdadeiro ✅' : 'Falso ❌'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function mostrarRespostaVF(index, resposta) {
+            const respostaElement = document.getElementById(`resposta-${index}`);
+            respostaElement.style.display = 'block';
+        }
+
+        function carregarFlashcards() {
+            const container = document.getElementById('flashcards-container');
+            container.innerHTML = flashcards.map((fc, i) => `
+                <div class="flashcard" onclick="virarFlashcard(this, ${i})">
+                    <div>${fc.pergunta}</div>
+                </div>
+            `).join('');
+        }
+
+        function virarFlashcard(element, index) {
+            const fc = flashcards[index];
+            if (element.classList.contains('virado')) {
+                element.innerHTML = `<div>${fc.pergunta}</div>`;
+                element.classList.remove('virado');
+            } else {
+                element.innerHTML = `<div>${fc.resposta}</div>`;
+                element.classList.add('virado');
+            }
+        }
+
+        function abrirImageModal(src) {
+            document.getElementById('imageModal').classList.add('ativo');
+            document.getElementById('modalImage').src = src;
+        }
+
+        function fecharImageModal() {
+            document.getElementById('imageModal').classList.remove('ativo');
+        }
+
+        // Carregar quizzes ao iniciar
+        carregarQuizzes();
+    </script>
+</body>
+</html>

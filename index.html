@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>📚 Geografia 6º Ano - Estudo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; color: #333; }
+        
+        .app-container { display: flex; flex-direction: column; height: 100vh; }
+        
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .header p { font-size: 0.9rem; opacity: 0.9; }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+            background: white;
+            overflow-x: auto;
+            border-bottom: 2px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .nav-tabs button {
+            padding: 10px 15px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s;
+            color: #666;
+        }
+        .nav-tabs button:hover { background: #e0e0e0; }
+        .nav-tabs button.active { 
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .content { 
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .card h2 { 
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        .card h3 { 
+            color: #764ba2;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .card p { line-height: 1.7; margin-bottom: 10px; }
+        .card ul, .card ol { margin-left: 20px; margin-bottom: 10px; }
+        .card li { margin-bottom: 8px; }
+        
+        .quiz-card {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        .quiz-card p { margin-bottom: 10px; font-weight: 600; }
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .quiz-btn {
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .quiz-btn:hover { background: #764ba2; }
+        
+        .flashcard {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #333;
+        }
+        .flashcard:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .flashcard.flipped { 
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .vf-card {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        .vf-card p { margin-bottom: 10px; font-weight: 600; }
+        .vf-buttons { display: flex; gap: 8px; }
+        .vf-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .vf-true { background: #27ae60; color: white; }
+        .vf-false { background: #e74c3c; color: white; }
+        .vf-true:hover { background: #229954; }
+        .vf-false:hover { background: #c0392b; }
+        
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        .image-grid img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .image-grid img:hover { transform: scale(1.05); }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            animation: fadeIn 0.3s;
+        }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #667eea;
+        }
+        .close-modal:hover { color: #764ba2; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📚 Geografia 6º Ano</h1>
+            <p>Estude para a prova de recuperação!</p>
+        </div>
+
+        <!-- NAVEGAÇÃO -->
+        <div class="nav-tabs">
+            <button class="active" onclick="mudarSecao('resumo')">📖 Resumo</button>
+            <button onclick="mudarSecao('quizzes')">🎯 Quizzes</button>
+            <button onclick="mudarSecao('vf')">✅ V/F</button>
+            <button onclick="mudarSecao('flashcards')">🎴 Flashcards</button>
+            <button onclick="mudarSecao('imagens')">📸 Imagens</button>
+        </div>
+
+        <!-- CONTEÚDO -->
+        <div class="content">
+            <!-- RESUMO -->
+            <div id="resumo" class="section active">
+                <div class="card">
+                    <h2>📖 Resumo Completo de Geografia</h2>
+                    
+                    <h3>🌊 AGENTES EXTERNOS DO RELEVO</h3>
+                    <p>Os agentes externos (ou exógenos) atuam na SUPERFÍCIE da Terra e transformam o relevo de forma LENTA e CONTÍNUA.</p>
+                    <p><strong>Principais Agentes Externos:</strong></p>
+                    <ul>
+                        <li><strong>💧 CHUVA E ESCOAMENTO:</strong> A água da chuva escoa pela superfície, causando erosão e transporte de sedimentos. Forma vales, ravinas e cânions.</li>
+                        <li><strong>🌊 AÇÃO DO MAR (MARINHA):</strong> As ondas e correntes marinhas modificam o litoral, formando praias, falésias e recortes costeiros.</li>
+                        <li><strong>💨 VENTO:</strong> Transporta partículas de rocha e areia, formando dunas e causando erosão eólica.</li>
+                        <li><strong>❄️ GELO:</strong> Congela a água nas fraturas das rochas, causando desintegração e fragmentação.</li>
+                        <li><strong>🪨 INTEMPERISMO:</strong> Decomposição química e física das rochas pela ação de água, oxigênio e ácidos.</li>
+                    </ul>
+
+                    <h3>🌋 AGENTES INTERNOS DO RELEVO</h3>
+                    <p>Os agentes internos (ou endógenos) atuam no INTERIOR da Terra e transformam o relevo de forma VIOLENTA e RÁPIDA.</p>
+                    <p><strong>Principais Agentes Internos:</strong></p>
+                    <ul>
+                        <li><strong>🌋 VULCANISMO:</strong> Expele lava, cinzas e gases do interior da Terra. Forma vulcões, caldeiras e novos relevos.</li>
+                        <li><strong>📍 TECTONISMO:</strong> Movimento das placas tectônicas que causa terremotos, tsunamis e formação de montanhas.</li>
+                        <li><strong>🔥 MAGMATISMO:</strong> Formação de rochas magmáticas no interior da Terra.</li>
+                    </ul>
+
+                    <h3>☀️ BALANÇO DE ENERGIA DA TERRA</h3>
+                    <p>O BALANÇO DE ENERGIA é o equilíbrio entre a radiação solar que entra e a radiação que sai do planeta.</p>
+                    <p><strong>Como Funciona:</strong></p>
+                    <ol>
+                        <li>☀️ RADIAÇÃO SOLAR INCIDENTE: O Sol emite radiação que chega à Terra</li>
+                        <li>🔄 REFLEXÃO (ALBEDO): Parte da radiação é refletida de volta ao espaço pela atmosfera, nuvens e superfície</li>
+                        <li>🌍 ABSORÇÃO: A atmosfera e a superfície terrestre absorvem parte da radiação</li>
+                        <li>🔥 RADIAÇÃO TERRESTRE: A Terra aquecida emite radiação infravermelha (calor)</li>
+                        <li>⚖️ EQUILÍBRIO: Quando a energia que entra = energia que sai, a temperatura é estável</li>
+                    </ol>
+                    <p><strong>DISTRIBUIÇÃO DA RADIAÇÃO SOLAR:</strong></p>
+                    <ul>
+                        <li>📊 30% é REFLETIDA de volta ao espaço (pelo albedo - nuvens, gelo, superfícies claras)</li>
+                        <li>📊 70% é ABSORVIDA pela atmosfera e superfície terrestre</li>
+                        <li>🌍 Essa energia absorvida aquece o planeta</li>
+                    </ul>
+                    <img src="/public/images/IMG_3680.jpeg" alt="Balanço de Energia" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+
+                    <h3>🌡️ EFEITO ESTUFA E AQUECIMENTO GLOBAL</h3>
+                    <p>O EFEITO ESTUFA é um processo natural onde gases atmosféricos retêm o calor da Terra.</p>
+                    <p><strong>Processo do Efeito Estufa:</strong></p>
+                    <ol>
+                        <li>☀️ Radiação solar entra na atmosfera</li>
+                        <li>🌍 A superfície absorve e aquece</li>
+                        <li>🔥 A Terra emite radiação infravermelha (calor)</li>
+                        <li>🛡️ GASES DE EFEITO ESTUFA RETÊM ESSE CALOR na atmosfera</li>
+                        <li>🌡️ Resultado: AQUECIMENTO DA TERRA</li>
+                    </ol>
+                    <p><strong>Gases de Efeito Estufa:</strong></p>
+                    <ul>
+                        <li>💨 Dióxido de Carbono (CO₂) - Queimação de combustíveis fósseis</li>
+                        <li>💨 Metano (CH₄) - Pecuária e decomposição de lixo</li>
+                        <li>💨 Óxido Nitroso (N₂O) - Fertilizantes agrícolas</li>
+                    </ul>
+                    <img src="/public/images/IMG_3681.jpeg" alt="Efeito Estufa" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+
+                    <h3>☀️ RADIAÇÃO SOLAR</h3>
+                    <p>A radiação solar é a energia que o Sol emite e que chega à Terra.</p>
+                    <p><strong>Distribuição da Radiação Solar:</strong></p>
+                    <ul>
+                        <li>📊 30% é REFLETIDA de volta ao espaço</li>
+                        <li>📊 70% é ABSORVIDA pela atmosfera e superfície terrestre</li>
+                        <li>🌍 Essa energia absorvida aquece o planeta</li>
+                    </ul>
+                    <img src="/public/images/IMG_3679.jpeg" alt="Radiação Solar" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+
+                    <h3>🌤️ CAMADAS DA ATMOSFERA</h3>
+                    <p>A atmosfera é dividida em 5 camadas principais, cada uma com características diferentes.</p>
+                    <ul>
+                        <li><strong>1️⃣ TROPOSFERA (0-12 km):</strong> A camada mais próxima da Terra onde VIVEMOS. Contém 80% da massa atmosférica. Aqui ocorrem os fenômenos meteorológicos: chuva, vento, nuvens, tempestades</li>
+                        <li><strong>2️⃣ ESTRATOSFERA (12-50 km):</strong> Contém a CAMADA DE OZÔNIO que protege a Terra dos raios ultravioleta. A temperatura aumenta com a altitude nesta camada</li>
+                        <li><strong>3️⃣ MESOSFERA (50-85 km):</strong> É a camada MAIS FRIA da atmosfera (até -90°C). Aqui os meteoritos se queimam ao entrar na atmosfera</li>
+                        <li><strong>4️⃣ TERMOSFERA (85-500 km):</strong> Tem temperatura MUITO ALTA (até 1500°C). Aqui ocorrem as auroras boreais e austrais</li>
+                        <li><strong>5️⃣ EXOSFERA (acima de 500 km):</strong> A camada mais EXTERNA da atmosfera. É a transição entre a atmosfera e o espaço sideral</li>
+                    </ul>
+
+                    <h3>💨 MASSAS DE AR E FRENTES</h3>
+                    <p>Uma MASSA DE AR é um grande volume de ar com características semelhantes de temperatura e umidade.</p>
+                    <p><strong>Frentes de Ar:</strong> Quando duas massas de ar com características diferentes se encontram, formam uma FRENTE DE AR.</p>
+                    <ul>
+                        <li>🔵 FRENTE FRIA: Massa de ar frio avança sobre massa de ar quente</li>
+                        <li>🔴 FRENTE QUENTE: Massa de ar quente avança sobre massa de ar frio</li>
+                        <li>⛈️ Isso causa mudanças bruscas de tempo: chuvas, tempestades, quedas de temperatura</li>
+                    </ul>
+                    <img src="/public/images/IMG_3677.jpeg" alt="Massas de Ar" class="imagem-resumo" onclick="abrirImageModal(this.src)">
+
+                    <h3>🌡️ EFEITO ESTUFA E AQUECIMENTO GLOBAL</h3>
+                    <p>O EFEITO ESTUFA é um processo natural onde gases atmosféricos retêm o calor da Terra.</p>
+                    <p><strong>Processo do Efeito Estufa:</strong></p>
+                    <ol>
+                        <li>☀️ Radiação solar entra na atmosfera</li>
+                        <li>🌍 A superfície absorve e aquece</li>
+                        <li>🔥 A Terra emite radiação infravermelha (calor)</li>
+                        <li>🛡️ GASES DE EFEITO ESTUFA RETÊM ESSE CALOR na atmosfera</li>
+                        <li>🌡️ Resultado: AQUECIMENTO DA TERRA</li>
+                    </ol>
+                    <p><strong>Gases de Efeito Estufa:</strong></p>
+                    <ul>
+                        <li>💨 Dióxido de Carbono (CO₂) - Queimação de combustíveis fósseis</li>
+                        <li>💨 Metano (CH₄) - Pecuária e decomposição de lixo</li>
+                        <li>💨 Óxido Nitroso (N₂O) - Fertilizantes agrícolas</li>
+                    </ul>
+
+                    <h3>☀️ RADIAÇÃO SOLAR</h3>
+                    <p>A radiação solar é a energia que o Sol emite e que chega à Terra.</p>
+                    <p><strong>Distribuição da Radiação Solar:</strong></p>
+                    <ul>
+                        <li>📊 30% é REFLETIDA de volta ao espaço</li>
+                        <li>📊 70% é ABSORVIDA pela atmosfera e superfície terrestre</li>
+                        <li>🌍 Essa energia absorvida aquece o planeta</li>
+                    </ul>
+
+                    <h3>🌤️ CAMADAS DA ATMOSFERA</h3>
+                    <p>A atmosfera é dividida em 5 camadas principais, cada uma com características diferentes.</p>
+                    <ul>
+                        <li><strong>1️⃣ TROPOSFERA (0-12 km):</strong> A camada mais próxima da Terra onde VIVEMOS. Contém 80% da massa atmosférica. Aqui ocorrem os fenômenos meteorológicos: chuva, vento, nuvens, tempestades</li>
+                        <li><strong>2️⃣ ESTRATOSFERA (12-50 km):</strong> Contém a CAMADA DE OZÔNIO que protege a Terra dos raios ultravioleta. A temperatura aumenta com a altitude nesta camada</li>
+                        <li><strong>3️⃣ MESOSFERA (50-85 km):</strong> É a camada MAIS FRIA da atmosfera (até -90°C). Aqui os meteoritos se queimam ao entrar na atmosfera</li>
+                        <li><strong>4️⃣ TERMOSFERA (85-500 km):</strong> Tem temperatura MUITO ALTA (até 1500°C). Aqui ocorrem as auroras boreais e austrais</li>
+                        <li><strong>5️⃣ EXOSFERA (acima de 500 km):</strong> A camada mais EXTERNA da atmosfera. É a transição entre a atmosfera e o espaço sideral</li>
+                    </ul>
+
+                    <h3>💨 MASSAS DE AR E FRENTES</h3>
+                    <p>Uma MASSA DE AR é um grande volume de ar com características semelhantes de temperatura e umidade.</p>
+                    <p><strong>Frentes de Ar:</strong> Quando duas massas de ar com características diferentes se encontram, formam uma FRENTE DE AR.</p>
+                    <ul>
+                        <li>🔵 FRENTE FRIA: Massa de ar frio avança sobre massa de ar quente</li>
+                        <li>🔴 FRENTE QUENTE: Massa de ar quente avança sobre massa de ar frio</li>
+                        <li>⛈️ Isso causa mudanças bruscas de tempo: chuvas, tempestades, quedas de temperatura</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- QUIZZES -->
+            <div id="quizzes" class="section">
+                <div class="card">
+                    <h2>🎯 Quizzes</h2>
+                    <div id="quizzes-container"></div>
+                </div>
+            </div>
+
+            <!-- VERDADEIRO/FALSO -->
+            <div id="vf" class="section">
+                <div class="card">
+                    <h2>✅ Questões Verdadeiro/Falso</h2>
+                    <div id="vf-container"></div>
+                </div>
+            </div>
+
+            <!-- FLASHCARDS -->
+            <div id="flashcards" class="section">
+                <div class="card">
+                    <h2>🎴 Flashcards</h2>
+                    <p style="margin-bottom: 15px; color: #666; font-size: 0.9rem;">Clique nos cards para virar e ver a resposta</p>
+                    <div id="flashcards-container"></div>
+                </div>
+            </div>
+
+            <!-- IMAGENS -->
+            <div id="imagens" class="section">
+                <div class="card">
+                    <h2>📸 Imagens do Livro</h2>
+                    <div class="image-grid" id="imagens-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA IMAGENS -->
+    <div id="imageModal" class="modal" onclick="fecharImageModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal" onclick="fecharImageModal()">&times;</span>
+            <img id="modalImage" src="" alt="" style="width: 100%; border-radius: 8px;">
+        </div>
+    </div>
+
+    <script>
+        // DADOS COMPLETOS
+        const quizzes = [
+            // AGENTES DO RELEVO
+            { pergunta: 'Os agentes externos transformam o relevo de forma:', opcoes: ['Violenta e rápida', 'Lenta e contínua', 'Muito rápida', 'Não transformam'], resposta: 1 },
+            { pergunta: 'Os agentes internos atuam no:', opcoes: ['Superfície da Terra', 'Interior da Terra', 'Oceano', 'Atmosfera'], resposta: 1 },
+            { pergunta: 'Qual é um agente externo?', opcoes: ['Vulcanismo', 'Tectonismo', 'Chuva', 'Magmatismo'], resposta: 2 },
+            { pergunta: 'Qual é um agente interno?', opcoes: ['Vento', 'Gelo', 'Intemperismo', 'Vulcanismo'], resposta: 3 },
+            { pergunta: 'O intemperismo é:', opcoes: ['Agente interno', 'Agente externo', 'Tipo de rocha', 'Tipo de clima'], resposta: 1 },
+            { pergunta: 'Qual agente externo forma dunas?', opcoes: ['Chuva', 'Vento', 'Gelo', 'Mar'], resposta: 1 },
+            { pergunta: 'Qual agente externo modifica o litoral?', opcoes: ['Vento', 'Gelo', 'Mar', 'Chuva'], resposta: 2 },
+            { pergunta: 'O vulcanismo é um agente:', opcoes: ['Externo', 'Interno', 'Climático', 'Atmosférico'], resposta: 1 },
+            
+            // BALANÇO DE ENERGIA
+            { pergunta: 'Qual percentual da radiação solar é refletida?', opcoes: ['70%', '50%', '30%', '10%'], resposta: 2 },
+            { pergunta: 'Qual percentual da radiação solar é absorvida?', opcoes: ['30%', '50%', '70%', '90%'], resposta: 2 },
+            { pergunta: 'O que é o Balanço de Energia?', opcoes: ['Temperatura do planeta', 'Equilíbrio entre radiação que entra e sai', 'Movimento das placas', 'Ciclo da água'], resposta: 1 },
+            { pergunta: 'O que é Albedo?', opcoes: ['Tipo de rocha', 'Capacidade de refletir radiação solar', 'Gás atmosférico', 'Camada da atmosfera'], resposta: 1 },
+            { pergunta: 'Qual superfície tem maior albedo?', opcoes: ['Oceano', 'Gelo e nuvens', 'Floresta', 'Areia do deserto'], resposta: 1 },
+            { pergunta: 'Quando o balanço de energia é alterado, ocorre:', opcoes: ['Chuva', 'Aquecimento ou resfriamento do planeta', 'Terremotos', 'Vulcões'], resposta: 1 },
+            { pergunta: 'A radiação infravermelha é emitida por:', opcoes: ['O Sol', 'A Terra aquecida', 'As nuvens', 'Os vulcões'], resposta: 1 },
+            { pergunta: 'Qual é a principal consequência do desequilíbrio energético?', opcoes: ['Chuvas ácidas', 'Aquecimento global', 'Terremotos', 'Tsunamis'], resposta: 1 },
+            { pergunta: 'O balanço de energia está em equilíbrio quando:', opcoes: ['Só há chuva', 'Energia que entra = energia que sai', 'Há vulcões', 'Há terremotos'], resposta: 1 },
+            
+            // EFEITO ESTUFA
+            { pergunta: 'O que retém o calor na atmosfera?', opcoes: ['Nuvens', 'Gases de efeito estufa', 'Ozônio', 'Água'], resposta: 1 },
+            { pergunta: 'Qual gás é principal causador do efeito estufa?', opcoes: ['Oxigênio', 'Nitrogênio', 'Dióxido de Carbono', 'Argônio'], resposta: 2 },
+            { pergunta: 'O efeito estufa é causado principalmente por:', opcoes: ['Vulcões', 'Queimação de combustíveis fósseis', 'Chuva', 'Vento'], resposta: 1 },
+            { pergunta: 'Qual gás é liberado pela pecuária?', opcoes: ['CO₂', 'Metano', 'Ozônio', 'Nitrogênio'], resposta: 1 },
+            { pergunta: 'O efeito estufa é:', opcoes: ['Prejudicial sempre', 'Natural, mas intensificado pela ação humana', 'Causado apenas por vulcões', 'Inexistente'], resposta: 1 },
+            { pergunta: 'Qual é a consequência do efeito estufa?', opcoes: ['Resfriamento global', 'Aquecimento global', 'Mais chuva', 'Menos vento'], resposta: 1 },
+            { pergunta: 'O dióxido de carbono vem principalmente de:', opcoes: ['Oceanos', 'Florestas', 'Queimação de combustíveis fósseis', 'Chuva'], resposta: 2 },
+            { pergunta: 'O metano é liberado por:', opcoes: ['Fábricas', 'Pecuária e lixo', 'Chuva', 'Vento'], resposta: 1 },
+            
+            // CAMADAS DA ATMOSFERA
+            { pergunta: 'Qual é a camada mais próxima da Terra?', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Qual camada contém a camada de ozônio?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Qual é a camada mais fria?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 2 },
+            { pergunta: 'Qual é a camada mais quente?', opcoes: ['Troposfera', 'Estratosfera', 'Mesosfera', 'Termosfera'], resposta: 3 },
+            { pergunta: 'Onde ocorrem fenômenos meteorológicos?', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+            { pergunta: 'Qual camada tem auroras boreais?', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 2 },
+            { pergunta: 'Qual camada os meteoritos se queimam?', opcoes: ['Estratosfera', 'Mesosfera', 'Termosfera', 'Exosfera'], resposta: 1 },
+            { pergunta: 'A Exosfera é a transição para:', opcoes: ['Oceano', 'Continente', 'Espaço sideral', 'Manto terrestre'], resposta: 2 },
+            
+            // MASSAS DE AR
+            { pergunta: 'O que é uma massa de ar?', opcoes: ['Um furacão', 'Grande volume de ar com características semelhantes', 'Uma nuvem', 'Um tornado'], resposta: 1 },
+            { pergunta: 'O que é uma frente de ar?', opcoes: ['Vento forte', 'Encontro de massas de ar', 'Nuvem', 'Tempestade'], resposta: 1 },
+            { pergunta: 'Frente fria é quando:', opcoes: ['Ar quente avança', 'Ar frio avança sobre ar quente', 'Não há movimento', 'Há chuva'], resposta: 1 },
+            { pergunta: 'Frente quente é quando:', opcoes: ['Ar frio avança', 'Ar quente avança sobre ar frio', 'Não há movimento', 'Há vento'], resposta: 1 },
+            { pergunta: 'As frentes de ar causam:', opcoes: ['Paz', 'Mudanças bruscas de tempo', 'Nada', 'Apenas frio'], resposta: 1 },
+            
+            // TIPOS DE CLIMA
+            { pergunta: 'Quantas zonas climáticas principais existem?', opcoes: ['2', '3', '4', '5'], resposta: 1 },
+            { pergunta: 'A zona intertropical é:', opcoes: ['Muito fria', 'Muito quente', 'Temperada', 'Variável'], resposta: 1 },
+            { pergunta: 'A zona polar é:', opcoes: ['Muito quente', 'Temperada', 'Muito fria', 'Úmida'], resposta: 2 },
+            { pergunta: 'A zona temperada é:', opcoes: ['Muito quente', 'Muito fria', 'Com estações bem definidas', 'Sempre igual'], resposta: 2 }
+        ];
+
+        const questoesVF = [
+            { texto: 'Os agentes externos transformam o relevo de forma lenta e contínua.', resposta: true },
+            { texto: 'Os agentes internos atuam na superfície da Terra.', resposta: false },
+            { texto: 'O vulcanismo é um agente endógeno.', resposta: true },
+            { texto: 'A chuva é um agente endógeno.', resposta: false },
+            { texto: '30% da radiação solar é refletida de volta ao espaço.', resposta: true },
+            { texto: '70% da radiação solar é absorvida pela Terra.', resposta: true },
+            { texto: 'O efeito estufa é causado principalmente pelo ozônio.', resposta: false },
+            { texto: 'A troposfera é a camada onde vivemos.', resposta: true },
+            { texto: 'A estratosfera contém a camada de ozônio.', resposta: true },
+            { texto: 'A mesosfera é a camada mais quente da atmosfera.', resposta: false },
+            { texto: 'A termosfera tem temperatura muito alta.', resposta: true },
+            { texto: 'A exosfera é a transição entre a atmosfera e o espaço.', resposta: true },
+            { texto: 'Uma massa de ar é um pequeno volume de ar.', resposta: false },
+            { texto: 'As frentes de ar causam mudanças bruscas de tempo.', resposta: true },
+            { texto: 'O vento forma dunas no deserto.', resposta: true },
+            { texto: 'O mar modifica o litoral.', resposta: true },
+            { texto: 'O intemperismo é um agente interno.', resposta: false },
+            { texto: 'As auroras boreais ocorrem na termosfera.', resposta: true },
+            { texto: 'Os meteoritos se queimam na mesosfera.', resposta: true },
+            { texto: 'O dióxido de carbono é um gás de efeito estufa.', resposta: true },
+            { texto: 'O intemperismo é um agente interno.', resposta: false },
+            { texto: 'O tectonismo causa terremotos e tsunamis.', resposta: true },
+            { texto: 'O balanço de energia é o equilíbrio entre radiação que entra e sai.', resposta: true },
+            { texto: 'O albedo é a capacidade de uma superfície refletir radiação solar.', resposta: true },
+            { texto: 'O gelo tem menor albedo que o oceano.', resposta: false },
+            { texto: 'A Terra emite radiação infravermelha.', resposta: true },
+            { texto: 'O desequilíbrio energético causa aquecimento global.', resposta: true },
+            { texto: 'Nuvens aumentam o albedo do planeta.', resposta: true },
+            { texto: 'A radiação solar infravermelha é refletida pela atmosfera.', resposta: false },
+            { texto: 'O metano é liberado pela pecuária.', resposta: true },
+            { texto: 'O efeito estufa é totalmente prejudicial.', resposta: false },
+            { texto: 'A queimação de combustíveis fósseis libera CO2.', resposta: true },
+            { texto: 'O efeito estufa intensifica o aquecimento global.', resposta: true },
+            { texto: 'O óxido nitroso vem dos fertilizantes agrícolas.', resposta: true },
+            { texto: 'O efeito estufa não existe na natureza.', resposta: false },
+            { texto: 'Gases de efeito estufa retêm calor na atmosfera.', resposta: true },
+            { texto: 'A mesosfera é a camada mais quente da atmosfera.', resposta: false },
+            { texto: 'Fenômenos meteorológicos ocorrem na estratosfera.', resposta: false },
+            { texto: 'Uma massa de ar é um pequeno volume de ar.', resposta: false },
+            { texto: 'Frente fria é quando ar frio avança sobre ar quente.', resposta: true },
+            { texto: 'Frente quente é quando ar quente avança sobre ar frio.', resposta: true },
+            { texto: 'Massas de ar têm características semelhantes de temperatura e umidade.', resposta: true },
+            { texto: 'A zona intertropical é muito quente.', resposta: true },
+            { texto: 'A zona polar é muito fria.', resposta: true },
+            { texto: 'A zona temperada tem estações bem definidas.', resposta: true },
+            { texto: 'Existem apenas 2 zonas climáticas principais.', resposta: false }
+        ];
+
+        const flashcards = [
+            { pergunta: 'O que são agentes externos?', resposta: 'Agentes que atuam na superfície e transformam o relevo de forma lenta e contínua' },
+            { pergunta: 'O que são agentes internos?', resposta: 'Agentes que atuam no interior e transformam o relevo de forma violenta e rápida' },
+            { pergunta: 'Como funciona o balanço de energia?', resposta: '30% refletida + 70% absorvida = Equilíbrio térmico' },
+            { pergunta: 'O que é efeito estufa?', resposta: 'Gases atmosféricos retêm o calor da Terra' },
+            { pergunta: 'Cite as 5 camadas da atmosfera', resposta: 'Troposfera, Estratosfera, Mesosfera, Termosfera, Exosfera' },
+            { pergunta: 'Qual camada tem ozônio?', resposta: 'Estratosfera' },
+            { pergunta: 'O que é uma massa de ar?', resposta: 'Grande volume de ar com características semelhantes' },
+            { pergunta: 'O que é uma frente de ar?', resposta: 'Encontro de duas massas de ar diferentes' }
+        ];
+
+        const imagens = [
+            '/public/images/IMG_3676.jpeg',
+            '/public/images/IMG_3677.jpeg',
+            '/public/images/IMG_3678.jpeg',
+            '/public/images/IMG_3679.jpeg',
+            '/public/images/IMG_3680.jpeg',
+            '/public/images/IMG_3681.jpeg',
+            '/public/images/IMG_3682.jpeg',
+            '/public/images/IMG_3683.jpeg',
+            '/public/images/IMG_3684.jpeg',
+            '/public/images/IMG_3685.jpeg',
+            '/public/images/IMG_3686.jpeg',
+            '/public/images/IMG_3687.jpeg',
+            '/public/images/IMG_3688.jpeg',
+            '/public/images/IMG_3689.jpeg',
+            '/public/images/IMG_3690.jpeg',
+            '/public/images/IMG_3691.jpeg'
+        ];
+
+        // FUNÇÕES
+        function mudarSecao(secaoId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(secaoId).classList.add('active');
+            document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function carregarQuizzes() {
+            const container = document.getElementById('quizzes-container');
+            container.innerHTML = quizzes.map((q, i) => `
+                <div class="quiz-card">
+                    <p>Pergunta ${i+1}: ${q.pergunta}</p>
+                    <div class="quiz-options">
+                        ${q.opcoes.map((op, j) => `
+                            <button class="quiz-btn" onclick="verificarQuiz(${i}, ${j})">${String.fromCharCode(65+j)}) ${op}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function verificarQuiz(quizIndex, respostaIndex) {
+            const quiz = quizzes[quizIndex];
+            if (respostaIndex === quiz.resposta) {
+                alert('✅ Correto!');
+            } else {
+                alert(`❌ Errado! A resposta correta é: ${String.fromCharCode(65+quiz.resposta)}) ${quiz.opcoes[quiz.resposta]}`);
+            }
+        }
+
+        function carregarVF() {
+            const container = document.getElementById('vf-container');
+            container.innerHTML = questoesVF.map((q, i) => `
+                <div class="vf-card">
+                    <p>Questão ${i+1}: ${q.texto}</p>
+                    <div class="vf-buttons">
+                        <button class="vf-btn vf-true" onclick="verificarVF(${i}, true)">✅ Verdadeiro</button>
+                        <button class="vf-btn vf-false" onclick="verificarVF(${i}, false)">❌ Falso</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function verificarVF(index, resposta) {
+            const questao = questoesVF[index];
+            if (resposta === questao.resposta) {
+                alert('✅ Correto!');
+            } else {
+                alert(`❌ Errado! A resposta correta é: ${questao.resposta ? 'Verdadeiro' : 'Falso'}`);
+            }
+        }
+
+        function carregarFlashcards() {
+            const container = document.getElementById('flashcards-container');
+            container.innerHTML = flashcards.map((fc, i) => `
+                <div class="flashcard" onclick="virarFlashcard(this, ${i})">
+                    <div>${fc.pergunta}</div>
+                </div>
+            `).join('');
+        }
+
+        function virarFlashcard(element, index) {
+            const fc = flashcards[index];
+            if (element.classList.contains('flipped')) {
+                element.innerHTML = `<div>${fc.pergunta}</div>`;
+                element.classList.remove('flipped');
+            } else {
+                element.innerHTML = `<div>${fc.resposta}</div>`;
+                element.classList.add('flipped');
+            }
+        }
+
+        function carregarImagens() {
+            const container = document.getElementById('imagens-container');
+            container.innerHTML = imagens.map(img => `
+                <img src="${img}" alt="Imagem do livro" onclick="abrirImageModal('${img}')">
+            `).join('');
+        }
+
+        function abrirImageModal(src) {
+            document.getElementById('imageModal').classList.add('active');
+            document.getElementById('modalImage').src = src;
+        }
+
+        function fecharImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        // INICIALIZAR
+        window.addEventListener('load', () => {
+            carregarQuizzes();
+            carregarVF();
+            carregarFlashcards();
+            carregarImagens();
+        });
+    </script>
+</body>
+</html>

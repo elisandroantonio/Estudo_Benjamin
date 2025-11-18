@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>📚 Plataforma de Estudos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .header p { font-size: 0.9rem; opacity: 0.9; }
+        
+        .disciplinas-selector {
+            background: white;
+            padding: 12px;
+            border-bottom: 2px solid #667eea;
+            overflow-x: auto;
+            display: flex;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .disciplina-btn {
+            padding: 10px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: all 0.3s;
+            color: #666;
+        }
+        
+        .disciplina-btn:hover { background: #e0e0e0; }
+        
+        .disciplina-btn.ativa {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+            background: white;
+            overflow-x: auto;
+            border-bottom: 2px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .nav-btn {
+            padding: 10px 15px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s;
+            color: #666;
+        }
+        
+        .nav-btn:hover { background: #e0e0e0; }
+        
+        .nav-btn.ativo {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .secao { display: none; }
+        .secao.ativa { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-top: 4px solid #667eea;
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .card h3 {
+            color: #764ba2;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .card p { line-height: 1.7; margin-bottom: 10px; }
+        .card ul { margin-left: 20px; margin-bottom: 10px; }
+        .card li { margin-bottom: 8px; }
+        
+        .imagem-resumo {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        
+        .quiz-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .quiz-item p { margin-bottom: 10px; font-weight: 600; }
+        
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        
+        .quiz-btn {
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .quiz-btn:hover { background: #764ba2; }
+        
+        .flashcard {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .flashcard:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
+        .flashcard.virado {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .vf-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .vf-item p { margin-bottom: 10px; font-weight: 600; }
+        
+        .vf-buttons { display: flex; gap: 8px; }
+        
+        .vf-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .vf-true { background: #27ae60; color: white; }
+        .vf-false { background: #e74c3c; color: white; }
+        
+        .vf-true:hover { background: #229954; }
+        .vf-false:hover { background: #c0392b; }
+        
+        .resposta-vf {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 4px;
+            color: #27ae60;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        
+        .image-gallery img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        
+        .modal.ativo { display: flex; align-items: center; justify-content: center; }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #667eea;
+        }
+        
+        .close-modal:hover { color: #764ba2; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📚 Plataforma de Estudos</h1>
+            <p>Prepare-se para as provas!</p>
+        </div>
+
+        <!-- SELETOR DE DISCIPLINAS -->
+        <div class="disciplinas-selector" id="disciplinasSelector"></div>
+
+        <!-- NAVEGAÇÃO -->
+        <div class="nav-tabs" id="navTabs"></div>
+
+        <!-- CONTEÚDO -->
+        <div class="content" id="contentArea"></div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="imageModal" class="modal" onclick="fecharImageModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal" onclick="fecharImageModal()">&times;</span>
+            <img id="modalImage" src="" alt="" style="width: 100%; border-radius: 8px;">
+        </div>
+    </div>
+
+    <script>
+        // DADOS DAS DISCIPLINAS
+        const disciplinas = {
+            geografia: {
+                nome: "📍 Geografia",
+                conteudos: [
+                    {
+                        titulo: "Agentes Externos do Relevo",
+                        texto: "Os agentes externos (ou exógenos) atuam na SUPERFÍCIE da Terra e transformam o relevo de forma LENTA e CONTÍNUA.\n\nPrincipais Agentes Externos:\n• Chuva e Escoamento\n• Ação do Mar\n• Vento\n• Gelo\n• Intemperismo",
+                        imagem: "/public/images/IMG_3682.jpeg"
+                    },
+                    {
+                        titulo: "Agentes Internos do Relevo",
+                        texto: "Os agentes internos (ou endógenos) atuam no INTERIOR da Terra e transformam o relevo de forma VIOLENTA e RÁPIDA.\n\nPrincipais Agentes Internos:\n• Vulcanismo\n• Tectonismo\n• Magmatismo",
+                        imagem: "/public/images/IMG_3683.jpeg"
+                    },
+                    {
+                        titulo: "Balanço de Energia",
+                        texto: "O BALANÇO DE ENERGIA é o equilíbrio entre a radiação solar que entra e a radiação que sai do planeta.\n\n• 30% é REFLETIDA de volta ao espaço\n• 70% é ABSORVIDA pela atmosfera e superfície\n• Essa energia absorvida aquece o planeta",
+                        imagem: "/public/images/IMG_3680.jpeg"
+                    },
+                    {
+                        titulo: "Efeito Estufa",
+                        texto: "O EFEITO ESTUFA é um processo natural onde gases atmosféricos retêm o calor da Terra.\n\nGases de Efeito Estufa:\n• Dióxido de Carbono (CO₂)\n• Metano (CH₄)\n• Óxido Nitroso (N₂O)",
+                        imagem: "/public/images/IMG_3681.jpeg"
+                    }
+                ],
+                quizzes: [
+                    { pergunta: "Os agentes externos transformam o relevo de forma:", opcoes: ["Violenta e rápida", "Lenta e contínua", "Muito rápida"], resposta: 1 },
+                    { pergunta: "Qual é um agente externo?", opcoes: ["Vulcanismo", "Chuva", "Tectonismo"], resposta: 1 },
+                    { pergunta: "Qual percentual da radiação solar é refletida?", opcoes: ["70%", "30%", "50%"], resposta: 1 }
+                ],
+                vf: [
+                    { texto: "Os agentes externos transformam o relevo de forma lenta e contínua.", resposta: true },
+                    { texto: "O vulcanismo é um agente externo.", resposta: false },
+                    { texto: "30% da radiação solar é refletida de volta ao espaço.", resposta: true }
+                ],
+                flashcards: [
+                    { pergunta: "O que são agentes externos?", resposta: "Agentes que atuam na superfície e transformam o relevo de forma lenta e contínua" },
+                    { pergunta: "O que é balanço de energia?", resposta: "Equilíbrio entre radiação solar que entra e radiação que sai" }
+                ]
+            },
+            historia: {
+                nome: "📜 História",
+                conteudos: [
+                    { titulo: "Em breve", texto: "Conteúdo de História em desenvolvimento..." }
+                ],
+                quizzes: [],
+                vf: [],
+                flashcards: []
+            },
+            portugues: {
+                nome: "📖 Português",
+                conteudos: [
+                    { titulo: "Em breve", texto: "Conteúdo de Português em desenvolvimento..." }
+                ],
+                quizzes: [],
+                vf: [],
+                flashcards: []
+            },
+            matematica: {
+                nome: "🔢 Matemática",
+                conteudos: [
+                    { titulo: "Em breve", texto: "Conteúdo de Matemática em desenvolvimento..." }
+                ],
+                quizzes: [],
+                vf: [],
+                flashcards: []
+            },
+            ingles: {
+                nome: "🌐 Inglês",
+                conteudos: [
+                    { titulo: "Em breve", texto: "Conteúdo de Inglês em desenvolvimento..." }
+                ],
+                quizzes: [],
+                vf: [],
+                flashcards: []
+            },
+            ciencias: {
+                nome: "🔬 Ciências",
+                conteudos: [
+                    { titulo: "Em breve", texto: "Conteúdo de Ciências em desenvolvimento..." }
+                ],
+                quizzes: [],
+                vf: [],
+                flashcards: []
+            }
+        };
+
+        let disciplinaAtual = 'geografia';
+
+        // INICIALIZAR
+        function inicializar() {
+            criarSeletorDisciplinas();
+            carregarDisciplina('geografia');
+        }
+
+        function criarSeletorDisciplinas() {
+            const selector = document.getElementById('disciplinasSelector');
+            selector.innerHTML = '';
+            
+            Object.keys(disciplinas).forEach(key => {
+                const btn = document.createElement('button');
+                btn.className = 'disciplina-btn' + (key === 'geografia' ? ' ativa' : '');
+                btn.textContent = disciplinas[key].nome;
+                btn.onclick = () => carregarDisciplina(key);
+                selector.appendChild(btn);
+            });
+        }
+
+        function carregarDisciplina(key) {
+            disciplinaAtual = key;
+            
+            // Atualizar botões
+            document.querySelectorAll('.disciplina-btn').forEach(btn => btn.classList.remove('ativa'));
+            event.target.classList.add('ativa');
+            
+            // Atualizar navegação
+            criarNavegacao();
+            mostrarSecao('conteudos');
+        }
+
+        function criarNavegacao() {
+            const navTabs = document.getElementById('navTabs');
+            navTabs.innerHTML = `
+                <button class="nav-btn ativo" onclick="mostrarSecao('conteudos')">📖 Conteúdos</button>
+                <button class="nav-btn" onclick="mostrarSecao('quizzes')">🎯 Quizzes</button>
+                <button class="nav-btn" onclick="mostrarSecao('vf')">✅ V/F</button>
+                <button class="nav-btn" onclick="mostrarSecao('flashcards')">🎴 Flashcards</button>
+            `;
+        }
+
+        function mostrarSecao(secaoId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('ativo'));
+            event.target.classList.add('ativo');
+            
+            const contentArea = document.getElementById('contentArea');
+            const disciplina = disciplinas[disciplinaAtual];
+            
+            if (secaoId === 'conteudos') {
+                contentArea.innerHTML = disciplina.conteudos.map(c => `
+                    <div class="card">
+                        <h2>${c.titulo}</h2>
+                        <p>${c.texto.replace(/\n/g, '<br>')}</p>
+                        ${c.imagem ? `<img src="${c.imagem}" alt="${c.titulo}" class="imagem-resumo" onclick="abrirImageModal(this.src)">` : ''}
+                    </div>
+                `).join('');
+            } else if (secaoId === 'quizzes') {
+                contentArea.innerHTML = `<div class="card"><h2>🎯 Quizzes</h2>` + 
+                    disciplina.quizzes.map((q, i) => `
+                        <div class="quiz-item">
+                            <p>Pergunta ${i+1}: ${q.pergunta}</p>
+                            <div class="quiz-options">
+                                ${q.opcoes.map((op, j) => `
+                                    <button class="quiz-btn" onclick="verificarQuiz(${i}, ${j})">${String.fromCharCode(65+j)}) ${op}</button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('') + `</div>`;
+            } else if (secaoId === 'vf') {
+                contentArea.innerHTML = `<div class="card"><h2>✅ Verdadeiro/Falso</h2>` + 
+                    disciplina.vf.map((q, i) => `
+                        <div class="vf-item">
+                            <p>Questão ${i+1}: ${q.texto}</p>
+                            <div class="vf-buttons">
+                                <button class="vf-btn vf-true" onclick="mostrarRespostaVF(${i}, true)">✅ Verdadeiro</button>
+                                <button class="vf-btn vf-false" onclick="mostrarRespostaVF(${i}, false)">❌ Falso</button>
+                            </div>
+                            <div class="resposta-vf" id="resposta-${i}">
+                                Resposta: ${q.resposta ? 'Verdadeiro ✅' : 'Falso ❌'}
+                            </div>
+                        </div>
+                    `).join('') + `</div>`;
+            } else if (secaoId === 'flashcards') {
+                contentArea.innerHTML = `<div class="card"><h2>🎴 Flashcards</h2><p style="margin-bottom: 15px; color: #666;">Clique para virar</p>` + 
+                    disciplina.flashcards.map((fc, i) => `
+                        <div class="flashcard" onclick="virarFlashcard(this, ${i})">
+                            <div>${fc.pergunta}</div>
+                        </div>
+                    `).join('') + `</div>`;
+            }
+        }
+
+        function verificarQuiz(quizIndex, respostaIndex) {
+            const quiz = disciplinas[disciplinaAtual].quizzes[quizIndex];
+            if (respostaIndex === quiz.resposta) {
+                alert('✅ Correto!');
+            } else {
+                alert(`❌ Errado! A resposta correta é: ${String.fromCharCode(65+quiz.resposta)}) ${quiz.opcoes[quiz.resposta]}`);
+            }
+        }
+
+        function mostrarRespostaVF(index, resposta) {
+            const respostaElement = document.getElementById(`resposta-${index}`);
+            respostaElement.style.display = 'block';
+        }
+
+        function virarFlashcard(element, index) {
+            const fc = disciplinas[disciplinaAtual].flashcards[index];
+            if (element.classList.contains('virado')) {
+                element.innerHTML = `<div>${fc.pergunta}</div>`;
+                element.classList.remove('virado');
+            } else {
+                element.innerHTML = `<div>${fc.resposta}</div>`;
+                element.classList.add('virado');
+            }
+        }
+
+        function abrirImageModal(src) {
+            document.getElementById('imageModal').classList.add('ativo');
+            document.getElementById('modalImage').src = src;
+        }
+
+        function fecharImageModal() {
+            document.getElementById('imageModal').classList.remove('ativo');
+        }
+
+        // Iniciar
+        inicializar();
+    </script>
+</body>
+</html>
