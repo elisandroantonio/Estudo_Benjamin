@@ -1645,7 +1645,7 @@
             let html = '';
             questoes.forEach((q, i) => {
                 html += `<div class="vf-card" id="vf-${i}">
-                    <div class="vf-question">${i+1}. ${q.texto}</div>
+                    <div class="vf-question">${i+1}. ${q.afirmacao || q.texto}</div>
                     <div class="vf-buttons">
                         <button class="vf-btn vf-btn-true" onclick="checkVF(${i}, true, ${q.resposta})">✅ Verdadeiro</button>
                         <button class="vf-btn vf-btn-false" onclick="checkVF(${i}, false, ${q.resposta})">❌ Falso</button>
