@@ -320,6 +320,7 @@
             <button class="btn" onclick="showSection('quizzes')">🎯 Quizzes</button>
             <button class="btn" onclick="showSection('vf')">✅ V/F</button>
             <button class="btn" onclick="showSection('flashcards')">🎴 Flashcards</button>
+            <button class="btn" onclick="showSection('lacunas')">📝 Lacunas</button>
             <button class="btn" onclick="showSection('tesouro')">🗺️ Tesouro</button>
         </div>
         
@@ -347,6 +348,13 @@
                 <h2>🎴 Flashcards (30 Conceitos)</h2>
                 <p style="margin-bottom: 15px; color: #666;">Clique nos cards para virar e ver a resposta!</p>
                 <div id="flashcards-content"></div>
+            </div>
+            
+            <!-- PREENCHER AS LACUNAS -->
+            <div id="lacunas" class="section">
+                <h2>📝 Preencher as Lacunas (20 Questoes)</h2>
+                <p style="margin-bottom: 15px; color: #666;">Complete as frases com as palavras corretas!</p>
+                <div id="lacunas-content"></div>
             </div>
             
             <!-- TESOURO -->
@@ -541,6 +549,28 @@
                 { texto: 'O oxigênio permitiu o surgimento da vida.', resposta: true, explicacao: 'Correto! Mudança principal na atmosfera.' },
                 { texto: 'Planaltos são formados por erosão de montanhas antigas.', resposta: true, explicacao: 'Correto! Desgaste transforma montanhas em planaltos.' },
                 { texto: 'Montanhas têm altitude acima de 1000m.', resposta: true, explicacao: 'Correto! Classificação por altitude.' }
+            ],
+            lacunas: [
+                { pergunta: 'Montanhas são formadas por agentes __________.', resposta: 'endógenos', dica: 'Vulcanismo e tectonismo' },
+                { pergunta: 'A __________ é a distância vertical de um ponto em relação ao nível do mar.', resposta: 'altitude', dica: 'Não é altura' },
+                { pergunta: 'O __________ é o movimento das placas tectônicas.', resposta: 'tectonismo', dica: 'Causa terremotos' },
+                { pergunta: 'O __________ é a erupção de magma que forma vulcões.', resposta: 'vulcanismo', dica: 'Cria novas rochas' },
+                { pergunta: 'Agentes exógenos são __________ do relevo.', resposta: 'modeladores', dica: 'Desgastam e transportam' },
+                { pergunta: 'A __________ é causada pelo vento e forma dunas.', resposta: 'erosão eólica', dica: 'Tipo de erosão' },
+                { pergunta: 'A __________ é causada pelos rios e forma vales em V.', resposta: 'erosão fluvial', dica: 'Tipo de erosão' },
+                { pergunta: 'O __________ quebra rochas em pequenos fragmentos.', resposta: 'intemperismo', dica: 'Não é erosão' },
+                { pergunta: 'O ciclo hidrológico tem 3 etapas: evaporação, __________ e precipitação.', resposta: 'condensação', dica: 'Formação de nuvens' },
+                { pergunta: 'A __________ é a área de terra que drena água para um rio principal.', resposta: 'bacia hidrográfica', dica: 'Conceito geográfico' },
+                { pergunta: 'A __________ é a camada da atmosfera onde vivemos.', resposta: 'troposfera', dica: 'Camada mais próxima da Terra' },
+                { pergunta: 'A __________ contém ozônio e nos protege da radiação ultravioleta.', resposta: 'estratosfera', dica: 'Camada importante' },
+                { pergunta: 'O __________ representa 78% da atmosfera.', resposta: 'nitrogênio', dica: 'Gás mais abundante' },
+                { pergunta: 'O __________ representa 21% da atmosfera.', resposta: 'oxigênio', dica: 'Essencial para a vida' },
+                { pergunta: 'A __________ é a camada mais fria da atmosfera.', resposta: 'mesosfera', dica: 'Temperatura: -90°C' },
+                { pergunta: 'A __________ é a camada mais quente da atmosfera.', resposta: 'termosfera', dica: 'Temperatura: acima de 1000°C' },
+                { pergunta: 'A __________ é a transição entre a atmosfera e o espaço.', resposta: 'exosfera', dica: 'Camada mais externa' },
+                { pergunta: 'O __________ é a alteração química das rochas em climas quentes e úmidos.', resposta: 'intemperismo químico', dica: 'Tipo de intemperismo' },
+                { pergunta: 'A __________ é a erosão causada pelo gelo e forma vales em U.', resposta: 'erosão glacial', dica: 'Tipo de erosão' },
+                { pergunta: 'A __________ é a erosão causada pelo mar que forma falésias.', resposta: 'erosão marinha', dica: 'Tipo de erosão' }
             ],
             flashcards: [
                 { pergunta: 'O que diferencia montanhas de planaltos?', resposta: 'Montanhas são acidentadas, planaltos são planos no topo' },
@@ -745,6 +775,28 @@
         { pergunta: 'O que significa friendly?', resposta: 'Amigável' },
         { pergunta: 'Complete: You ___ at the party', resposta: 'were' },
         { pergunta: 'Qual é o simple past de make?', resposta: 'Made' }
+    ],
+    lacunas: [
+        { pergunta: '__________ significa futebol em inglês.', resposta: 'Football', dica: 'Esporte com bola' },
+        { pergunta: 'O verbo __________ significa jogar.', resposta: 'play', dica: 'Usado com esportes' },
+        { pergunta: '__________ significa cachorro em inglês.', resposta: 'dog', dica: 'Animal doméstico' },
+        { pergunta: 'O adjetivo __________ significa grande.', resposta: 'big', dica: 'Oposto de small' },
+        { pergunta: 'A forma correta é "I __________" (estava).', resposta: 'was', dica: 'Simple past de be' },
+        { pergunta: 'Complete: "There __________ a cat in the house".', resposta: 'was', dica: 'Singular' },
+        { pergunta: 'O verbo __________ significa chutar.', resposta: 'kick', dica: 'Usado em futebol' },
+        { pergunta: '__________ significa elefante em inglês.', resposta: 'elephant', dica: 'Animal grande' },
+        { pergunta: 'O simple past de "play" é __________.', resposta: 'played', dica: 'Adiciona -ed' },
+        { pergunta: 'O verbo __________ significa pegar.', resposta: 'catch', dica: 'Oposto de throw' },
+        { pergunta: '__________ significa basquete em inglês.', resposta: 'basketball', dica: 'Esporte com bola' },
+        { pergunta: 'O adjetivo __________ significa pequeno.', resposta: 'small', dica: 'Oposto de big' },
+        { pergunta: 'Complete: "They __________ in the park".', resposta: 'were', dica: 'Plural' },
+        { pergunta: 'O simple past de "go" é __________.', resposta: 'went', dica: 'Verbo irregular' },
+        { pergunta: 'O verbo __________ significa lançar.', resposta: 'throw', dica: 'Oposto de catch' },
+        { pergunta: '__________ significa natação em inglês.', resposta: 'swimming', dica: 'Atividade na água' },
+        { pergunta: 'O adjetivo __________ significa rápido.', resposta: 'fast', dica: 'Oposto de slow' },
+        { pergunta: 'Complete: "He __________ at home".', resposta: 'was', dica: 'Singular' },
+        { pergunta: 'O simple past de "see" é __________.', resposta: 'saw', dica: 'Verbo irregular' },
+        { pergunta: 'O verbo __________ significa correr.', resposta: 'run', dica: 'Atividade rápida' }
     ]
 };
         
@@ -890,6 +942,28 @@
                 { pergunta: 'Como os músculos permitem movimento?', resposta: 'Contraindo e puxando os ossos' },
                 { pergunta: 'Qual sistema trabalha com o respiratório?', resposta: 'Sistema circulatório' },
                 { pergunta: 'Qual é a função da uretra?', resposta: 'Conduzir urina da bexiga para fora do corpo' }
+            ],
+            lacunas: [
+                { pergunta: 'O __________ é o órgão principal do sistema respiratório.', resposta: 'pulmão', dica: 'Troca gases' },
+                { pergunta: 'O __________ bombeia sangue pelo corpo.', resposta: 'coração', dica: 'Órgão principal do sistema circulatório' },
+                { pergunta: 'Os __________ filtram o sangue e produzem urina.', resposta: 'rins', dica: 'Existem 2' },
+                { pergunta: 'A __________ armazena urina.', resposta: 'bexiga', dica: 'Órgão do sistema urinário' },
+                { pergunta: 'A __________ leva ar aos pulmões.', resposta: 'traqueia', dica: 'Tubo respiratório' },
+                { pergunta: 'As __________ levam sangue para o corpo.', resposta: 'artérias', dica: 'Vasos sanguíneos' },
+                { pergunta: 'As __________ trazem sangue de volta ao coração.', resposta: 'veias', dica: 'Vasos sanguíneos' },
+                { pergunta: 'O __________ é o osso mais longo do corpo.', resposta: 'fêmur', dica: 'Osso da coxa' },
+                { pergunta: 'Os __________ são estruturas que conectam músculos a ossos.', resposta: 'tendões', dica: 'Tecido conjuntivo' },
+                { pergunta: 'As __________ são uniões entre ossos que permitem movimento.', resposta: 'articulações', dica: 'Permitem mobilidade' },
+                { pergunta: 'Um adulto tem aproximadamente __________ ossos.', resposta: '206', dica: 'Número de ossos' },
+                { pergunta: 'O corpo tem aproximadamente __________ músculos.', resposta: '600', dica: 'Número de músculos' },
+                { pergunta: 'O __________ é o músculo respiratório essencial.', resposta: 'diafragma', dica: 'Abaixo dos pulmões' },
+                { pergunta: 'Os __________ são ramificações da traqueia.', resposta: 'brônquios', dica: 'Levam ar aos pulmões' },
+                { pergunta: 'A pressão arterial normal é __________.', resposta: '120/80', dica: 'Em mmHg' },
+                { pergunta: 'O pulso normal é de __________ batidas por minuto.', resposta: '60-100', dica: 'Batidas do coração' },
+                { pergunta: 'Temos __________ rins.', resposta: '2', dica: 'Número de rins' },
+                { pergunta: 'O __________ é o conjunto de processos químicos do corpo.', resposta: 'metabolismo', dica: 'Processos do corpo' },
+                { pergunta: 'Os músculos permitem movimento ao __________ os ossos.', resposta: 'contrair', dica: 'Ao se contrair' },
+                { pergunta: 'O sistema __________ trabalha junto com o respiratório.', resposta: 'circulatório', dica: 'Transporta oxigênio' }
             ]
         };
         
@@ -1039,6 +1113,28 @@
                 { pergunta: 'O que é um acréscimo de 10% em 100?', resposta: '110' },
                 { pergunta: 'Qual é a probabilidade de tirar um número par em um dado?', resposta: '1/2 ou 50%' },
                 { pergunta: 'Qual é a probabilidade de tirar um número ímpar em um dado?', resposta: '1/2 ou 50%' }
+            ],
+            lacunas: [
+                { pergunta: 'Um __________ é um sólido com faces planas.', resposta: 'poliedro', dica: 'Exemplo: cubo' },
+                { pergunta: 'Um __________ é um sólido com superfícies curvas.', resposta: 'corpo redondo', dica: 'Exemplo: esfera' },
+                { pergunta: 'Um cubo tem __________ faces.', resposta: '6', dica: 'Todas quadradas' },
+                { pergunta: 'Uma esfera é um exemplo de __________.', resposta: 'corpo redondo', dica: 'Forma redonda' },
+                { pergunta: 'Um cilindro é um exemplo de __________.', resposta: 'corpo redondo', dica: 'Tem 2 bases circulares' },
+                { pergunta: '__________  é uma fração de 100 partes.', resposta: 'Porcentagem', dica: 'Usa o síbolo %' },
+                { pergunta: '50% de 100 é __________.', resposta: '50', dica: 'Metade' },
+                { pergunta: '25% de 200 é __________.', resposta: '50', dica: 'Um quarto' },
+                { pergunta: '10% de 500 é __________.', resposta: '50', dica: 'Um décimo' },
+                { pergunta: 'Um gráfico de __________ compara categorias.', resposta: 'barras', dica: 'Tipo de gráfico' },
+                { pergunta: 'Um gráfico de __________ mostra variação ao longo do tempo.', resposta: 'linhas', dica: 'Tipo de gráfico' },
+                { pergunta: 'Um gráfico de __________ mostra proporções do total.', resposta: 'pizza', dica: 'Tipo de gráfico' },
+                { pergunta: '__________  é a chance de um evento ocorrer.', resposta: 'Probabilidade', dica: 'Conceito matemático' },
+                { pergunta: 'A probabilidade de um evento certo é __________.', resposta: '1', dica: 'Ou 100%' },
+                { pergunta: 'A probabilidade de um evento impossível é __________.', resposta: '0', dica: 'Ou 0%' },
+                { pergunta: '20% de 100 é __________.', resposta: '20', dica: 'Um quinto' },
+                { pergunta: '30% de 200 é __________.', resposta: '60', dica: 'Três décimos' },
+                { pergunta: '15% de 300 é __________.', resposta: '45', dica: 'Quinze por cento' },
+                { pergunta: 'Um desconto de 20% em 100 é __________.', resposta: '80', dica: 'Subtrair 20' },
+                { pergunta: 'Um acréscimo de 10% em 100 é __________.', resposta: '110', dica: 'Adicionar 10' }
             ]
         };
         
@@ -1219,6 +1315,28 @@
                 { pergunta: 'Qual é a altitude da termosfera?', resposta: '85-500 km' },
                 { pergunta: 'O que é uma planície?', resposta: 'Terreno plano com altitude baixa' },
                 { pergunta: 'O que é uma depressão?', resposta: 'Área mais baixa que o entorno' }
+            ],
+            lacunas: [
+                { pergunta: 'Uma __________ é uma forma de relevo elevada e acidentada.', resposta: 'montanha', dica: 'Muito elevada' },
+                { pergunta: 'Um __________ é uma forma de relevo elevada e plana.', resposta: 'planalto', dica: 'Plano no topo' },
+                { pergunta: 'Uma __________ é uma forma de relevo plana e baixa.', resposta: 'planície', dica: 'Terreno plano' },
+                { pergunta: 'Uma __________ é uma área mais baixa que o entorno.', resposta: 'depressão', dica: 'Área baixa' },
+                { pergunta: 'O __________ é o movimento das placas tectônicas.', resposta: 'tectonismo', dica: 'Agente endógeno' },
+                { pergunta: 'O __________ é a erupção de magma.', resposta: 'vulcanismo', dica: 'Agente endógeno' },
+                { pergunta: 'A __________ é a erosão causada pelo vento.', resposta: 'erosão eólica', dica: 'Forma dunas' },
+                { pergunta: 'A __________ é a erosão causada pelos rios.', resposta: 'erosão fluvial', dica: 'Forma vales em V' },
+                { pergunta: 'A __________ é a erosão causada pelo gelo.', resposta: 'erosão glacial', dica: 'Forma vales em U' },
+                { pergunta: 'A __________ é a erosão causada pelo mar.', resposta: 'erosão marinha', dica: 'Forma falésias' },
+                { pergunta: 'A __________ é a camada da atmosfera onde vivemos.', resposta: 'troposfera', dica: 'Mais próxima da Terra' },
+                { pergunta: 'A __________ contém ozônio.', resposta: 'estratosfera', dica: 'Camada importante' },
+                { pergunta: 'A __________ é a camada mais fria.', resposta: 'mesosfera', dica: 'Muito fria' },
+                { pergunta: 'A __________ é a camada mais quente.', resposta: 'termosfera', dica: 'Muito quente' },
+                { pergunta: 'O __________ é a distância do mar.', resposta: 'continentalidade', dica: 'Fator climático' },
+                { pergunta: 'A __________ é a altura acima do nível do mar.', resposta: 'altitude', dica: 'Fator climático' },
+                { pergunta: 'A __________ é a posição norte-sul da Terra.', resposta: 'latitude', dica: 'Fator climático' },
+                { pergunta: 'A troposfera tem altitude de __________ km.', resposta: '0-12', dica: 'Aproximadamente' },
+                { pergunta: 'A estratosfera tem altitude de __________ km.', resposta: '12-50', dica: 'Aproximadamente' },
+                { pergunta: 'A mesosfera tem altitude de __________ km.', resposta: '50-85', dica: 'Aproximadamente' }
             ]
         };
         
@@ -1382,6 +1500,28 @@
                 { pergunta: 'Cite 5 tipos de documentos históricos', resposta: 'Cartas, diários, leis, tratados, moedas, artefatos' },
                 { pergunta: 'Como devemos analisar um documento?', resposta: 'Considerar data, autor, contexto e intenção' },
                 { pergunta: 'Por que estudamos documentos históricos?', resposta: 'Para entender e aprender com o passado' }
+            ],
+            lacunas: [
+                { pergunta: 'As __________ foram expedições militares para recuperar a Terra Santa.', resposta: 'Cruzadas', dica: 'Séculos XI-XIII' },
+                { pergunta: 'As Cruzadas tinham motivações __________, econômicas e políticas.', resposta: 'religiosas', dica: 'Igreja Católica' },
+                { pergunta: 'A primeira Cruzada ocorreu em __________.', resposta: '1096-1099', dica: 'Século XI' },
+                { pergunta: 'O __________ Comercial e Urbano ocorreu entre os séculos XI e XIV.', resposta: 'Renascimento', dica: 'Período medieval' },
+                { pergunta: 'O Renascimento Comercial foi causado pelo aumento da produção __________.', resposta: 'agrícola', dica: 'Setor econômico' },
+                { pergunta: 'O Renascimento Comercial fortaleceu cidades italianas como __________.', resposta: 'Veneza', dica: 'Cidade importante' },
+                { pergunta: 'O __________ Cultural ocorreu entre os séculos XIV e XVI.', resposta: 'Renascimento', dica: 'Movimento cultural' },
+                { pergunta: 'O Renascimento Cultural começou principalmente na __________.', resposta: 'Itália', dica: 'País europeu' },
+                { pergunta: 'O __________ foi um sistema de governo da Idade Média.', resposta: 'Feudalismo', dica: 'Sistema medieval' },
+                { pergunta: 'A base econômica do Feudalismo era __________.', resposta: 'terra', dica: 'Recurso principal' },
+                { pergunta: 'No Feudalismo, o poder era __________ nos senhores feudais.', resposta: 'descentralizado', dica: 'Não era centralizado' },
+                { pergunta: 'O __________ é um sistema onde o rei tem poder absoluto.', resposta: 'Absolutismo', dica: 'Sistema de governo' },
+                { pergunta: 'O lema do Absolutismo era "O Estado __________ eu".', resposta: 'sou', dica: 'Frase de Luís XIV' },
+                { pergunta: 'Luís XIV foi rei da __________ e exemplo do Absolutismo.', resposta: 'França', dica: 'País europeu' },
+                { pergunta: 'O Absolutismo se consolidou nos séculos __________.', resposta: 'XVII-XVIII', dica: 'Período' },
+                { pergunta: 'A característica principal do Absolutismo era a __________ do poder no rei.', resposta: 'centralização', dica: 'Concentração' },
+                { pergunta: 'Um __________ histórico é uma fonte que ajuda a entender o passado.', resposta: 'documento', dica: 'Fonte primária' },
+                { pergunta: 'Exemplos de documentos históricos são __________, diários e leis.', resposta: 'cartas', dica: 'Tipo de documento' },
+                { pergunta: 'Ao analisar um documento, devemos considerar a __________ e o autor.', resposta: 'data', dica: 'Informação importante' },
+                { pergunta: 'Estudamos documentos históricos para __________ e aprender com o passado.', resposta: 'entender', dica: 'Objetivo principal' }
             ]
         };
         
@@ -1540,6 +1680,28 @@
                 { pergunta: 'Homônimo', resposta: 'Palavra com mesmo som' },
                 { pergunta: 'Parônimo', resposta: 'Palavra com som parecido' },
                 { pergunta: 'Metáfora', resposta: 'Comparação sem "como"' }
+            ],
+            lacunas: [
+                { pergunta: 'Uma __________ é um resumo de uma obra.', resposta: 'sinópse', dica: 'Resumo breve' },
+                { pergunta: 'A __________ é um sinal de pontuação.', resposta: 'vírgula', dica: 'Separa elementos' },
+                { pergunta: 'O __________ é um tempo verbal que indica ações passadas.', resposta: 'pretérito', dica: 'Tempo do passado' },
+                { pergunta: 'O __________ é um tempo verbal que indica ações presentes.', resposta: 'presente', dica: 'Tempo do agora' },
+                { pergunta: 'O __________ é um tempo verbal que indica ações futuras.', resposta: 'futuro', dica: 'Tempo do porvir' },
+                { pergunta: 'Uma __________ é um conjunto de palavras com sentido completo.', resposta: 'oração', dica: 'Tem verbo' },
+                { pergunta: 'Um __________ é um conjunto de orações.', resposta: 'período', dica: 'Más de uma oração' },
+                { pergunta: 'O __________ é um modo verbal que expressa ordem ou pedido.', resposta: 'imperativo', dica: 'Modo de comando' },
+                { pergunta: '"Há" é um __________ que significa "existir".', resposta: 'verbo', dica: 'Forma de "haver"' },
+                { pergunta: '"A" é uma __________ que indica direção.', resposta: 'preposição', dica: 'Palavra de ligação' },
+                { pergunta: 'Uma __________ é uma representação visual de dados.', resposta: 'infografia', dica: 'Gráfico ou diagrama' },
+                { pergunta: 'A __________ é a concordância entre verbo e sujeito.', resposta: 'concordância verbal', dica: 'Concordância' },
+                { pergunta: 'A __________ é a ortografia correta de palavras.', resposta: 'ortografia', dica: 'Escrita correta' },
+                { pergunta: 'Um __________ é uma palavra que expressa ação.', resposta: 'verbo', dica: 'Classe de palavra' },
+                { pergunta: 'Um __________ é uma palavra que modifica um nome.', resposta: 'adjetivo', dica: 'Descreve qualidade' },
+                { pergunta: 'Um __________ é uma palavra que substitui um nome.', resposta: 'pronome', dica: 'No lugar do nome' },
+                { pergunta: 'Um __________ é uma palavra que modifica um verbo.', resposta: 'advérbio', dica: 'Modifica verbo' },
+                { pergunta: 'Um __________ é uma palavra com significado parecido.', resposta: 'sinônimo', dica: 'Significado similar' },
+                { pergunta: 'Um __________ é uma palavra com significado oposto.', resposta: 'antônimo', dica: 'Significado contrário' },
+                { pergunta: 'Uma __________ é uma comparação sem "como".', resposta: 'metáfora', dica: 'Figura de linguagem' }
             ]
         };
         
@@ -1591,6 +1753,7 @@
             if (id === 'quizzes') loadQuizzes(data.quizzes);
             if (id === 'vf') loadVF(data.vf);
             if (id === 'flashcards') loadFlashcards(data.flashcards);
+            if (id === 'lacunas') loadLacunas(data.lacunas);
             if (id === 'tesouro') loadTreasure(data.quizzes);
         }
         
@@ -1703,6 +1866,62 @@
             } else {
                 card.innerHTML = `<div class="flashcard-text">${f.pergunta}</div>`;
             }
+        }
+        
+        function loadLacunas(lacunas) {
+            if (!lacunas || lacunas.length === 0) {
+                document.getElementById('lacunas-content').innerHTML = '<p style="color: #666;">Conteúdo em desenvolvimento...</p>';
+                return;
+            }
+            let html = '';
+            lacunas.forEach((l, i) => {
+                html += `<div class="quiz-item">
+                    <p>${i+1}. ${l.pergunta}</p>
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" id="lacuna-${i}" placeholder="Digite a resposta..." style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 1rem;">
+                    </div>
+                    <small style="color: #999;">Dica: ${l.dica}</small>
+                    <div style="margin-top: 10px;">
+                        <button class="option-btn" onclick="checkLacuna(${i}, '${l.resposta}')" style="width: 100%; background: #667eea; color: white; border: none; cursor: pointer;">Verificar</button>
+                    </div>
+                    <div id="lacuna-feedback-${i}" style="margin-top: 10px; display: none;"></div>
+                </div>`;
+            });
+            document.getElementById('lacunas-content').innerHTML = html;
+        }
+        
+        function checkLacuna(index, resposta) {
+            const input = document.getElementById(`lacuna-${index}`);
+            const feedback = document.getElementById(`lacuna-feedback-${index}`);
+            const userAnswer = input.value.toLowerCase().trim();
+            const correctAnswer = resposta.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                input.classList.add('correct');
+                feedback.className = 'correct';
+                feedback.textContent = '✅ Correto!';
+                feedback.style.display = 'block';
+                feedback.style.background = '#d4edda';
+                feedback.style.color = '#155724';
+                feedback.style.padding = '10px';
+                feedback.style.borderRadius = '6px';
+                feedback.style.border = '1px solid #28a745';
+                addPoints(10);
+                player.correct++;
+                input.disabled = true;
+                event.target.disabled = true;
+            } else {
+                input.classList.add('incorrect');
+                feedback.className = 'incorrect';
+                feedback.textContent = `❌ Incorreto! A resposta correta é: "${resposta}"`;
+                feedback.style.display = 'block';
+                feedback.style.background = '#f8d7da';
+                feedback.style.color = '#721c24';
+                feedback.style.padding = '10px';
+                feedback.style.borderRadius = '6px';
+                feedback.style.border = '1px solid #dc3545';
+            }
+            updateStats();
         }
         
         function loadTreasure(quizzes) {
