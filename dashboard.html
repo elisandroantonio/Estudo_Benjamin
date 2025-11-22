@@ -1534,6 +1534,7 @@
             else if (currentSubject === 'ciencias') data = cienciasData;
             else if (currentSubject === 'matematica') data = matematicaData;
             else if (currentSubject === 'historia') data = historiaData;
+            else if (currentSubject === 'portugues') data = portuguesData;
             else data = geoData;
             
             if (id === 'resumo') {
@@ -1544,6 +1545,7 @@
                 else if (currentSubject === 'ciencias') titulo += ' - Ciências';
                 else if (currentSubject === 'matematica') titulo += ' - Matemática';
                 else if (currentSubject === 'historia') titulo += ' - História';
+                else if (currentSubject === 'portugues') titulo += ' - Português';
                 else titulo += ' - GEO (Real)';
                 document.getElementById('resumo-title').textContent = titulo;
                 document.getElementById('resumo-content').innerHTML = data.resumo;
@@ -1715,6 +1717,7 @@
             else if (currentSubject === 'ciencias') data = cienciasData;
             else if (currentSubject === 'matematica') data = matematicaData;
             else if (currentSubject === 'historia') data = historiaData;
+            else if (currentSubject === 'portugues') data = portuguesData;
             else data = geoData;
             loadTreasure(data.quizzes);
         }
@@ -1728,6 +1731,7 @@
             else if (currentSubject === 'ciencias') data = cienciasData;
             else if (currentSubject === 'matematica') data = matematicaData;
             else if (currentSubject === 'historia') data = historiaData;
+            else if (currentSubject === 'portugues') data = portuguesData;
             else data = geoData;
             loadTreasure(data.quizzes);
         }
