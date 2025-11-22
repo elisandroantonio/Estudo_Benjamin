@@ -30,24 +30,60 @@
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+        
+        .subject-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .subject-btn {
+            padding: 12px 15px;
+            border: 2px solid #667eea;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .subject-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .subject-btn.active {
+            background: #667eea;
+            color: white;
         }
         
         .game-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
             margin-bottom: 30px;
         }
         
         .game-btn {
-            padding: 20px;
+            padding: 15px;
             border: 2px solid #667eea;
             background: white;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: bold;
             transition: all 0.3s;
             text-align: center;
@@ -85,7 +121,7 @@
         }
         
         .stat-value {
-            font-size: 2em;
+            font-size: 1.8em;
             font-weight: bold;
             color: #667eea;
         }
@@ -93,6 +129,7 @@
         .stat-label {
             color: #666;
             margin-top: 5px;
+            font-size: 0.9em;
         }
         
         .question-card {
@@ -125,9 +162,13 @@
             text-align: left;
         }
         
-        .option-btn:hover {
+        .option-btn:hover:not(:disabled) {
             border-color: #667eea;
             background: #f0f4ff;
+        }
+        
+        .option-btn:disabled {
+            cursor: not-allowed;
         }
         
         .option-btn.correct {
@@ -140,29 +181,6 @@
             background: #f8d7da;
             border-color: #dc3545;
             color: #721c24;
-        }
-        
-        .feedback {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
-        }
-        
-        .feedback.show {
-            display: block;
-        }
-        
-        .feedback.correct {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #28a745;
-        }
-        
-        .feedback.incorrect {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #dc3545;
         }
         
         .next-btn {
@@ -228,18 +246,67 @@
         .restart-btn:hover {
             background: #764ba2;
         }
+        
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .memory-card {
+            padding: 20px;
+            font-size: 2em;
+            border: 2px solid #667eea;
+            background: #f0f4ff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .timer-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .timer-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .timer-label {
+            color: #666;
+            font-size: 1em;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎮 Game Interativo - Estudos</h1>
+        <h1>🎮 Game Interativo</h1>
+        <div class="subtitle">Escolha uma disciplina e um modo de jogo</div>
         
+        <!-- SELETOR DE DISCIPLINA -->
+        <h3 style="color: #333; margin-bottom: 10px;">📚 Escolha a Disciplina:</h3>
+        <div class="subject-selector" id="subject-selector"></div>
+        
+        <!-- SELETOR DE MODO DE JOGO -->
+        <h3 style="color: #333; margin-bottom: 10px; margin-top: 20px;">🎮 Escolha o Modo de Jogo:</h3>
         <div class="game-selector">
             <button class="game-btn active" onclick="selectGame('quiz')">🎯 Quiz Rápido</button>
-            <button class="game-btn" onclick="selectGame('memory')">🧠 Memória</button>
+            <button class="game-btn" onclick="selectGame('memory')">🧠 Jogo de Memória</button>
             <button class="game-btn" onclick="selectGame('speed')">⚡ Velocidade</button>
         </div>
         
+        <!-- ESTATÍSTICAS -->
         <div class="stats">
             <div class="stat-item">
                 <div class="stat-value" id="points">0</div>
@@ -269,21 +336,23 @@
         <!-- JOGO DE MEMÓRIA -->
         <div id="memory" class="game-content">
             <h2>🧠 Jogo de Memória</h2>
-            <p style="color: #666; margin-bottom: 20px;">Encontre os pares corretos!</p>
-            <div id="memory-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+            <p style="color: #666; margin-bottom: 20px;">Encontre os pares corretos! Clique nos cartões.</p>
+            <div id="memory-grid" class="memory-grid"></div>
+            <button class="next-btn" id="memory-restart" onclick="restartMemory()" style="display: none;">Novo Jogo</button>
         </div>
         
         <!-- JOGO DE VELOCIDADE -->
         <div id="speed" class="game-content">
             <h2>⚡ Jogo de Velocidade</h2>
             <p style="color: #666; margin-bottom: 20px;">Responda antes do tempo acabar!</p>
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 3em; font-weight: bold; color: #667eea;" id="timer">30</div>
-                <p>segundos</p>
+            <div class="timer-display">
+                <div class="timer-value" id="timer">30</div>
+                <div class="timer-label">segundos</div>
             </div>
             <div id="speed-container"></div>
         </div>
         
+        <!-- GAME OVER -->
         <div id="game-over" class="game-over">
             <h2>🎉 Parabéns!</h2>
             <p>Você completou o game!</p>
@@ -293,60 +362,124 @@
     </div>
     
     <script>
-        // Dados de Quiz com conteúdos CORRETOS das professoras
-        const quizzes = [
-            // Português
-            { pergunta: 'Qual é o tempo verbal que indica ações passadas?', opcoes: ['Presente', 'Pretérito', 'Futuro', 'Imperativo'], resposta: 1 },
-            { pergunta: 'O que é uma sinopse?', opcoes: ['Um sinal de pontuação', 'Um resumo de uma obra', 'Um tipo de verbo', 'Uma classe de palavras'], resposta: 1 },
-            { pergunta: 'Qual é a função da vírgula entre sujeito e predicado?', opcoes: ['Separar informações', 'Indicar pausa', 'Conectar orações', 'Todas as anteriores'], resposta: 3 },
-            { pergunta: 'O que é concordância verbal?', opcoes: ['Acordo entre palavras', 'Tipo de pontuação', 'Classe de palavras', 'Modo de falar'], resposta: 0 },
-            { pergunta: 'Qual modo verbal expressa ordem ou pedido?', opcoes: ['Indicativo', 'Subjuntivo', 'Imperativo', 'Condicional'], resposta: 2 },
-            
-            // Inglês
-            { pergunta: 'Qual é o past tense de "go"?', opcoes: ['Goes', 'Going', 'Went', 'Gone'], resposta: 2 },
-            { pergunta: 'Complete: "There _______ many animals in the zoo."', opcoes: ['is', 'are', 'was', 'were'], resposta: 1 },
-            { pergunta: 'Qual animal é conhecido por ser muito rápido?', opcoes: ['Elephant', 'Cheetah', 'Turtle', 'Sloth'], resposta: 1 },
-            { pergunta: 'O que significa "lazy"?', opcoes: ['Rápido', 'Preguiçoso', 'Inteligente', 'Forte'], resposta: 1 },
-            { pergunta: 'Complete: "She _______ a book right now."', opcoes: ['read', 'reads', 'is reading', 'reading'], resposta: 2 },
-            
-            // Matemática
-            { pergunta: 'O que é um poliedro?', opcoes: ['Uma forma redonda', 'Um sólido com faces planas', 'Um tipo de gráfico', 'Uma medida'], resposta: 1 },
-            { pergunta: '50% é igual a quanto?', opcoes: ['Um terço', 'Metade', 'Um quarto', 'Três quartos'], resposta: 1 },
-            { pergunta: 'Qual é a fórmula da área de um círculo?', opcoes: ['πr', '2πr', 'πr²', 'πd'], resposta: 2 },
-            { pergunta: 'O que é probabilidade?', opcoes: ['Uma forma geométrica', 'A chance de algo acontecer', 'Um tipo de gráfico', 'Uma medida de comprimento'], resposta: 1 },
-            { pergunta: 'Um cubo tem quantas faces?', opcoes: ['4', '5', '6', '8'], resposta: 2 },
-            
-            // Ciências
-            { pergunta: 'Qual sistema é responsável pela respiração?', opcoes: ['Circulatório', 'Respiratório', 'Urinário', 'Locomotor'], resposta: 1 },
-            { pergunta: 'Qual órgão bombeia sangue pelo corpo?', opcoes: ['Pulmão', 'Rim', 'Coração', 'Estômago'], resposta: 2 },
-            { pergunta: 'O que filtra o sangue e produz urina?', opcoes: ['Coração', 'Pulmão', 'Rim', 'Fígado'], resposta: 2 },
-            { pergunta: 'Qual sistema permite o movimento do corpo?', opcoes: ['Respiratório', 'Circulatório', 'Locomotor', 'Nervoso'], resposta: 2 },
-            { pergunta: 'O que transporta sangue pelo corpo?', opcoes: ['Nervos', 'Ossos', 'Vasos sanguíneos', 'Músculos'], resposta: 2 },
-            
-            // Geografia
-            { pergunta: 'O que é relevo?', opcoes: ['Tipo de clima', 'Forma do terreno', 'Tipo de vegetação', 'Massa de água'], resposta: 1 },
-            { pergunta: 'Qual é a diferença entre altitude e altura?', opcoes: ['Não há diferença', 'Altitude é vertical, altura é horizontal', 'Altitude é acima do nível do mar', 'Altura é acima do nível do mar'], resposta: 2 },
-            { pergunta: 'O que é uma planície?', opcoes: ['Uma montanha', 'Uma área plana e baixa', 'Uma área elevada', 'Uma depressão'], resposta: 1 },
-            { pergunta: 'Qual é o ciclo da água?', opcoes: ['Evaporação, condensação, precipitação', 'Apenas chuva', 'Apenas evaporação', 'Apenas condensação'], resposta: 0 },
-            { pergunta: 'O que é a atmosfera?', opcoes: ['Camada de água', 'Camada de ar que envolve a Terra', 'Camada de rocha', 'Camada de gelo'], resposta: 1 },
-            
-            // História
-            { pergunta: 'O que foram as Cruzadas?', opcoes: ['Guerras comerciais', 'Guerras religiosas na Idade Média', 'Expedições científicas', 'Viagens comerciais'], resposta: 1 },
-            { pergunta: 'O que foi o Renascimento Comercial?', opcoes: ['Crescimento das artes', 'Crescimento do comércio', 'Crescimento das cidades', 'Crescimento da religião'], resposta: 1 },
-            { pergunta: 'O que foi o Renascimento Cultural?', opcoes: ['Crescimento do comércio', 'Renovação das artes e letras', 'Crescimento das cidades', 'Período de guerra'], resposta: 1 },
-            { pergunta: 'O que foi o Feudalismo?', opcoes: ['Sistema de governo moderno', 'Sistema político da Idade Média', 'Sistema de comércio', 'Sistema de educação'], resposta: 1 },
-            { pergunta: 'O que foi o Absolutismo?', opcoes: ['Governo democrático', 'Governo centralizado no rei', 'Governo popular', 'Governo militar'], resposta: 1 }
-        ];
+        // Dados de Quiz por disciplina
+        const quizzesBySubject = {
+            'Português': [
+                { pergunta: 'Qual é o tempo verbal que indica ações passadas?', opcoes: ['Presente', 'Pretérito', 'Futuro', 'Imperativo'], resposta: 1 },
+                { pergunta: 'O que é uma sinopse?', opcoes: ['Um sinal de pontuação', 'Um resumo de uma obra', 'Um tipo de verbo', 'Uma classe de palavras'], resposta: 1 },
+                { pergunta: 'Qual é a função da vírgula entre sujeito e predicado?', opcoes: ['Separar informações', 'Indicar pausa', 'Conectar orações', 'Todas as anteriores'], resposta: 3 },
+                { pergunta: 'O que é concordância verbal?', opcoes: ['Acordo entre palavras', 'Tipo de pontuação', 'Classe de palavras', 'Modo de falar'], resposta: 0 },
+                { pergunta: 'Qual modo verbal expressa ordem ou pedido?', opcoes: ['Indicativo', 'Subjuntivo', 'Imperativo', 'Condicional'], resposta: 2 },
+                { pergunta: 'O que é um período?', opcoes: ['Um tempo verbal', 'Um conjunto de orações', 'Um sinal de pontuação', 'Uma classe de palavras'], resposta: 1 },
+                { pergunta: 'Qual é a diferença entre "há" e "a"?', opcoes: ['Não há diferença', 'Há = verbo, A = preposição', 'A = verbo, Há = preposição', 'Ambos são verbos'], resposta: 1 },
+                { pergunta: 'O que é uma infografia?', opcoes: ['Um texto', 'Uma representação visual de dados', 'Um tipo de poesia', 'Um gênero literário'], resposta: 1 },
+                { pergunta: 'Como é classificado um sujeito com dois núcleos?', opcoes: ['Simples', 'Composto', 'Oculto', 'Indeterminado'], resposta: 1 },
+                { pergunta: 'Qual tempo verbal indica ações futuras?', opcoes: ['Pretérito', 'Presente', 'Futuro', 'Imperfeito'], resposta: 2 }
+            ],
+            'Inglês': [
+                { pergunta: 'Qual é o past tense de "go"?', opcoes: ['Goes', 'Going', 'Went', 'Gone'], resposta: 2 },
+                { pergunta: 'Complete: "There _______ many animals in the zoo."', opcoes: ['is', 'are', 'was', 'were'], resposta: 1 },
+                { pergunta: 'Qual animal é conhecido por ser muito rápido?', opcoes: ['Elephant', 'Cheetah', 'Turtle', 'Sloth'], resposta: 1 },
+                { pergunta: 'O que significa "lazy"?', opcoes: ['Rápido', 'Preguiçoso', 'Inteligente', 'Forte'], resposta: 1 },
+                { pergunta: 'Complete: "She _______ a book right now."', opcoes: ['read', 'reads', 'is reading', 'reading'], resposta: 2 },
+                { pergunta: 'Qual é o past tense de "have"?', opcoes: ['Has', 'Had', 'Having', 'Have'], resposta: 1 },
+                { pergunta: 'Complete: "I _______ to school yesterday."', opcoes: ['go', 'goes', 'went', 'going'], resposta: 2 },
+                { pergunta: 'O que significa "sports"?', opcoes: ['Esportes', 'Esporte', 'Jogos', 'Atividades'], resposta: 0 },
+                { pergunta: 'Qual é o verbo irregular "be" no passado?', opcoes: ['Beed', 'Was/Were', 'Being', 'Bees'], resposta: 1 },
+                { pergunta: 'Complete: "They _______ happy yesterday."', opcoes: ['are', 'is', 'were', 'was'], resposta: 2 }
+            ],
+            'Matemática': [
+                { pergunta: 'O que é um poliedro?', opcoes: ['Uma forma redonda', 'Um sólido com faces planas', 'Um tipo de gráfico', 'Uma medida'], resposta: 1 },
+                { pergunta: '50% é igual a quanto?', opcoes: ['Um terço', 'Metade', 'Um quarto', 'Três quartos'], resposta: 1 },
+                { pergunta: 'Qual é a fórmula da área de um círculo?', opcoes: ['πr', '2πr', 'πr²', 'πd'], resposta: 2 },
+                { pergunta: 'O que é probabilidade?', opcoes: ['Uma forma geométrica', 'A chance de algo acontecer', 'Um tipo de gráfico', 'Uma medida de comprimento'], resposta: 1 },
+                { pergunta: 'Um cubo tem quantas faces?', opcoes: ['4', '5', '6', '8'], resposta: 2 },
+                { pergunta: '25% é igual a quanto?', opcoes: ['Um quarto', 'Metade', 'Três quartos', 'Um terço'], resposta: 0 },
+                { pergunta: 'Qual é a fórmula do perímetro de um círculo?', opcoes: ['πr', '2πr', 'πr²', 'πd'], resposta: 1 },
+                { pergunta: 'Um cilindro é um corpo redondo?', opcoes: ['Não', 'Sim', 'Parcialmente', 'Depende'], resposta: 1 },
+                { pergunta: 'Qual é a fórmula da área de um quadrado?', opcoes: ['l + l', 'l × l', '2l', 'l²'], resposta: 1 },
+                { pergunta: '75% é igual a quanto?', opcoes: ['Um quarto', 'Metade', 'Três quartos', 'Um terço'], resposta: 2 }
+            ],
+            'Ciências': [
+                { pergunta: 'Qual sistema é responsável pela respiração?', opcoes: ['Circulatório', 'Respiratório', 'Urinário', 'Locomotor'], resposta: 1 },
+                { pergunta: 'Qual órgão bombeia sangue pelo corpo?', opcoes: ['Pulmão', 'Rim', 'Coração', 'Estômago'], resposta: 2 },
+                { pergunta: 'O que filtra o sangue e produz urina?', opcoes: ['Coração', 'Pulmão', 'Rim', 'Fígado'], resposta: 2 },
+                { pergunta: 'Qual sistema permite o movimento do corpo?', opcoes: ['Respiratório', 'Circulatório', 'Locomotor', 'Nervoso'], resposta: 2 },
+                { pergunta: 'O que transporta sangue pelo corpo?', opcoes: ['Nervos', 'Ossos', 'Vasos sanguíneos', 'Músculos'], resposta: 2 },
+                { pergunta: 'Qual é o tubo que leva ar aos pulmões?', opcoes: ['Esôfago', 'Traqueia', 'Brônquios', 'Laringe'], resposta: 1 },
+                { pergunta: 'Qual é a função dos rins?', opcoes: ['Bombear sangue', 'Filtrar sangue', 'Respirar', 'Digerir'], resposta: 1 },
+                { pergunta: 'O que são artérias?', opcoes: ['Veias', 'Nervos', 'Vasos que levam sangue', 'Ossos'], resposta: 2 },
+                { pergunta: 'Qual é o osso mais longo do corpo?', opcoes: ['Úmero', 'Fêmur', 'Tíbia', 'Rádio'], resposta: 1 },
+                { pergunta: 'Qual sistema controla o corpo?', opcoes: ['Respiratório', 'Nervoso', 'Circulatório', 'Digestivo'], resposta: 1 }
+            ],
+            'Geografia': [
+                { pergunta: 'O que é relevo?', opcoes: ['Tipo de clima', 'Forma do terreno', 'Tipo de vegetação', 'Massa de água'], resposta: 1 },
+                { pergunta: 'Qual é a diferença entre altitude e altura?', opcoes: ['Não há diferença', 'Altitude é vertical, altura é horizontal', 'Altitude é acima do nível do mar', 'Altura é acima do nível do mar'], resposta: 2 },
+                { pergunta: 'O que é uma planície?', opcoes: ['Uma montanha', 'Uma área plana e baixa', 'Uma área elevada', 'Uma depressão'], resposta: 1 },
+                { pergunta: 'Qual é o ciclo da água?', opcoes: ['Evaporação, condensação, precipitação', 'Apenas chuva', 'Apenas evaporação', 'Apenas condensação'], resposta: 0 },
+                { pergunta: 'O que é a atmosfera?', opcoes: ['Camada de água', 'Camada de ar que envolve a Terra', 'Camada de rocha', 'Camada de gelo'], resposta: 1 },
+                { pergunta: 'O que é um planalto?', opcoes: ['Uma área plana e baixa', 'Uma área plana e elevada', 'Uma montanha', 'Uma depressão'], resposta: 1 },
+                { pergunta: 'Qual é a temperatura média da Terra?', opcoes: ['10°C', '15°C', '20°C', '25°C'], resposta: 1 },
+                { pergunta: 'O que é uma depressão geográfica?', opcoes: ['Uma área elevada', 'Uma área baixa', 'Uma montanha', 'Um planalto'], resposta: 1 },
+                { pergunta: 'Qual é a camada mais próxima da Terra?', opcoes: ['Estratosfera', 'Troposfera', 'Mesosfera', 'Termosfera'], resposta: 1 },
+                { pergunta: 'O que são agentes endógenos?', opcoes: ['Chuva e vento', 'Tectonismo e vulcanismo', 'Erosão e intemperismo', 'Clima e vegetação'], resposta: 1 }
+            ],
+            'História': [
+                { pergunta: 'O que foram as Cruzadas?', opcoes: ['Guerras comerciais', 'Guerras religiosas na Idade Média', 'Expedições científicas', 'Viagens comerciais'], resposta: 1 },
+                { pergunta: 'O que foi o Renascimento Comercial?', opcoes: ['Crescimento das artes', 'Crescimento do comércio', 'Crescimento das cidades', 'Crescimento da religião'], resposta: 1 },
+                { pergunta: 'O que foi o Renascimento Cultural?', opcoes: ['Crescimento do comércio', 'Renovação das artes e letras', 'Crescimento das cidades', 'Período de guerra'], resposta: 1 },
+                { pergunta: 'O que foi o Feudalismo?', opcoes: ['Sistema de governo moderno', 'Sistema político da Idade Média', 'Sistema de comércio', 'Sistema de educação'], resposta: 1 },
+                { pergunta: 'O que foi o Absolutismo?', opcoes: ['Governo democrático', 'Governo centralizado no rei', 'Governo popular', 'Governo militar'], resposta: 1 },
+                { pergunta: 'Qual foi um rei absolutista famoso?', opcoes: ['Napoleão', 'Luís XIV', 'Henrique VIII', 'Carlos Magno'], resposta: 1 },
+                { pergunta: 'O que é um documento histórico?', opcoes: ['Um livro', 'Um registro que comprova fatos históricos', 'Uma pintura', 'Uma escultura'], resposta: 1 },
+                { pergunta: 'Qual foi o período do Renascimento?', opcoes: ['Idade Antiga', 'Idade Média', 'Idade Moderna', 'Idade Contemporânea'], resposta: 2 },
+                { pergunta: 'O que era um servo no feudalismo?', opcoes: ['Um nobre', 'Um trabalhador rural', 'Um guerreiro', 'Um sacerdote'], resposta: 1 },
+                { pergunta: 'Qual foi a principal característica do Absolutismo?', opcoes: ['Democracia', 'Poder centralizado no rei', 'Igualdade social', 'Liberdade total'], resposta: 1 }
+            ]
+        };
         
-        let player = { points: 0, correct: 0, streak: 0, level: 1 };
+        let currentSubject = 'Português';
         let currentGame = 'quiz';
         let currentQuestion = 0;
         let answered = false;
+        let player = { points: 0, correct: 0, streak: 0, level: 1 };
+        let speedTimer = null;
+        
+        // Inicializar seletores de disciplina
+        function initSubjects() {
+            const selector = document.getElementById('subject-selector');
+            Object.keys(quizzesBySubject).forEach(subject => {
+                const btn = document.createElement('button');
+                btn.className = 'subject-btn' + (subject === 'Português' ? ' active' : '');
+                btn.textContent = subject;
+                btn.onclick = () => changeSubject(subject);
+                selector.appendChild(btn);
+            });
+        }
+        
+        function changeSubject(subject) {
+            currentSubject = subject;
+            currentQuestion = 0;
+            answered = false;
+            player = { points: 0, correct: 0, streak: 0, level: 1 };
+            
+            document.querySelectorAll('.subject-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            updateStats();
+            
+            if (currentGame === 'quiz') loadQuiz();
+            else if (currentGame === 'memory') loadMemory();
+            else if (currentGame === 'speed') loadSpeed();
+        }
         
         function selectGame(game) {
+            if (speedTimer) clearInterval(speedTimer);
+            
             currentGame = game;
             currentQuestion = 0;
             answered = false;
+            player = { points: 0, correct: 0, streak: 0, level: 1 };
             
             document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
@@ -355,6 +488,7 @@
             document.getElementById(game).classList.add('active');
             
             document.getElementById('game-over').classList.remove('show');
+            updateStats();
             
             if (game === 'quiz') loadQuiz();
             else if (game === 'memory') loadMemory();
@@ -362,13 +496,20 @@
         }
         
         function loadQuiz() {
+            const quizzes = quizzesBySubject[currentSubject];
+            if (currentQuestion >= quizzes.length) {
+                showGameOver();
+                return;
+            }
+            
             const q = quizzes[currentQuestion];
             let html = `<div class="question-card">
-                <div class="question-text">${currentQuestion + 1}. ${q.pergunta}</div>
+                <div style="color: #667eea; font-weight: bold; margin-bottom: 10px;">Questão ${currentQuestion + 1} de ${quizzes.length}</div>
+                <div class="question-text">${q.pergunta}</div>
                 <div class="options">`;
             
             q.opcoes.forEach((opt, i) => {
-                html += `<button class="option-btn" onclick="checkQuiz(${i}, ${q.resposta})">${opt}</button>`;
+                html += `<button class="option-btn" id="opt-${i}" onclick="checkQuiz(${i}, ${q.resposta})" ${answered ? 'disabled' : ''}>${opt}</button>`;
             });
             
             html += `</div></div>`;
@@ -380,14 +521,16 @@
             answered = true;
             
             const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(btn => btn.disabled = true);
+            
             if (selected === correct) {
-                btns[selected].classList.add('correct');
+                document.getElementById(`opt-${selected}`).classList.add('correct');
                 player.points += 10;
                 player.correct++;
                 player.streak++;
             } else {
-                btns[selected].classList.add('incorrect');
-                btns[correct].classList.add('correct');
+                document.getElementById(`opt-${selected}`).classList.add('incorrect');
+                document.getElementById(`opt-${correct}`).classList.add('correct');
                 player.streak = 0;
             }
             
@@ -396,72 +539,82 @@
             setTimeout(() => {
                 currentQuestion++;
                 answered = false;
-                if (currentQuestion >= quizzes.length) {
-                    endGame();
-                } else {
-                    loadQuiz();
-                }
+                loadQuiz();
             }, 1500);
         }
         
         function loadMemory() {
-            const cards = [
-                { id: 1, text: '🍎' }, { id: 1, text: '🍎' },
-                { id: 2, text: '🍊' }, { id: 2, text: '🍊' },
-                { id: 3, text: '🍌' }, { id: 3, text: '🍌' },
-                { id: 4, text: '🍓' }, { id: 4, text: '🍓' },
-                { id: 5, text: '🍉' }, { id: 5, text: '🍉' },
-                { id: 6, text: '🍇' }, { id: 6, text: '🍇' },
-                { id: 7, text: '🍒' }, { id: 7, text: '🍒' },
-                { id: 8, text: '🥝' }, { id: 8, text: '🥝' }
-            ];
-            
+            const emojis = ['🍎', '🍊', '🍌', '🍓', '🍉', '🍇', '🍒', '🥝'];
+            const cards = [];
+            emojis.forEach(emoji => {
+                cards.push({ emoji, id: emoji });
+                cards.push({ emoji, id: emoji });
+            });
             cards.sort(() => Math.random() - 0.5);
             
             let html = '';
             cards.forEach((card, i) => {
-                html += `<button class="memory-card" style="padding: 20px; font-size: 2em; border: 2px solid #667eea; background: #f0f4ff; border-radius: 8px; cursor: pointer;" onclick="flipCard(${i}, ${card.id})">${card.text}</button>`;
+                html += `<button class="memory-card" id="card-${i}" onclick="flipMemoryCard(${i}, '${card.id}')">${card.emoji}</button>`;
             });
             
             document.getElementById('memory-grid').innerHTML = html;
         }
         
-        function flipCard(index, id) {
+        function flipMemoryCard(index, id) {
             player.points += 5;
             updateStats();
         }
         
+        function restartMemory() {
+            currentQuestion = 0;
+            player = { points: 0, correct: 0, streak: 0, level: 1 };
+            updateStats();
+            loadMemory();
+            document.getElementById('memory-restart').style.display = 'none';
+        }
+        
         function loadSpeed() {
-            let timeLeft = 30;
-            const q = quizzes[0];
+            const quizzes = quizzesBySubject[currentSubject];
+            const q = quizzes[Math.floor(Math.random() * quizzes.length)];
             
             let html = `<div class="question-card">
                 <div class="question-text">${q.pergunta}</div>
                 <div class="options">`;
             
             q.opcoes.forEach((opt, i) => {
-                html += `<button class="option-btn" onclick="checkSpeed(${i}, ${q.resposta})">${opt}</button>`;
+                html += `<button class="option-btn" id="speed-opt-${i}" onclick="checkSpeed(${i}, ${q.resposta})">${opt}</button>`;
             });
             
             html += `</div></div>`;
             document.getElementById('speed-container').innerHTML = html;
             
-            const timer = setInterval(() => {
+            let timeLeft = 30;
+            document.getElementById('timer').textContent = timeLeft;
+            
+            speedTimer = setInterval(() => {
                 timeLeft--;
                 document.getElementById('timer').textContent = timeLeft;
                 
                 if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    endGame();
+                    clearInterval(speedTimer);
+                    showGameOver();
                 }
             }, 1000);
         }
         
         function checkSpeed(selected, correct) {
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(btn => btn.disabled = true);
+            
             if (selected === correct) {
+                document.getElementById(`speed-opt-${selected}`).classList.add('correct');
                 player.points += 20;
                 player.correct++;
+            } else {
+                document.getElementById(`speed-opt-${selected}`).classList.add('incorrect');
+                document.getElementById(`speed-opt-${correct}`).classList.add('correct');
             }
+            
             updateStats();
         }
         
@@ -472,12 +625,14 @@
             document.getElementById('level').textContent = Math.floor(player.points / 100) + 1;
         }
         
-        function endGame() {
+        function showGameOver() {
+            if (speedTimer) clearInterval(speedTimer);
             document.getElementById('final-score').textContent = player.points;
             document.getElementById('game-over').classList.add('show');
         }
         
         // Inicializar
+        initSubjects();
         loadQuiz();
     </script>
 </body>
