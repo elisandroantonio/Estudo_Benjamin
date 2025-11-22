@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Game Interativo - Benjamin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .game-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .game-btn {
+            padding: 20px;
+            border: 2px solid #667eea;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .game-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .game-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .game-content {
+            display: none;
+        }
+        
+        .game-content.active {
+            display: block;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .question-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .option-btn {
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #28a745;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #dc3545;
+        }
+        
+        .next-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        
+        .next-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+        
+        .next-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .game-over {
+            text-align: center;
+            padding: 40px;
+            background: #f0f4ff;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .game-over.show {
+            display: block;
+        }
+        
+        .game-over h2 {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #764ba2;
+            margin: 20px 0;
+        }
+        
+        .restart-btn {
+            padding: 15px 40px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .restart-btn:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Game Interativo - Estudos</h1>
+        
+        <div class="game-selector">
+            <button class="game-btn active" onclick="selectGame('quiz')">🎯 Quiz Rápido</button>
+            <button class="game-btn" onclick="selectGame('memory')">🧠 Memória</button>
+            <button class="game-btn" onclick="selectGame('speed')">⚡ Velocidade</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="points">0</div>
+                <div class="stat-label">Pontos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="correct">0</div>
+                <div class="stat-label">Acertos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">Sequência</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="level">1</div>
+                <div class="stat-label">Nível</div>
+            </div>
+        </div>
+        
+        <!-- QUIZ RÁPIDO -->
+        <div id="quiz" class="game-content active">
+            <h2>🎯 Quiz Rápido</h2>
+            <p style="color: #666; margin-bottom: 20px;">Responda as perguntas o mais rápido possível!</p>
+            <div id="quiz-container"></div>
+        </div>
+        
+        <!-- JOGO DE MEMÓRIA -->
+        <div id="memory" class="game-content">
+            <h2>🧠 Jogo de Memória</h2>
+            <p style="color: #666; margin-bottom: 20px;">Encontre os pares corretos!</p>
+            <div id="memory-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+        </div>
+        
+        <!-- JOGO DE VELOCIDADE -->
+        <div id="speed" class="game-content">
+            <h2>⚡ Jogo de Velocidade</h2>
+            <p style="color: #666; margin-bottom: 20px;">Responda antes do tempo acabar!</p>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 3em; font-weight: bold; color: #667eea;" id="timer">30</div>
+                <p>segundos</p>
+            </div>
+            <div id="speed-container"></div>
+        </div>
+        
+        <div id="game-over" class="game-over">
+            <h2>🎉 Parabéns!</h2>
+            <p>Você completou o game!</p>
+            <div class="score" id="final-score">0</div>
+            <button class="restart-btn" onclick="location.reload()">Jogar Novamente</button>
+        </div>
+    </div>
+    
+    <script>
+        // Dados de Quiz com conteúdos CORRETOS das professoras
+        const quizzes = [
+            // Português
+            { pergunta: 'Qual é o tempo verbal que indica ações passadas?', opcoes: ['Presente', 'Pretérito', 'Futuro', 'Imperativo'], resposta: 1 },
+            { pergunta: 'O que é uma sinopse?', opcoes: ['Um sinal de pontuação', 'Um resumo de uma obra', 'Um tipo de verbo', 'Uma classe de palavras'], resposta: 1 },
+            { pergunta: 'Qual é a função da vírgula entre sujeito e predicado?', opcoes: ['Separar informações', 'Indicar pausa', 'Conectar orações', 'Todas as anteriores'], resposta: 3 },
+            { pergunta: 'O que é concordância verbal?', opcoes: ['Acordo entre palavras', 'Tipo de pontuação', 'Classe de palavras', 'Modo de falar'], resposta: 0 },
+            { pergunta: 'Qual modo verbal expressa ordem ou pedido?', opcoes: ['Indicativo', 'Subjuntivo', 'Imperativo', 'Condicional'], resposta: 2 },
+            
+            // Inglês
+            { pergunta: 'Qual é o past tense de "go"?', opcoes: ['Goes', 'Going', 'Went', 'Gone'], resposta: 2 },
+            { pergunta: 'Complete: "There _______ many animals in the zoo."', opcoes: ['is', 'are', 'was', 'were'], resposta: 1 },
+            { pergunta: 'Qual animal é conhecido por ser muito rápido?', opcoes: ['Elephant', 'Cheetah', 'Turtle', 'Sloth'], resposta: 1 },
+            { pergunta: 'O que significa "lazy"?', opcoes: ['Rápido', 'Preguiçoso', 'Inteligente', 'Forte'], resposta: 1 },
+            { pergunta: 'Complete: "She _______ a book right now."', opcoes: ['read', 'reads', 'is reading', 'reading'], resposta: 2 },
+            
+            // Matemática
+            { pergunta: 'O que é um poliedro?', opcoes: ['Uma forma redonda', 'Um sólido com faces planas', 'Um tipo de gráfico', 'Uma medida'], resposta: 1 },
+            { pergunta: '50% é igual a quanto?', opcoes: ['Um terço', 'Metade', 'Um quarto', 'Três quartos'], resposta: 1 },
+            { pergunta: 'Qual é a fórmula da área de um círculo?', opcoes: ['πr', '2πr', 'πr²', 'πd'], resposta: 2 },
+            { pergunta: 'O que é probabilidade?', opcoes: ['Uma forma geométrica', 'A chance de algo acontecer', 'Um tipo de gráfico', 'Uma medida de comprimento'], resposta: 1 },
+            { pergunta: 'Um cubo tem quantas faces?', opcoes: ['4', '5', '6', '8'], resposta: 2 },
+            
+            // Ciências
+            { pergunta: 'Qual sistema é responsável pela respiração?', opcoes: ['Circulatório', 'Respiratório', 'Urinário', 'Locomotor'], resposta: 1 },
+            { pergunta: 'Qual órgão bombeia sangue pelo corpo?', opcoes: ['Pulmão', 'Rim', 'Coração', 'Estômago'], resposta: 2 },
+            { pergunta: 'O que filtra o sangue e produz urina?', opcoes: ['Coração', 'Pulmão', 'Rim', 'Fígado'], resposta: 2 },
+            { pergunta: 'Qual sistema permite o movimento do corpo?', opcoes: ['Respiratório', 'Circulatório', 'Locomotor', 'Nervoso'], resposta: 2 },
+            { pergunta: 'O que transporta sangue pelo corpo?', opcoes: ['Nervos', 'Ossos', 'Vasos sanguíneos', 'Músculos'], resposta: 2 },
+            
+            // Geografia
+            { pergunta: 'O que é relevo?', opcoes: ['Tipo de clima', 'Forma do terreno', 'Tipo de vegetação', 'Massa de água'], resposta: 1 },
+            { pergunta: 'Qual é a diferença entre altitude e altura?', opcoes: ['Não há diferença', 'Altitude é vertical, altura é horizontal', 'Altitude é acima do nível do mar', 'Altura é acima do nível do mar'], resposta: 2 },
+            { pergunta: 'O que é uma planície?', opcoes: ['Uma montanha', 'Uma área plana e baixa', 'Uma área elevada', 'Uma depressão'], resposta: 1 },
+            { pergunta: 'Qual é o ciclo da água?', opcoes: ['Evaporação, condensação, precipitação', 'Apenas chuva', 'Apenas evaporação', 'Apenas condensação'], resposta: 0 },
+            { pergunta: 'O que é a atmosfera?', opcoes: ['Camada de água', 'Camada de ar que envolve a Terra', 'Camada de rocha', 'Camada de gelo'], resposta: 1 },
+            
+            // História
+            { pergunta: 'O que foram as Cruzadas?', opcoes: ['Guerras comerciais', 'Guerras religiosas na Idade Média', 'Expedições científicas', 'Viagens comerciais'], resposta: 1 },
+            { pergunta: 'O que foi o Renascimento Comercial?', opcoes: ['Crescimento das artes', 'Crescimento do comércio', 'Crescimento das cidades', 'Crescimento da religião'], resposta: 1 },
+            { pergunta: 'O que foi o Renascimento Cultural?', opcoes: ['Crescimento do comércio', 'Renovação das artes e letras', 'Crescimento das cidades', 'Período de guerra'], resposta: 1 },
+            { pergunta: 'O que foi o Feudalismo?', opcoes: ['Sistema de governo moderno', 'Sistema político da Idade Média', 'Sistema de comércio', 'Sistema de educação'], resposta: 1 },
+            { pergunta: 'O que foi o Absolutismo?', opcoes: ['Governo democrático', 'Governo centralizado no rei', 'Governo popular', 'Governo militar'], resposta: 1 }
+        ];
+        
+        let player = { points: 0, correct: 0, streak: 0, level: 1 };
+        let currentGame = 'quiz';
+        let currentQuestion = 0;
+        let answered = false;
+        
+        function selectGame(game) {
+            currentGame = game;
+            currentQuestion = 0;
+            answered = false;
+            
+            document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.game-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(game).classList.add('active');
+            
+            document.getElementById('game-over').classList.remove('show');
+            
+            if (game === 'quiz') loadQuiz();
+            else if (game === 'memory') loadMemory();
+            else if (game === 'speed') loadSpeed();
+        }
+        
+        function loadQuiz() {
+            const q = quizzes[currentQuestion];
+            let html = `<div class="question-card">
+                <div class="question-text">${currentQuestion + 1}. ${q.pergunta}</div>
+                <div class="options">`;
+            
+            q.opcoes.forEach((opt, i) => {
+                html += `<button class="option-btn" onclick="checkQuiz(${i}, ${q.resposta})">${opt}</button>`;
+            });
+            
+            html += `</div></div>`;
+            document.getElementById('quiz-container').innerHTML = html;
+        }
+        
+        function checkQuiz(selected, correct) {
+            if (answered) return;
+            answered = true;
+            
+            const btns = document.querySelectorAll('.option-btn');
+            if (selected === correct) {
+                btns[selected].classList.add('correct');
+                player.points += 10;
+                player.correct++;
+                player.streak++;
+            } else {
+                btns[selected].classList.add('incorrect');
+                btns[correct].classList.add('correct');
+                player.streak = 0;
+            }
+            
+            updateStats();
+            
+            setTimeout(() => {
+                currentQuestion++;
+                answered = false;
+                if (currentQuestion >= quizzes.length) {
+                    endGame();
+                } else {
+                    loadQuiz();
+                }
+            }, 1500);
+        }
+        
+        function loadMemory() {
+            const cards = [
+                { id: 1, text: '🍎' }, { id: 1, text: '🍎' },
+                { id: 2, text: '🍊' }, { id: 2, text: '🍊' },
+                { id: 3, text: '🍌' }, { id: 3, text: '🍌' },
+                { id: 4, text: '🍓' }, { id: 4, text: '🍓' },
+                { id: 5, text: '🍉' }, { id: 5, text: '🍉' },
+                { id: 6, text: '🍇' }, { id: 6, text: '🍇' },
+                { id: 7, text: '🍒' }, { id: 7, text: '🍒' },
+                { id: 8, text: '🥝' }, { id: 8, text: '🥝' }
+            ];
+            
+            cards.sort(() => Math.random() - 0.5);
+            
+            let html = '';
+            cards.forEach((card, i) => {
+                html += `<button class="memory-card" style="padding: 20px; font-size: 2em; border: 2px solid #667eea; background: #f0f4ff; border-radius: 8px; cursor: pointer;" onclick="flipCard(${i}, ${card.id})">${card.text}</button>`;
+            });
+            
+            document.getElementById('memory-grid').innerHTML = html;
+        }
+        
+        function flipCard(index, id) {
+            player.points += 5;
+            updateStats();
+        }
+        
+        function loadSpeed() {
+            let timeLeft = 30;
+            const q = quizzes[0];
+            
+            let html = `<div class="question-card">
+                <div class="question-text">${q.pergunta}</div>
+                <div class="options">`;
+            
+            q.opcoes.forEach((opt, i) => {
+                html += `<button class="option-btn" onclick="checkSpeed(${i}, ${q.resposta})">${opt}</button>`;
+            });
+            
+            html += `</div></div>`;
+            document.getElementById('speed-container').innerHTML = html;
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        function checkSpeed(selected, correct) {
+            if (selected === correct) {
+                player.points += 20;
+                player.correct++;
+            }
+            updateStats();
+        }
+        
+        function updateStats() {
+            document.getElementById('points').textContent = player.points;
+            document.getElementById('correct').textContent = player.correct;
+            document.getElementById('streak').textContent = player.streak;
+            document.getElementById('level').textContent = Math.floor(player.points / 100) + 1;
+        }
+        
+        function endGame() {
+            document.getElementById('final-score').textContent = player.points;
+            document.getElementById('game-over').classList.add('show');
+        }
+        
+        // Inicializar
+        loadQuiz();
+    </script>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Desafio Diário - Benjamin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .date-info {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .ranking-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .ranking-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .ranking-section h2 {
+            color: #f5576c;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .ranking-list {
+            list-style: none;
+        }
+        
+        .ranking-item {
+            padding: 15px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #f5576c;
+        }
+        
+        .ranking-position {
+            font-weight: bold;
+            color: #f5576c;
+            font-size: 1.2em;
+            margin-right: 15px;
+        }
+        
+        .ranking-name {
+            flex: 1;
+        }
+        
+        .ranking-points {
+            font-weight: bold;
+            color: #f5576c;
+            font-size: 1.1em;
+        }
+        
+        .medal {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+        
+        .daily-challenge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .challenge-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .challenge-description {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .challenge-progress {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 65%;
+            transition: width 0.3s;
+        }
+        
+        .progress-text {
+            font-size: 0.9em;
+        }
+        
+        .challenge-btn {
+            padding: 15px 40px;
+            background: white;
+            color: #f5576c;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .challenge-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .badges-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .badges-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+        
+        .badge {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .badge.unlocked {
+            border-color: #f5576c;
+            background: #fff5f7;
+        }
+        
+        .badge.locked {
+            opacity: 0.5;
+        }
+        
+        .badge-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .badge-name {
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #333;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #f5576c;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #666;
+        }
+        
+        .streak-fire {
+            font-size: 2em;
+        }
+        
+        .challenge-content {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .challenge-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #f5576c;
+        }
+        
+        .challenge-item h3 {
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+        
+        .challenge-item p {
+            color: #666;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Desafio Diário</h1>
+        
+        <div class="date-info">
+            <p id="date-display"></p>
+        </div>
+        
+        <!-- DESAFIO DIÁRIO -->
+        <div class="daily-challenge">
+            <div class="challenge-title">📚 Desafio de Hoje</div>
+            <div class="challenge-description">Complete os desafios das disciplinas para ganhar pontos!</div>
+            <div class="challenge-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-text"><span id="progress-count">6</span>/10 desafios completados</div>
+            </div>
+            <button class="challenge-btn" onclick="startChallenge()">🚀 Continuar Desafio</button>
+        </div>
+        
+        <!-- DESAFIOS DISPONÍVEIS -->
+        <div class="challenge-content">
+            <h2 style="color: #f5576c; margin-bottom: 20px;">📋 Desafios de Hoje</h2>
+            
+            <div class="challenge-item">
+                <h3>🇵🇹 Português - Tempos Verbais</h3>
+                <p>Identifique o tempo verbal correto em 5 frases. Dificuldade: ⭐⭐</p>
+            </div>
+            
+            <div class="challenge-item">
+                <h3>🇬🇧 Inglês - Past Tense</h3>
+                <p>Complete 5 frases no past tense. Dificuldade: ⭐⭐⭐</p>
+            </div>
+            
+            <div class="challenge-item">
+                <h3>📐 Matemática - Porcentagem</h3>
+                <p>Calcule porcentagens em 5 problemas. Dificuldade: ⭐⭐</p>
+            </div>
+            
+            <div class="challenge-item">
+                <h3>🔬 Ciências - Sistemas do Corpo</h3>
+                <p>Identifique os sistemas do corpo humano. Dificuldade: ⭐</p>
+            </div>
+            
+            <div class="challenge-item">
+                <h3>🌍 Geografia - Relevo</h3>
+                <p>Classifique formas de relevo. Dificuldade: ⭐⭐</p>
+            </div>
+            
+            <div class="challenge-item">
+                <h3>📜 História - Idade Média</h3>
+                <p>Responda sobre Feudalismo e Cruzadas. Dificuldade: ⭐⭐⭐</p>
+            </div>
+        </div>
+        
+        <!-- ESTATÍSTICAS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">42</div>
+                <div class="stat-label">Pontos Hoje</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">8<span class="streak-fire">🔥</span></div>
+                <div class="stat-label">Dias Consecutivos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">156</div>
+                <div class="stat-label">Pontos Totais</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">32</div>
+                <div class="stat-label">Questões Respondidas</div>
+            </div>
+        </div>
+        
+        <!-- RANKING -->
+        <div class="ranking-container">
+            <div class="ranking-section">
+                <h2>🏆 Ranking Semanal</h2>
+                <ul class="ranking-list">
+                    <li class="ranking-item">
+                        <span class="ranking-position">
+                            <span class="medal">🥇</span>1º
+                        </span>
+                        <span class="ranking-name">Benjamin</span>
+                        <span class="ranking-points">156 pts</span>
+                    </li>
+                    <li class="ranking-item">
+                        <span class="ranking-position">
+                            <span class="medal">🥈</span>2º
+                        </span>
+                        <span class="ranking-name">João</span>
+                        <span class="ranking-points">142 pts</span>
+                    </li>
+                    <li class="ranking-item">
+                        <span class="ranking-position">
+                            <span class="medal">🥉</span>3º
+                        </span>
+                        <span class="ranking-name">Maria</span>
+                        <span class="ranking-points">138 pts</span>
+                    </li>
+                    <li class="ranking-item">
+                        <span class="ranking-position">4º</span>
+                        <span class="ranking-name">Pedro</span>
+                        <span class="ranking-points">125 pts</span>
+                    </li>
+                    <li class="ranking-item">
+                        <span class="ranking-position">5º</span>
+                        <span class="ranking-name">Ana</span>
+                        <span class="ranking-points">118 pts</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="ranking-section">
+                <h2>⭐ Ranking Mensal</h2>
+                <ul class="ranking-list">
+                    <li class="ranking-item">
+                        <span class="ranking-position">
+                            <span class="medal">🥇</span>1º
+                        </span>
+                        <span class="ranking-name">Benjamin</span>
+                        <span class="ranking-points">892 pts</span>
+                    </li>
+                    <li class="ranking-item">
+                        <span class="ranking-position">
+                            <span class="medal">🥈</span>2º
+                        </span>
+                        <span class="ranking-name">João</span>
+                        <span class="ranking-points">756 pts</span>
+                    </li>
+                    <li class="ranking-item">
+                        <span class="ranking-position">
+                            <span class="medal">🥉</span>3º
+                        </span>
+                        <span class="ranking-name">Maria</span>
+                        <span class="ranking-points">743 pts</span>
+                    </li>
+                    <li class="ranking-item">
+                        <span class="ranking-position">4º</span>
+                        <span class="ranking-name">Pedro</span>
+                        <span class="ranking-points">698 pts</span>
+                    </li>
+                    <li class="ranking-item">
+                        <span class="ranking-position">5º</span>
+                        <span class="ranking-name">Ana</span>
+                        <span class="ranking-points">652 pts</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- BADGES -->
+        <div class="badges-section">
+            <h2>🏅 Badges Conquistadas</h2>
+            <div class="badges-grid">
+                <div class="badge unlocked">
+                    <div class="badge-icon">🚀</div>
+                    <div class="badge-name">Iniciante</div>
+                </div>
+                <div class="badge unlocked">
+                    <div class="badge-icon">⭐</div>
+                    <div class="badge-name">5 Acertos</div>
+                </div>
+                <div class="badge unlocked">
+                    <div class="badge-icon">🔥</div>
+                    <div class="badge-name">3 Dias</div>
+                </div>
+                <div class="badge unlocked">
+                    <div class="badge-icon">💯</div>
+                    <div class="badge-name">100 Pontos</div>
+                </div>
+                <div class="badge unlocked">
+                    <div class="badge-icon">🎯</div>
+                    <div class="badge-name">10 Acertos</div>
+                </div>
+                <div class="badge locked">
+                    <div class="badge-icon">👑</div>
+                    <div class="badge-name">Mestre</div>
+                </div>
+                <div class="badge locked">
+                    <div class="badge-icon">🌟</div>
+                    <div class="badge-name">30 Dias</div>
+                </div>
+                <div class="badge locked">
+                    <div class="badge-icon">💎</div>
+                    <div class="badge-name">1000 Pontos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Atualizar data
+        const today = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('date-display').textContent = today.toLocaleDateString('pt-BR', options);
+        
+        function startChallenge() {
+            alert('🎯 Desafio iniciado! Complete os 4 desafios restantes para ganhar pontos extras!');
+        }
+    </script>
+</body>
+</html>
